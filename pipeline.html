@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kdsnr-ai · Pipeline</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+</head>
+<body>
+
+<aside class="sidebar">
+  <a class="brand" href="index.html"><span>KDSNR-AI</span><img src="assets/mark.png" alt=""></a>
+  <nav>
+    <a class="group" href="index.html">Installation &amp; Start<span class="chev"></span></a>
+    <ul>
+      <li><a href="index.html#install">설치</a></li>
+      <li><a href="index.html#client">Client</a></li>
+    </ul>
+    <a class="group open" href="pipeline.html">Pipeline<span class="chev"></span></a>
+    <ul>
+      <li><a href="pipeline.html#demo">소개</a></li>
+      <li><a href="pipeline.html#overview">개요</a></li>
+      <li><a href="pipeline.html#question">Question 스키마</a></li>
+      <li><a href="pipeline.html#api-usage">API 사용법</a></li>
+      <li class="sub"><a href="pipeline.html#import-file">import_file</a></li>
+      <li class="sub"><a href="pipeline.html#extract-question">extract_question</a></li>
+      <li class="sub"><a href="pipeline.html#export-preview">export_preview</a></li>
+      <li class="sub"><a href="pipeline.html#compose-hwpx">compose_hwpx</a></li>
+      <li class="sub"><a href="pipeline.html#hwp-to-pdf">hwp_to_pdf</a></li>
+      <li class="sub"><a href="pipeline.html#hwp-to-hwpx">hwp_to_hwpx</a></li>
+    </ul>
+  </nav>
+  <div class="foot">
+    (주)강남대성수능연구소<br>
+    kdsnrai@gmail.com
+  </div>
+</aside>
+
+<main class="content">
+
+<h1>Pipeline</h1>
+<p class="lead">시험지 형식의 문서에서 개별 문항을 추출하고, 이를 여러 형식의 파일로 내보내는 API입니다.<br>10만 건 이상의 데이터로 전용 ML 모델을 학습·탑재하여, 정확성과 신뢰성을 극대화하였습니다.</p>
+<ul class="lead-list">
+<li>입력 : 시험지 형식의 문서 파일 (hwp, hwpx, pdf)</li>
+<li>출력 : 개별 문항 파일 (json, pdf, svg, webp, png, hwpx)<br>( * 국어 과목의 경우, 지문과 문항 세트를 모두 추출합니다.)</li>
+<li>원문 수식, 표, 이미지, 도식, 밑줄, 굵은 글씨, 박스 보존</li>
+<li>2단 구조 또는 페이지에 걸친 문항을 자동 복원</li>
+</ul>
+
+<section id="demo" class="demo-sec">
+<div class="demo" id="kdsnr-demo"></div>
+<p class="demo-cap">Pipeline API 문항 추출 예시</p>
+</section>
+
+<h2 class="part">개요</h2>
+
+<section id="overview">
+
+
+<pre><code class="language-python">from kdsnr_ai import Client, ExportPreviewConfig
+
+client = Client(api_key="YOUR_API_KEY")
+
+doc = client.pipeline.import_file("exam.pdf", label="exam_2026")
+questions = client.pipeline.extract_question(doc, subject="auto")
+
+client.pipeline.export_preview(
+    questions,
+    "out/preview",
+    config=ExportPreviewConfig(type="image"),
+)</code></pre>
+<table>
+<tr><th>메서드</th><th>역할</th></tr>
+<tr><td><code>import_file</code></td><td>파일 업로드 → <code>Document</code></td></tr>
+<tr><td><code>extract_question</code></td><td>pdf · hwp · hwpx → <code>Question</code> 리스트 (문항 이미지 · 원본 링크 포함)</td></tr>
+<tr><td><code>export_preview</code></td><td><code>Question</code> 리스트 → 문항별 image · pdf · svg 파일</td></tr>
+<tr><td><code>compose_hwpx</code></td><td><code>Question</code> 리스트 → 문항별 한글 문서(hwpx)</td></tr>
+<tr><td><code>hwp_to_pdf</code></td><td>hwp · hwpx → pdf (원본 조판 보존)</td></tr>
+<tr><td><code>hwp_to_hwpx</code></td><td>hwp → hwpx</td></tr>
+</table>
+<p><code>extract_question</code>이 반환하는 <code>Question</code> 리스트는 JSON으로 직렬화되고, 저장 · 수정 · 직접 작성할 수 있습니다. <code>export_preview</code>는 이 리스트를 문항별 파일로 저장합니다.</p>
+
+<figure class="shots single">
+<img src="assets/architecture.png" alt="">
+</figure>
+<p class="demo-cap">입력 문서에서 문항 JSON까지의 처리 경로</p>
+</section>
+
+<h2 class="part" id="question-part">Question 스키마</h2>
+
+<section id="question">
+<p><code>extract_question</code>은 문서를 문항 단위로 잘라 객체 리스트로 반환합니다. 단독 문항은 <code>Question</code> 하나가 되고, 하나의 지문에 여러 문항이 묶인 세트는 지시문·지문·문항들을 함께 담은 <code>QuestionSet</code> 하나가 됩니다. 리스트의 순서는 지면의 읽기 순서와 같고, 컬럼이나 페이지에 걸친 문항도 하나의 객체로 이어 붙어 돌아옵니다.</p>
+<p>각 객체는 <code>kdsnr_ai.ir</code> 모듈의 pydantic 모델이고, JSON 구조와 1:1로 대응합니다. 모든 노드는 <code>type</code> 필드로 종류를 판별합니다. 문서 핸들이나 페이지 좌표 없이 내용과 구조만 담기 때문에, 파일로 저장해 두었다가 재사용하거나, 필드를 수정하거나, 처음부터 직접 작성할 수 있습니다.</p>
+
+<pre><code class="language-json">{
+  "type": "QuestionSet",
+  "metadata": {
+    "label": "kor_2026",
+    "subject": "korean",
+    "q_nums": [38, 39],
+    "set_id": "3a55061cc011.s1"
+  },
+  "instruction": { "type": "Text", "text": "다음 글을 읽고 물음에 답하시오." },
+  "passage": [
+    { "type": "Text", "text": "&lt;bold&gt;(가)&lt;/bold&gt; 언어는 ..." },
+    { "type": "Figure", "mime": "image/webp", "data": "..." }
+  ],
+  "questions": [
+    {
+      "type": "Question",
+      "metadata": { "q_num": 38, "points": 3, "q_id": "3a55061cc011.q1" },
+      "content": [
+        { "type": "Text", "text": "윗글을 이해한 내용으로 적절한 것은?" },
+        { "type": "BogiBox", "content": [
+          { "type": "Text", "text": "ㄱ. ..." }
+        ] },
+        { "type": "Text", "text": "① ㄱ" }
+      ],
+      "q_img": "base64..."
+    }
+  ],
+  "source": "https://kdsnr-ai-main-223982025046.asia-northeast3.run.app/v1/files/..."
+}</code></pre>
+
+<h3>필드</h3>
+<table>
+<tr><th>필드</th><th>노드</th><th>타입</th><th>설명</th></tr>
+<tr><td><code>type</code></td><td>공통</td><td><code>"Question" | "QuestionSet"</code></td><td>노드 판별자.</td></tr>
+<tr><td><code>metadata</code></td><td>공통</td><td><code>Metadata</code></td><td>번호 · 배점 · 과목 · 라벨 · 발급 id.</td></tr>
+<tr><td><code>source</code></td><td>공통</td><td><code>str | null</code></td><td>원본 pdf를 내려받는 URL (API 키 인증). hwp · hwpx 입력은 변환된 pdf. 직접 작성한 객체는 <code>null</code>.</td></tr>
+<tr><td><code>content</code></td><td><code>Question</code></td><td><code>BodyItem[]</code></td><td>발문 · 자료 · 선지를 읽기 순서대로 담은 블록 리스트.</td></tr>
+<tr><td><code>q_img</code></td><td><code>Question</code></td><td><code>str | null</code></td><td>문항 영역을 잘라낸 PNG 이미지 (base64).</td></tr>
+<tr><td><code>instruction</code></td><td><code>QuestionSet</code></td><td><code>Text</code></td><td>세트 지시문.</td></tr>
+<tr><td><code>passage</code></td><td><code>QuestionSet</code></td><td><code>BodyItem[]</code></td><td>지문 블록 리스트.</td></tr>
+<tr><td><code>questions</code></td><td><code>QuestionSet</code></td><td><code>Question[]</code></td><td>소속 문항. 각자 <code>q_id</code>와 <code>q_img</code>를 가집니다.</td></tr>
+</table>
+
+<h3>블록 타입</h3>
+<table>
+<tr><th>타입</th><th>설명</th><th>필드</th></tr>
+<tr><td><code>Text</code></td><td>텍스트 문단.</td><td class="fields">
+<div><code>text</code><span>내용 문자열. 인라인 태그와 <code>$...$</code> 수식 포함</span></div>
+<div><code>font</code><span>서체 — 1=명조, 2=돋움</span></div>
+<div><code>size</code><span>글자 크기 (pt)</span></div>
+<div><code>align</code><span>문단 정렬 — left · center · right · justify · distribute</span></div>
+</td></tr>
+<tr><td><code>Equation</code></td><td>한 줄을 차지하는 독립 수식.</td><td class="fields">
+<div><code>latex</code><span>LaTeX 수식</span></div>
+<div><code>size</code><span>글자 크기 (pt)</span></div>
+</td></tr>
+<tr><td><code>Table</code></td><td>행·열 격자 표.</td><td class="fields">
+<div><code>grid</code><span>슬롯별 셀 id 격자 — 같은 id는 병합 셀</span></div>
+<div><code>col_ratios</code><span>열 너비 비율</span></div>
+<div><code>width</code><span>표 너비 (pt)</span></div>
+<div><code>border</code><span>표 테두리 여부</span></div>
+<div><code>cells</code><span>셀 리스트 — <code>border</code> · <code>valign</code> · <code>content</code></span></div>
+</td></tr>
+<tr><td><code>BogiBox</code></td><td><code>&lt;보기&gt;</code>류 헤더가 달린 박스.</td><td class="fields">
+<div><code>label</code><span>헤더 텍스트. 생략 = 보기</span></div>
+<div><code>content</code><span>내부 블록 리스트</span></div>
+</td></tr>
+<tr><td><code>PlainBox</code></td><td>헤더 없는 테두리 박스.</td><td class="fields">
+<div><code>content</code><span>내부 블록 리스트</span></div>
+</td></tr>
+<tr><td><code>Figure</code></td><td>그림·드로잉의 래스터 이미지.</td><td class="fields">
+<div><code>mime</code><span>이미지 형식 — image/webp</span></div>
+<div><code>data</code><span>base64 이미지</span></div>
+<div><code>width</code> <code>height</code><span>표시 크기 (pt)</span></div>
+<div><code>content</code><span>그림 내부에서 복원된 블록 리스트</span></div>
+</td></tr>
+<tr><td><code>Object</code></td><td>본문 옆에 떠 있는 표·그림 래퍼.</td><td class="fields">
+<div><code>float</code><span>앵커 기준 오프셋 — <code>{dx, dy}</code> (pt)</span></div>
+<div><code>block</code><span><code>Table</code> 또는 <code>Figure</code></span></div>
+</td></tr>
+</table>
+
+<h3>인라인 태그</h3>
+<p><code>Text.text</code>가 나르는 표기는 다섯 가지입니다.</p>
+<table>
+<tr><th>표기</th><th>의미</th></tr>
+<tr><td><code>$...$</code></td><td>인라인 수식 (LaTeX).</td></tr>
+<tr><td><code>&lt;u&gt;...&lt;/u&gt;</code></td><td>밑줄.</td></tr>
+<tr><td><code>&lt;bold&gt;...&lt;/bold&gt;</code></td><td>굵게.</td></tr>
+<tr><td><code>&lt;box&gt;...&lt;/box&gt;</code></td><td>줄 안의 박스 친 구간.</td></tr>
+<tr><td><code>&lt;bracket:A&gt;...&lt;/bracket:A&gt;</code></td><td><code>[A]</code> 대괄호가 감싸는 범위.</td></tr>
+</table>
+
+
+<h3>Metadata</h3>
+<table>
+<tr><th>필드</th><th>타입</th><th>설명</th></tr>
+<tr><td><code>label</code></td><td><code>str</code></td><td>문서 라벨.</td></tr>
+<tr><td><code>subject</code></td><td><code>"korean" | "math" | "social" | "science"</code></td><td>과목.</td></tr>
+<tr><td><code>q_num</code></td><td><code>int | null</code></td><td>문항 번호.</td></tr>
+<tr><td><code>points</code></td><td><code>int | null</code></td><td><code>[N점]</code> 배점.</td></tr>
+<tr><td><code>q_nums</code></td><td><code>int[]</code></td><td>세트의 문항 번호 목록 (<code>QuestionSet</code>).</td></tr>
+<tr><td><code>q_id</code></td><td><code>str | null</code></td><td>추출 시 서버가 발급하는 문항 id. <code>export_preview</code>가 이 id로 문항을 찾습니다.</td></tr>
+<tr><td><code>set_id</code></td><td><code>str | null</code></td><td>세트 id (<code>QuestionSet</code>).</td></tr>
+</table>
+</section>
+
+
+<h2 class="part" id="api-usage">API 사용법</h2>
+
+<section id="import-file">
+<h3>import_file</h3>
+<p>파일을 업로드하고 <code>Document</code>를 반환합니다.</p>
+<pre><code class="language-python">from kdsnr_ai import Client, Document
+
+client = Client(api_key="YOUR_API_KEY")
+
+doc: Document = client.pipeline.import_file(
+    "exam.pdf",
+    label="exam_2026",
+)</code></pre>
+<table>
+<tr><th>인자</th><th>타입</th><th>기본값</th><th>설명</th></tr>
+<tr><td><code>file</code></td><td><code>str | Path</code></td><td>—</td><td>파일 경로. <code>.pdf</code> · <code>.hwp</code> · <code>.hwpx</code>만 허용, 그 외는 <code>ValueError</code>.</td></tr>
+<tr><td><code>label</code></td><td><code>str | None</code></td><td><code>None</code></td><td>문서 라벨. 생략하면 확장자를 뗀 파일명. 추출 결과의 <code>metadata.label</code>로 전파.</td></tr>
+</table>
+<p>hwp · hwpx는 pdf로 변환되어 저장되며, <code>source</code> 링크는 이 pdf를 가리킵니다.</p>
+</section>
+
+<section id="extract-question">
+<h3>extract_question</h3>
+<p>문서에서 문항을 추출해 <code>Question</code> · <code>QuestionSet</code> 리스트로 반환합니다.</p>
+<pre><code class="language-python">from kdsnr_ai import Client
+from kdsnr_ai.ir import Question, QuestionSet
+
+client = Client(api_key="YOUR_API_KEY")
+
+doc = client.pipeline.import_file("exam.pdf")
+
+questions: list[Question | QuestionSet] = client.pipeline.extract_question(
+    doc,
+    subject="auto",
+    q_img_dpi=150,
+)
+
+for q in questions:
+    print(q.type, q.metadata.q_num, q.metadata.points)</code></pre>
+<table>
+<tr><th>인자</th><th>타입</th><th>기본값</th><th>설명</th></tr>
+<tr><td><code>doc</code></td><td><code>Document</code></td><td>—</td><td><code>import_file</code>이 반환한 문서.</td></tr>
+<tr><td><code>subject</code></td><td><code>str</code></td><td><code>"auto"</code></td><td><code>korean</code> · <code>math</code> · <code>social</code> · <code>science</code> (별칭 <code>kor</code> · <code>mat</code> · <code>soc</code> · <code>sci</code>). <code>auto</code>는 문항 단위 자동 분류.</td></tr>
+<tr><td><code>emit_overlay</code></td><td><code>EmitOverlayConfig | None</code></td><td><code>None</code></td><td>지정하면 검출 박스를 그린 pdf를 함께 반환. 반환형이 <code>ExtractResult</code>로 바뀝니다.</td></tr>
+<tr><td><code>q_img_dpi</code></td><td><code>int</code></td><td><code>150</code></td><td>문항 이미지(<code>q_img</code>)의 래스터 해상도.</td></tr>
+</table>
+<p>결과는 지면의 읽기 순서를 따릅니다. 각 문항에는 id(<code>metadata.q_id</code> · <code>set_id</code>), 원본 pdf 링크(<code>source</code>), 문항 이미지(<code>q_img</code>)가 담깁니다. 경고(텍스트층 품질 등)는 파이썬 <code>warnings</code>로 전달됩니다.</p>
+<h4>EmitOverlayConfig</h4>
+<p>추출 결과에 반영된 요소를 클래스별 박스로 문서 위에 그려 받습니다.</p>
+<pre><code class="language-python">from kdsnr_ai import Client, EmitOverlayConfig, ExtractResult
+
+client = Client(api_key="YOUR_API_KEY")
+
+doc = client.pipeline.import_file("exam.pdf")
+
+result: ExtractResult = client.pipeline.extract_question(
+    doc,
+    subject="auto",
+    emit_overlay=EmitOverlayConfig(
+        classes=["inlinebox", "table", "cell"],
+    ),
+)
+
+questions = result.questions
+result.overlay.save("out/exam.overlay.pdf")</code></pre>
+<table>
+<tr><th>필드</th><th>타입</th><th>기본값</th><th>설명</th></tr>
+<tr><td><code>classes</code></td><td><code>list[str] | None</code></td><td><code>None</code></td><td>그릴 클래스. <code>None</code>이면 전부. <code>passage</code> · <code>instruction</code> · <code>question</code> · <code>eq</code> · <code>eqtable</code> · <code>bogi</code> · <code>plainbox</code> · <code>inlinebox</code> · <code>bracket</code> · <code>table</code> · <code>figure</code> · <code>qnum</code> · <code>cell</code>(표 격자). 그 외 이름은 오류.</td></tr>
+</table>
+<p><code>ExtractResult</code>는 <code>questions</code>(문항 리스트)와 <code>overlay</code>(<code>Document</code>, <code>.save(path)</code>로 저장) 두 필드를 가지며, 문항 리스트처럼 바로 순회할 수 있습니다. hwp · hwpx 입력은 추출에 쓰인 pdf 변환본 위에 그려집니다.</p>
+</section>
+
+<section id="export-preview">
+<h3>export_preview</h3>
+<p><code>Question</code> 리스트를 문항별 image · pdf · svg 파일로 내보냅니다.</p>
+<pre><code class="language-python">from pathlib import Path
+
+from kdsnr_ai import Client, ExportPreviewConfig
+
+client = Client(api_key="YOUR_API_KEY")
+
+doc = client.pipeline.import_file("exam.pdf")
+questions = client.pipeline.extract_question(doc)
+
+paths: list[Path] = client.pipeline.export_preview(
+    questions,
+    "out/preview",
+    config=ExportPreviewConfig(
+        type="image",
+        dpi=300,
+        image_type="png",
+    ),
+)</code></pre>
+<table>
+<tr><th>인자</th><th>타입</th><th>기본값</th><th>설명</th></tr>
+<tr><td><code>questions</code></td><td><code>list[Question | QuestionSet]</code></td><td>—</td><td>내보낼 문항. <code>extract_question</code>이 반환한, id(<code>q_id</code> · <code>set_id</code>)가 있는 객체.</td></tr>
+<tr><td><code>export_dir</code></td><td><code>str | Path</code></td><td>—</td><td>산출 파일 디렉터리.</td></tr>
+<tr><td><code>config</code></td><td><code>ExportPreviewConfig</code></td><td><code>None</code></td><td>생략하면 기본값(<code>type="image"</code>).</td></tr>
+</table>
+<h4>ExportPreviewConfig</h4>
+<table>
+<tr><th>필드</th><th>타입</th><th>기본값</th><th>적용</th><th>설명</th></tr>
+<tr><td><code>type</code></td><td><code>str</code></td><td><code>"image"</code></td><td>—</td><td><code>image</code> · <code>pdf</code> · <code>svg</code>. pdf · svg는 벡터(검색 · 확대 가능), image는 래스터.</td></tr>
+<tr><td><code>dpi</code></td><td><code>int</code></td><td><code>300</code></td><td>image</td><td>래스터 해상도.</td></tr>
+<tr><td><code>image_type</code></td><td><code>str</code></td><td><code>"png"</code></td><td>image</td><td><code>png</code> · <code>jpeg</code>.</td></tr>
+</table>
+<p><code>Question</code>은 문항 영역이 파일 하나가 됩니다 — 컬럼이나 페이지에 걸친 문항은 위아래로 이어 붙습니다. <code>QuestionSet</code>은 세트가 실린 페이지 전체가 반환됩니다 — pdf는 한 파일, image · svg는 페이지당 한 파일.</p>
+<p>결과는 추출 시점의 문서 기준입니다. 반환받은 객체를 수정해도 반영되지 않습니다.</p>
+</section>
+
+<section id="compose-hwpx">
+<h3>compose_hwpx</h3>
+<p><code>Question</code> 리스트를 한글 문서(hwpx)로 조판합니다.</p>
+<pre><code class="language-python">from pathlib import Path
+
+from kdsnr_ai import Client
+
+client = Client(api_key="YOUR_API_KEY")
+
+doc = client.pipeline.import_file("exam.pdf")
+questions = client.pipeline.extract_question(doc)
+
+paths: list[Path] = client.pipeline.compose_hwpx(
+    questions,
+    "out/hwpx",
+)</code></pre>
+<table>
+<tr><th>인자</th><th>타입</th><th>기본값</th><th>설명</th></tr>
+<tr><td><code>questions</code></td><td><code>list[Question | QuestionSet]</code></td><td>—</td><td>조판할 문항. 추출 결과 또는 직접 작성한 객체 — id가 없어도 됩니다.</td></tr>
+<tr><td><code>export_dir</code></td><td><code>str | Path</code></td><td>—</td><td>산출 파일 디렉터리.</td></tr>
+</table>
+<p>문항·세트 하나가 hwpx 파일 하나가 됩니다. 결과물은 표준 서식으로 새로 조판된 문서이며, 원본 지면의 배치를 복원하지 않습니다.</p>
+</section>
+
+<section id="hwp-to-pdf">
+<h3>hwp_to_pdf</h3>
+<p>hwp · hwpx 문서를 원본 조판 그대로 pdf로 변환합니다.</p>
+<pre><code class="language-python">from pathlib import Path
+
+from kdsnr_ai import Client
+
+client = Client(api_key="YOUR_API_KEY")
+
+pdf_path: Path = client.pipeline.hwp_to_pdf(
+    "exam.hwp",
+    "out/exam.pdf",
+    enable_vec=True,
+)</code></pre>
+<table>
+<tr><th>인자</th><th>타입</th><th>기본값</th><th>설명</th></tr>
+<tr><td><code>file</code></td><td><code>str | Path</code></td><td>—</td><td>파일 경로. <code>.hwp</code> · <code>.hwpx</code>.</td></tr>
+<tr><td><code>save_path</code></td><td><code>str | Path</code></td><td>—</td><td>저장할 pdf 경로. 중간 디렉터리 자동 생성.</td></tr>
+<tr><td><code>enable_vec</code></td><td><code>bool</code></td><td><code>True</code></td><td><code>True</code>=벡터 글리프 + 검색·복사 가능한 텍스트층. <code>False</code>=300dpi 래스터 페이지.</td></tr>
+</table>
+</section>
+
+<section id="hwp-to-hwpx">
+<h3>hwp_to_hwpx</h3>
+<p>구형 바이너리 hwp 문서를 hwpx로 변환합니다.</p>
+<pre><code class="language-python">from pathlib import Path
+
+from kdsnr_ai import Client
+
+client = Client(api_key="YOUR_API_KEY")
+
+hwpx_path: Path = client.pipeline.hwp_to_hwpx(
+    "exam.hwp",
+    "out/exam.hwpx",
+)</code></pre>
+<table>
+<tr><th>인자</th><th>타입</th><th>기본값</th><th>설명</th></tr>
+<tr><td><code>file</code></td><td><code>str | Path</code></td><td>—</td><td>파일 경로. <code>.hwp</code>.</td></tr>
+<tr><td><code>save_path</code></td><td><code>str | Path</code></td><td>—</td><td>저장할 hwpx 경로. 중간 디렉터리 자동 생성.</td></tr>
+</table>
+</section>
+
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script src="assets/demo/demo_data.js"></script>
+<script>
+(function () {
+  const data = window.KDSNR_DEMO || [];
+  const root = document.getElementById('kdsnr-demo');
+  if (!root || !data.length) return;
+  const tabs = document.createElement('div'); tabs.className = 'demo-tabs';
+  const head = document.createElement('div'); head.className = 'demo-head';
+  const title = document.createElement('div'); title.className = 'demo-title';
+  const vtabs = document.createElement('div'); vtabs.className = 'demo-vtabs';
+  head.append(title, vtabs);
+  const view = document.createElement('div'); view.className = 'demo-view';
+  const pre = document.createElement('pre'); pre.className = 'demo-json';
+  const code = document.createElement('code'); code.className = 'language-json';
+  pre.appendChild(code);
+  root.append(tabs, head, view, pre);
+  const VIEWS = ['검출 화면', '출력 JSON'];
+  let si = 0, vi = 0;
+  VIEWS.forEach((name, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = name;
+    b.onclick = () => { vi = i; render(); };
+    vtabs.appendChild(b);
+  });
+  data.forEach((d, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = d.tab;
+    b.onclick = () => { si = i; render(); };
+    tabs.appendChild(b);
+  });
+  function render() {
+    const item = data[si];
+    [...tabs.children].forEach((b, i) => b.classList.toggle('active', i === si));
+    [...vtabs.children].forEach((b, i) => b.classList.toggle('active', i === vi));
+    title.textContent = item.desc;
+    view.style.display = vi === 0 ? '' : 'none';
+    pre.style.display = vi === 1 ? '' : 'none';
+    if (vi === 0) {
+      view.innerHTML = '';
+      item.images.forEach(src => {
+        const im = new Image();
+        im.src = src;
+        im.alt = item.desc;
+        view.appendChild(im);
+      });
+      view.scrollTop = 0;
+    } else {
+      code.textContent = item.json;
+      code.removeAttribute('data-highlighted');
+      if (window.hljs) hljs.highlightElement(code);
+      pre.scrollTop = 0;
+      pre.scrollLeft = 0;
+    }
+  }
+  render();
+})();
+hljs.highlightAll();
+document.querySelectorAll('pre, .sig').forEach(el => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.type = 'button';
+  const icoCopy = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  const icoDone = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  btn.innerHTML = icoCopy;
+  btn.addEventListener('click', () => {
+    const code = el.querySelector('code');
+    navigator.clipboard.writeText((code || el).innerText.trimEnd()).then(() => {
+      btn.innerHTML = icoDone;
+      setTimeout(() => { btn.innerHTML = icoCopy; }, 1200);
+    });
+  });
+  el.appendChild(btn);
+});
+document.querySelectorAll('.sidebar .group .chev').forEach(ch => {
+  ch.addEventListener('click', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    ch.closest('.group').classList.toggle('open');
+  });
+});
+const here = location.pathname.split('/').pop() || 'index.html';
+const links = [...document.querySelectorAll('.sidebar li a')].filter(a => a.getAttribute('href').startsWith(here + '#'));
+const secs = links.map(a => document.getElementById(a.getAttribute('href').split('#')[1]));
+function spy() {
+  let cur = 0;
+  secs.forEach((s, i) => { if (s && s.getBoundingClientRect().top < 120) cur = i; });
+  links.forEach((a, i) => a.classList.toggle('active', i === cur));
+}
+addEventListener('scroll', spy, { passive: true });
+spy();
+</script>
+
+</body>
+</html>
