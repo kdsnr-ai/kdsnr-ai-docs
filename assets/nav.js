@@ -32,7 +32,6 @@
     ]) +
     group(R + 'pipeline.html', 'Pipeline', page === 'pipeline.html', true) +
     items([
-      { href: P + 'demo', label: '소개' },
       { href: P + 'overview', label: '개요' },
       { href: P + 'question', label: 'Question 스키마' },
       { href: P + 'api-usage', label: 'API 사용법' },

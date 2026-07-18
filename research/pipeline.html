@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kdsnr-ai · 문항 추출 파이프라인 연구·개발</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar"></aside>
+<script src="../assets/nav.js"></script>
+
+<main class="content">
+
+<article class="post">
+
+<h1>문항 추출 파이프라인 연구·개발</h1>
+<p class="post-sub">시험지 한 부가 문항 데이터가 되기까지</p>
+<p class="post-meta">Infrastructure · 2026-07-18 · 작성자 : 권준희</p>
+
+<p>문항 검색과 출제 자동화, 유사 문항 추천, 난이도 예측 등 AI를 이용한 콘텐츠 비즈니스는 잘 구축된 문항 데이터를 전제로 합니다. 그리고 문항 데이터의 원천은 대부분 PDF와 한글 파일로 저장된 시험지입니다.</p>
+
+<p>시험지는 그대로 데이터가 되지 않습니다. 한 페이지에 여러 문항이 2단으로 조판되어 있고, 문항 하나가 단과 페이지를 넘어 이어지기도 하며, 본문에는 수식·표·그림·밑줄 같은 요소가 섞여 있습니다. 이 글에서는 시험지 문서를 문항 단위의 구조화된 데이터로 변환하기 위해 강남대성수능연구소에서 개발한 문항 추출 파이프라인을 소개합니다.</p>
+
+<h2>1. 무엇이 나오는가</h2>
+
+<p>아래는 실제 서비스의 추출 결과입니다. 시험지 한 부를 넣으면 문항 단위로 분리되고, 문항마다 지면과 동일한 이미지, 그리고 본문·수식·표·그림이 구조화된 JSON 객체가 나옵니다. 과목 탭을 바꿔 가며 검출 화면과 출력 JSON을 확인할 수 있습니다.</p>
+
+<section class="demo-sec">
+<div class="demo" id="kdsnr-demo"></div>
+<p class="demo-cap">문항 추출 파이프라인의 실제 출력</p>
+</section>
+
+<p>출력 JSON에서 수식은 편집 가능한 LaTeX로, 표는 셀 단위 구조로, 그림은 이미지로 담깁니다. 문항 순서는 지면의 읽기 순서와 같고, 단이나 페이지에 걸친 문항도 하나의 객체로 복원됩니다. 국어처럼 하나의 지문에 여러 문항이 묶이는 과목은 지시문·지문·문항들이 세트 객체 하나로 나옵니다.</p>
+
+<h2>2. 어떻게 처리되는가</h2>
+
+<figure class="shots single">
+<img src="../assets/architecture.png" alt="문항 추출 파이프라인 처리 경로">
+<figcaption>입력 문서에서 문항 JSON까지의 처리 경로</figcaption>
+</figure>
+
+<p>한글 문서(hwp·hwpx)가 들어오면 자체 조판 엔진이 원본 조판을 보존한 PDF로 먼저 변환합니다. 이후의 처리는 입력 형식과 무관하게 PDF 하나의 경로로 진행됩니다.</p>
+
+<p>PDF에서는 두 종류의 정보를 함께 읽습니다. 하나는 인쇄 명령의 기록입니다. 어떤 문자가 어느 좌표에 어떤 크기로 찍혔는지가 파일 안에 남아 있으므로, 글자·수식 조각·괘선은 추측 없이 그대로 추출합니다. 다른 하나는 지면의 시각 구조입니다. 자체 학습한 레이아웃 검출 모델이 문항과 지문의 경계, 그리고 그 안의 수식·표·그림·보기 상자 영역을 찾습니다.</p>
+
+<p>두 정보를 합쳐 문항을 조립합니다. 검출된 문항 경계로 지면을 문항 단위로 나누고, 각 영역의 문자들을 문단과 블록으로 묶습니다. 수식 영역의 문자 조각들은 <a href="eqasm.html">EqASM</a>이 LaTeX로 조립하고, 표는 괘선 좌표에서 셀 구조와 테두리·정렬을 복원합니다. 이렇게 만들어진 문항 객체가 위 데모에서 본 JSON입니다.</p>
+
+<h2>3. 결론</h2>
+
+<p>이 파이프라인으로 시험지 한 부가 사람 손을 거치지 않고 문항 단위의 구조화된 데이터로 변환됩니다. 변환된 문항은 검색과 출제 자동화, 유사 문항 추천, 난이도 예측의 입력으로 쓰일 수 있습니다.</p>
+
+<p>파이프라인은 현재 Pipeline API로 서비스되고 있습니다. 호출 사양과 사용법은 <a href="../pipeline.html">Pipeline 문서</a>에 있습니다.</p>
+
+</article>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script src="../assets/demo/demo_data.js"></script>
+<script>
+(function () {
+  const data = window.KDSNR_DEMO || [];
+  const root = document.getElementById('kdsnr-demo');
+  if (!root || !data.length) return;
+  const tabs = document.createElement('div'); tabs.className = 'demo-tabs';
+  const head = document.createElement('div'); head.className = 'demo-head';
+  const title = document.createElement('div'); title.className = 'demo-title';
+  const vtabs = document.createElement('div'); vtabs.className = 'demo-vtabs';
+  head.append(title, vtabs);
+  const view = document.createElement('div'); view.className = 'demo-view';
+  const pre = document.createElement('pre'); pre.className = 'demo-json';
+  const code = document.createElement('code'); code.className = 'language-json';
+  pre.appendChild(code);
+  root.append(tabs, head, view, pre);
+  const VIEWS = ['검출 화면', '출력 JSON'];
+  let si = 0, vi = 0;
+  VIEWS.forEach((name, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = name;
+    b.onclick = () => { vi = i; render(); };
+    vtabs.appendChild(b);
+  });
+  data.forEach((d, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = d.tab;
+    b.onclick = () => { si = i; render(); };
+    tabs.appendChild(b);
+  });
+  function render() {
+    const item = data[si];
+    [...tabs.children].forEach((b, i) => b.classList.toggle('active', i === si));
+    [...vtabs.children].forEach((b, i) => b.classList.toggle('active', i === vi));
+    title.textContent = item.desc;
+    view.style.display = vi === 0 ? '' : 'none';
+    pre.style.display = vi === 1 ? '' : 'none';
+    if (vi === 0) {
+      view.innerHTML = '';
+      item.images.forEach(src => {
+        const im = new Image();
+        im.src = '../' + src;
+        im.alt = item.desc;
+        view.appendChild(im);
+      });
+      view.scrollTop = 0;
+    } else {
+      code.textContent = item.json;
+      code.removeAttribute('data-highlighted');
+      if (window.hljs) hljs.highlightElement(code);
+      pre.scrollTop = 0;
+      pre.scrollLeft = 0;
+    }
+  }
+  render();
+})();
+hljs.highlightAll();
+document.querySelectorAll('pre:not(.demo-json), .sig').forEach(el => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.type = 'button';
+  const icoCopy = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  const icoDone = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  btn.innerHTML = icoCopy;
+  btn.addEventListener('click', () => {
+    const code = el.querySelector('code');
+    navigator.clipboard.writeText((code || el).innerText.trimEnd()).then(() => {
+      btn.innerHTML = icoDone;
+      setTimeout(() => { btn.innerHTML = icoCopy; }, 1200);
+    });
+  });
+  el.appendChild(btn);
+});
+</script>
+
+</body>
+</html>
