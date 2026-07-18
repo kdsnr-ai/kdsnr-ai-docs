@@ -25,11 +25,6 @@
 <li>2단 구조 또는 페이지에 걸친 문항을 자동 복원</li>
 </ul>
 
-<section id="demo" class="demo-sec">
-<div class="demo" id="kdsnr-demo"></div>
-<p class="demo-cap">Pipeline 문항 추출 예시</p>
-</section>
-
 <h2 class="part">개요</h2>
 
 <section id="overview">
@@ -57,11 +52,6 @@ client.pipeline.export_preview(
 <tr><td><code>hwp_to_hwpx</code></td><td>hwp → hwpx</td></tr>
 </table>
 <p><code>extract_question</code>이 반환하는 <code>Question</code> 리스트는 JSON으로 직렬화되고, 저장 · 수정 · 직접 작성할 수 있습니다. <code>export_preview</code>는 이 리스트를 문항별 파일로 저장합니다.</p>
-
-<figure class="shots single">
-<img src="assets/architecture.png" alt="">
-</figure>
-<p class="demo-cap">입력 문서에서 문항 JSON까지의 처리 경로</p>
 </section>
 
 <h2 class="part" id="question-part">Question 스키마</h2>
@@ -358,64 +348,7 @@ hwpx_path: Path = client.pipeline.hwp_to_hwpx(
 </main>
 
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
-<script src="assets/demo/demo_data.js"></script>
 <script>
-(function () {
-  const data = window.KDSNR_DEMO || [];
-  const root = document.getElementById('kdsnr-demo');
-  if (!root || !data.length) return;
-  const tabs = document.createElement('div'); tabs.className = 'demo-tabs';
-  const head = document.createElement('div'); head.className = 'demo-head';
-  const title = document.createElement('div'); title.className = 'demo-title';
-  const vtabs = document.createElement('div'); vtabs.className = 'demo-vtabs';
-  head.append(title, vtabs);
-  const view = document.createElement('div'); view.className = 'demo-view';
-  const pre = document.createElement('pre'); pre.className = 'demo-json';
-  const code = document.createElement('code'); code.className = 'language-json';
-  pre.appendChild(code);
-  root.append(tabs, head, view, pre);
-  const VIEWS = ['검출 화면', '출력 JSON'];
-  let si = 0, vi = 0;
-  VIEWS.forEach((name, i) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.textContent = name;
-    b.onclick = () => { vi = i; render(); };
-    vtabs.appendChild(b);
-  });
-  data.forEach((d, i) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.textContent = d.tab;
-    b.onclick = () => { si = i; render(); };
-    tabs.appendChild(b);
-  });
-  function render() {
-    const item = data[si];
-    [...tabs.children].forEach((b, i) => b.classList.toggle('active', i === si));
-    [...vtabs.children].forEach((b, i) => b.classList.toggle('active', i === vi));
-    title.textContent = item.desc;
-    view.style.display = vi === 0 ? '' : 'none';
-    pre.style.display = vi === 1 ? '' : 'none';
-    if (vi === 0) {
-      view.innerHTML = '';
-      item.images.forEach(src => {
-        const im = new Image();
-        im.src = src;
-        im.alt = item.desc;
-        view.appendChild(im);
-      });
-      view.scrollTop = 0;
-    } else {
-      code.textContent = item.json;
-      code.removeAttribute('data-highlighted');
-      if (window.hljs) hljs.highlightElement(code);
-      pre.scrollTop = 0;
-      pre.scrollLeft = 0;
-    }
-  }
-  render();
-})();
 hljs.highlightAll();
 document.querySelectorAll('pre, .sig').forEach(el => {
   const btn = document.createElement('button');
