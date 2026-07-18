@@ -27,6 +27,7 @@
     group(R + 'start.html', 'Installation &amp; Start', page === 'start.html', true) +
     items([
       { href: I + 'install', label: '설치' },
+      { href: I + 'api-key', label: 'API Key 발급' },
       { href: I + 'client', label: 'Client' },
     ]) +
     group(R + 'pipeline.html', 'Pipeline', page === 'pipeline.html', true) +
