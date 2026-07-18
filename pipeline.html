@@ -10,34 +10,9 @@
 </head>
 <body>
 
-<aside class="sidebar">
-  <a class="brand" href="index.html"><span>KDSNR-AI</span><img src="assets/mark.png" alt=""></a>
-  <nav>
-    <a class="group" href="index.html">Installation &amp; Start<span class="chev"></span></a>
-    <ul>
-      <li><a href="index.html#install">설치</a></li>
-      <li><a href="index.html#client">Client</a></li>
-    </ul>
-    <a class="group open" href="pipeline.html">Pipeline<span class="chev"></span></a>
-    <ul>
-      <li><a href="pipeline.html#demo">소개</a></li>
-      <li><a href="pipeline.html#overview">개요</a></li>
-      <li><a href="pipeline.html#question">Question 스키마</a></li>
-      <li><a href="pipeline.html#api-usage">API 사용법</a></li>
-      <li class="sub"><a href="pipeline.html#import-file">import_file</a></li>
-      <li class="sub"><a href="pipeline.html#extract-question">extract_question</a></li>
-      <li class="sub"><a href="pipeline.html#export-preview">export_preview</a></li>
-      <li class="sub"><a href="pipeline.html#compose-hwpx">compose_hwpx</a></li>
-      <li class="sub"><a href="pipeline.html#hwp-to-pdf">hwp_to_pdf</a></li>
-      <li class="sub"><a href="pipeline.html#hwp-to-hwpx">hwp_to_hwpx</a></li>
-    </ul>
-    <a class="group" href="research/index.html">Research</a>
-  </nav>
-  <div class="foot">
-    (주)강남대성수능연구소<br>
-    kdsnrai@gmail.com
-  </div>
+<aside class="sidebar" id="sidebar">
 </aside>
+<script src="assets/nav.js"></script>
 
 <main class="content">
 
@@ -457,13 +432,6 @@ document.querySelectorAll('pre, .sig').forEach(el => {
     });
   });
   el.appendChild(btn);
-});
-document.querySelectorAll('.sidebar .group .chev').forEach(ch => {
-  ch.addEventListener('click', e => {
-    e.preventDefault();
-    e.stopPropagation();
-    ch.closest('.group').classList.toggle('open');
-  });
 });
 const here = location.pathname.split('/').pop() || 'index.html';
 const links = [...document.querySelectorAll('.sidebar li a')].filter(a => a.getAttribute('href').startsWith(here + '#'));
