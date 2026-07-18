@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kdsnr-ai · Research</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+</head>
+<body>
+
+<aside class="sidebar">
+  <a class="brand" href="../index.html"><span>KDSNR-AI</span><img src="../assets/mark.png" alt=""></a>
+  <nav>
+    <a class="group" href="../index.html">Installation &amp; Start<span class="chev"></span></a>
+    <ul>
+      <li><a href="../index.html#install">설치</a></li>
+      <li><a href="../index.html#client">Client</a></li>
+    </ul>
+    <a class="group" href="../pipeline.html">Pipeline<span class="chev"></span></a>
+    <ul>
+      <li><a href="../pipeline.html#demo">소개</a></li>
+      <li><a href="../pipeline.html#overview">개요</a></li>
+      <li><a href="../pipeline.html#question">Question 스키마</a></li>
+      <li><a href="../pipeline.html#api-usage">API 사용법</a></li>
+      <li class="sub"><a href="../pipeline.html#import-file">import_file</a></li>
+      <li class="sub"><a href="../pipeline.html#extract-question">extract_question</a></li>
+      <li class="sub"><a href="../pipeline.html#export-preview">export_preview</a></li>
+      <li class="sub"><a href="../pipeline.html#compose-hwpx">compose_hwpx</a></li>
+      <li class="sub"><a href="../pipeline.html#hwp-to-pdf">hwp_to_pdf</a></li>
+      <li class="sub"><a href="../pipeline.html#hwp-to-hwpx">hwp_to_hwpx</a></li>
+    </ul>
+    <a class="group" href="index.html">Research</a>
+  </nav>
+  <div class="foot">
+    (주)강남대성수능연구소<br>
+    kdsnrai@gmail.com
+  </div>
+</aside>
+
+<main class="content">
+
+<h1>Research</h1>
+<p class="lead">주요 AI/ML 기술 연구 일지 및 보고서입니다.<br>문제의식과 해결 아이디어를 중심으로 정리했습니다.</p>
+
+<div class="cat-tabs">
+  <button class="active" data-cat="all">전체</button>
+  <button data-cat="model">Model</button>
+  <button data-cat="infra">Infrastructure</button>
+  <button data-cat="dataset">Dataset</button>
+  <button data-cat="business">Business</button>
+</div>
+
+<div class="card-grid">
+  <a class="card" data-cat="model" href="eqasm.html">
+    <div class="card-thumb"><img src="../assets/research/eqasm.png" alt=""></div>
+    <div class="card-body">
+      <div class="card-title">EqASM 모델 연구·개발</div>
+      <div class="card-sub">흩어진 수식 조각들을 LaTeX로 조립하기</div>
+      <div class="card-meta"><span class="card-cat">Model</span><span>2026-07-18</span><span>작성자 : 권준희</span></div>
+    </div>
+  </a>
+</div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script>
+hljs.highlightAll();
+document.querySelectorAll('.sidebar .group .chev').forEach(ch => {
+  ch.addEventListener('click', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    ch.closest('.group').classList.toggle('open');
+  });
+});
+const tabs = document.querySelectorAll('.cat-tabs button');
+tabs.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabs.forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.card-grid .card').forEach(card => {
+      card.style.display = (btn.dataset.cat === 'all' || card.dataset.cat === btn.dataset.cat) ? '' : 'none';
+    });
+  });
+});
+</script>
+
+</body>
+</html>

@@ -31,6 +31,7 @@
       <li class="sub"><a href="pipeline.html#hwp-to-pdf">hwp_to_pdf</a></li>
       <li class="sub"><a href="pipeline.html#hwp-to-hwpx">hwp_to_hwpx</a></li>
     </ul>
+    <a class="group" href="research/index.html">Research</a>
   </nav>
   <div class="foot">
     (주)강남대성수능연구소<br>
@@ -41,9 +42,9 @@
 <main class="content">
 
 <h1>Pipeline</h1>
-<p class="lead">시험지 형식의 문서에서 개별 문항을 추출하고, 이를 여러 형식의 파일로 내보내는 API입니다.<br>10만 건 이상의 데이터로 전용 ML 모델을 학습·탑재하여, 정확성과 신뢰성을 극대화하였습니다.</p>
+<p class="lead">PDF·HWP·HWPX 문서에서 문항을 추출하고, 문항 객체와 미리보기 파일을 만드는 API입니다.</p>
 <ul class="lead-list">
-<li>입력 : 시험지 형식의 문서 파일 (hwp, hwpx, pdf)</li>
+<li>입력 : 문항이 포함된 문서 파일 (hwp, hwpx, pdf)</li>
 <li>출력 : 개별 문항 파일 (json, pdf, svg, webp, png, hwpx)<br>( * 국어 과목의 경우, 지문과 문항 세트를 모두 추출합니다.)</li>
 <li>원문 수식, 표, 이미지, 도식, 밑줄, 굵은 글씨, 박스 보존</li>
 <li>2단 구조 또는 페이지에 걸친 문항을 자동 복원</li>
@@ -51,7 +52,7 @@
 
 <section id="demo" class="demo-sec">
 <div class="demo" id="kdsnr-demo"></div>
-<p class="demo-cap">Pipeline API 문항 추출 예시</p>
+<p class="demo-cap">Pipeline 문항 추출 예시</p>
 </section>
 
 <h2 class="part">개요</h2>
@@ -269,7 +270,7 @@ questions = result.questions
 result.overlay.save("out/exam.overlay.pdf")</code></pre>
 <table>
 <tr><th>필드</th><th>타입</th><th>기본값</th><th>설명</th></tr>
-<tr><td><code>classes</code></td><td><code>list[str] | None</code></td><td><code>None</code></td><td>그릴 클래스. <code>None</code>이면 전부. <code>passage</code> · <code>instruction</code> · <code>question</code> · <code>eq</code> · <code>eqtable</code> · <code>bogi</code> · <code>plainbox</code> · <code>inlinebox</code> · <code>bracket</code> · <code>table</code> · <code>figure</code> · <code>qnum</code> · <code>cell</code>(표 격자). 그 외 이름은 오류.</td></tr>
+<tr><td><code>classes</code></td><td><code>list[str] | None</code></td><td><code>None</code></td><td>그릴 클래스. <code>None</code>이면 전부. <code>passage</code> · <code>instruction</code> · <code>question</code> · <code>eq</code> · <code>bogi</code> · <code>plainbox</code> · <code>inlinebox</code> · <code>bracket</code> · <code>table</code> · <code>figure</code> · <code>qnum</code> · <code>cell</code>(표 격자). 그 외 이름은 오류.</td></tr>
 </table>
 <p><code>ExtractResult</code>는 <code>questions</code>(문항 리스트)와 <code>overlay</code>(<code>Document</code>, <code>.save(path)</code>로 저장) 두 필드를 가지며, 문항 리스트처럼 바로 순회할 수 있습니다. hwp · hwpx 입력은 추출에 쓰인 pdf 변환본 위에 그려집니다.</p>
 </section>
