@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kdsnr-ai · EqASM 모델 연구·개발</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+</head>
+<body>
+
+<aside class="sidebar">
+  <a class="brand" href="../index.html"><span>KDSNR-AI</span><img src="../assets/mark.png" alt=""></a>
+  <nav>
+    <a class="group" href="../index.html">Installation &amp; Start<span class="chev"></span></a>
+    <ul>
+      <li><a href="../index.html#install">설치</a></li>
+      <li><a href="../index.html#client">Client</a></li>
+    </ul>
+    <a class="group" href="../pipeline.html">Pipeline<span class="chev"></span></a>
+    <ul>
+      <li><a href="../pipeline.html#demo">소개</a></li>
+      <li><a href="../pipeline.html#overview">개요</a></li>
+      <li><a href="../pipeline.html#question">Question 스키마</a></li>
+      <li><a href="../pipeline.html#api-usage">API 사용법</a></li>
+      <li class="sub"><a href="../pipeline.html#import-file">import_file</a></li>
+      <li class="sub"><a href="../pipeline.html#extract-question">extract_question</a></li>
+      <li class="sub"><a href="../pipeline.html#export-preview">export_preview</a></li>
+      <li class="sub"><a href="../pipeline.html#compose-hwpx">compose_hwpx</a></li>
+      <li class="sub"><a href="../pipeline.html#hwp-to-pdf">hwp_to_pdf</a></li>
+      <li class="sub"><a href="../pipeline.html#hwp-to-hwpx">hwp_to_hwpx</a></li>
+    </ul>
+    <a class="group" href="index.html">Research</a>
+  </nav>
+  <div class="foot">
+    (주)강남대성수능연구소<br>
+    kdsnrai@gmail.com
+  </div>
+</aside>
+
+<main class="content">
+
+<article class="post">
+
+<h1>EqASM 모델 연구·개발</h1>
+<p class="post-sub">흩어진 수식 조각들을 LaTeX로 조립하기</p>
+<p class="post-meta">Model · 2026-07-18 · 작성자 : 권준희</p>
+
+<p>문항 검색과 재조판, 유사 문항 추천, 난이도 예측 등 AI를 이용한 콘텐츠 비즈니스는 잘 구축된 문항 데이터를 전제로 합니다. 종이와 한글 파일에 흩어져 있는 문항을 정확한 디지털 자산으로 변환하는 작업이 그 출발점입니다.</p>
+
+<p>이 변환에서 가장 까다로운 대상은 수식입니다. 지문과 발문은 글자를 그대로 옮기면 되지만, 수식은 부호 하나만 뒤집혀도 다른 문제가 됩니다. 최근에는 이미지 속 수식을 LaTeX로 변환하는 작업을 GPT 등 LLM에 맡기는 경우가 많습니다. 하지만 실제 측정 결과 LLM을 이용한 OCR 기반의 수식 인식은 항상 정확하지 않았습니다. 이 글에서는 이러한 문제 상황을 분석하고, 이를 해결하고자 강남대성수능연구소에서 자체 개발한 ML 모델인 EqASM을 소개합니다.</p>
+
+<h2>1. GPT는 수식을 정확하게 읽지 못한다</h2>
+
+<p>최신 평가원 기출에서 수식 밀도가 높은 수학 5문항(2026 6월 모의평가 15·20번, 2025 수능 미적분 28·30번, 2025 9월 모의평가 미적분 24번)과 화학Ⅰ 5문항(2026 6월 모의평가 9·11·13·19·20번)을 골라, 문항 단위로 잘라낸 동일한 이미지를 OpenAI의 최신 모델 GPT-5.6 두 등급(Sol·Luna)에 문항당 10회씩, 모델당 100회 옮겨 적게 했습니다. 채점은 원본 수식과의 기계 대조로 하되, 불일치로 걸린 출력은 전부 눈으로 재확인해서 <code>\frac{1}{2}</code>과 <code>1/2</code> 같은 단순 표기 차이는 정답으로 인정했습니다.</p>
+
+<table>
+<tr><th>모델</th><th>수학 (50회)</th><th>화학 (50회)</th><th>전체 정확도</th><th>10회 일관성</th><th>비용 (100회)</th><th>평균 응답</th></tr>
+<tr><td>GPT-5.6 Sol (최고 성능)</td><td>43/50</td><td>49/50</td><td><strong>92%</strong></td><td>91%</td><td>$1.96</td><td>14.2초</td></tr>
+<tr><td>GPT-5.6 Luna (경량)</td><td>44/50</td><td>23/50</td><td><strong>67%</strong></td><td>76%</td><td>$0.52</td><td>5.1초</td></tr>
+</table>
+
+<p>최고 성능 모델이 100회 중 8회를 틀렸고, 경량 모델은 3회 중 1회꼴로 틀렸습니다. 특히 표기가 밀집된 화학에서 경량 모델의 정확도는 절반 아래(23/50)로 떨어집니다. 일관성 수치는 같은 이미지를 열 번 넣었을 때 같은 결과가 나온 비율입니다 — 열에 두세 번은 지난번과 다른 답을 내놓는다는 뜻이기도 합니다. 아래는 실제로 틀린 대표 사례 네 건입니다. 왼쪽 문항 이미지에 붉게 표시한 수식이 문제가 된 대목입니다.</p>
+
+<div class="case">
+  <div class="case-head">사례 1 : 2026학년도 6월 모의평가 수학 20번<span class="cr">저작권 : 한국교육과정평가원</span></div>
+  <div class="case-body">
+    <img src="../assets/research/eqasm/case-m20.png" alt="2026학년도 6월 모의평가 수학 20번">
+    <div class="case-right">
+      <div class="ans-head">✅ 원본</div>
+      <div class="ans-eq">$$g(m)=-\log_b m=\frac{\beta}{\log_m\alpha}=\frac{\beta}{-1+\log_m\beta}$$</div>
+      <div class="ans-head bad">❌ GPT-5.6 Sol 출력 · 10회 중 5회</div>
+      <div class="ans-eq">$$g(m)=-\log_b m=\frac{\beta}{\log_m\alpha}=\frac{\beta}{1+\log_m\beta}$$</div>
+      <p class="ans-note">최고 성능 모델조차 절반의 확률로 분모의 $-1$을 $+1$로 바꿉니다. 문법적으로 완결된 출력이라 원본 없이는 알 수 없습니다.</p>
+    </div>
+  </div>
+</div>
+
+<div class="case">
+  <div class="case-head">사례 2 : 2025학년도 수능 미적분 30번<span class="cr">저작권 : 한국교육과정평가원</span></div>
+  <div class="case-body">
+    <img src="../assets/research/eqasm/case-m30.png" alt="2025학년도 수능 미적분 30번">
+    <div class="case-right">
+      <div class="ans-head">✅ 원본</div>
+      <div class="ans-eq">$$g(a)\times\Bigl(\lim_{m\to a+}g(m)\Bigr)+g(b)\times\Bigl(\frac{\ln b}{b}\Bigr)^2$$</div>
+      <div class="ans-head bad">❌ GPT-5.6 Luna 출력 · 10회 중 5회</div>
+      <div class="ans-eq"><span class="n">10회 중 4회</span>$$\lim_{m\to a}g(m)$$</div>
+      <div class="ans-eq"><span class="n">10회 중 1회</span>$$\lim_{m\to a^-}g(m)$$</div>
+      <p class="ans-note">우극한 $m\to a+$의 방향이 사라져 양쪽 극한이 되거나, 좌극한으로 반전됩니다. 불연속점에서의 극한이므로 문제의 답 자체가 달라집니다.</p>
+    </div>
+  </div>
+</div>
+
+<div class="case">
+  <div class="case-head">사례 3 : 2026학년도 6월 모의평가 화학Ⅰ 11번<span class="cr">저작권 : 한국교육과정평가원</span></div>
+  <div class="case-body">
+    <img src="../assets/research/eqasm/case-c11.png" alt="2026학년도 6월 모의평가 화학Ⅰ 11번">
+    <div class="case-right">
+      <div class="ans-head">✅ 원본</div>
+      <div class="ans-eq">$$\mathrm{X_2}+a\mathrm{Y_2}+b\mathrm{H_2O}\rightarrow 2\mathrm{XO}_m^-+c\mathrm{Y}^{(m-2)-}+d\mathrm{H}^+$$</div>
+      <div class="ans-head bad">❌ GPT-5.6 Luna 출력 · 10회 중 7회</div>
+      <div class="ans-eq"><span class="n">10회 중 3회</span>$$2\mathrm{XO}_m^{(m-2)-}$$</div>
+      <div class="ans-eq"><span class="n">10회 중 2회</span>$$2\mathrm{XO}_m^{(2m-2)-}$$</div>
+      <div class="ans-eq"><span class="n">10회 중 2회</span>$$2\mathrm{XO}_m$$</div>
+      <p class="ans-note">이웃한 $\mathrm{Y}^{(m-2)-}$의 전하 표기를 끌어다 붙여 존재하지 않는 이온을 만들거나, 전하를 통째로 지웁니다.</p>
+    </div>
+  </div>
+</div>
+
+<div class="case">
+  <div class="case-head">사례 4 : 2026학년도 6월 모의평가 화학Ⅰ 20번<span class="cr">저작권 : 한국교육과정평가원</span></div>
+  <div class="case-body">
+    <img src="../assets/research/eqasm/case-c20.png" alt="2026학년도 6월 모의평가 화학Ⅰ 20번">
+    <div class="case-right">
+      <div class="ans-head">✅ 원본</div>
+      <div class="ans-eq">$$b\times\frac{\text{Ⅱ에서 반응 후 전체 기체의 부피(L)}}{\text{Ⅲ에서 반응 후 전체 기체의 부피(L)}}$$</div>
+      <div class="ans-head bad">❌ GPT-5.6 Luna 출력 · 10회 중 6회 (Sol도 1회)</div>
+      <div class="ans-eq"><span class="n">10회 중 4회</span>$$b\times\frac{\text{Ⅲ에서 반응 후 전체 기체의 부피(L)}}{\text{Ⅱ에서 반응 후 전체 기체의 부피(L)}}$$</div>
+      <div class="ans-eq"><span class="n">10회 중 1회</span>$$b\times\frac{\text{Ⅲ에서 반응 후 전체 기체의 부피(L)}}{\text{Ⅰ에서 반응 후 전체 기체의 부피(L)}}$$</div>
+      <div class="ans-eq"><span class="n">10회 중 1회</span>$$b\times\frac{\text{Ⅲ에서 반응 후 전체 기체의 부피(L)}}{\text{Ⅲ에서 반응 후 전체 기체의 부피(L)}}$$</div>
+      <p class="ans-note">분자와 분모의 실험 번호가 서로 뒤바뀝니다. 문항에 쓰이지도 않은 Ⅰ이 등장하거나 분자·분모가 똑같아지기도 합니다. 값이 역수가 되는 오류입니다.</p>
+    </div>
+  </div>
+</div>
+
+<p>200회에서 관찰된 오류를 정리하면 세 갈래입니다.</p>
+
+<table class="t-types">
+<tr><th>유형</th><th>무엇이 일어나는가</th><th>실측 사례</th></tr>
+<tr><td>오독</td><td>부호·첨자·구조가 다른 의미로 바뀜</td><td>분모의 $-1$이 $+1$로, 우극한이 좌극한으로, 분수의 분자·분모 반전, 옆 항의 전하가 번져 붙음</td></tr>
+<tr><td>날조</td><td>원본에 없는 기호를 만들어 냄</td><td>동위원소 표기에 원자번호를 임의 추가, 한글 조건("모든 이온의 몰 농도 합")을 $\sum$ 기호로 재작성, 없던 절댓값 추가</td></tr>
+<tr><td>증발</td><td>있던 내용이 표시 없이 사라짐</td><td>분수 속 한글 라벨("제3 이온화 에너지")이 $E_3$으로 축약, 지수의 음수 부호 소실, 선택지 통째로 누락</td></tr>
+</table>
+
+<p>200회의 출력은 모두 문법적으로 완결된 LaTeX였습니다. 오류는 부호 하나, 첨자 하나 규모로 그 안에 섞여 있어서 출력만 봐서는 가려낼 수 없습니다. 이런 오류는 검증 절차 없이는 그대로 데이터베이스에 쌓이고, 모델이 문자를 새로 생성하는 방식인 한 완전히 사라지지 않습니다.</p>
+
+<h2>2. 수식을 쓰지 말고, 조립하면 어떨까?</h2>
+
+<p>시험지 PDF는 화면을 찍은 사진이 아니라 인쇄 명령의 기록입니다. 어떤 문자가 어느 위치에 어떤 크기로 찍혔는지가 파일 안에 좌표로 남아 있기 때문에, 수식을 이루는 문자·숫자·분수 막대·괄호 같은 조각들은 추측 없이 정확하게 추출할 수 있습니다.</p>
+
+<p>그렇다면 모델이 문자까지 새로 쓸 필요가 없습니다. 두 방식 모두 최종 출력은 LaTeX이지만, LaTeX를 이루는 문자의 출처가 다릅니다. 기존 방식은 문자까지 모델이 새로 생성합니다. 새로운 방식에서 문자는 전부 PDF에서 추출한 조각의 복사이고, 모델은 조각을 어디에 배치할지 결정하는 구조만 생성합니다.</p>
+
+<figure class="shots single narrow">
+  <img src="../assets/research/eqasm/compare.png" alt="기존 방식과 새로운 방식의 비교">
+  <figcaption>기존 방식은 새 글자를 만들어 쓰고, EqASM은 있는 조각을 조립합니다</figcaption>
+</figure>
+
+<p>역할을 이렇게 나누면 1번에서 관찰한 오류들이 구조적으로 발생하지 않습니다. 모델의 출력에는 새 문자가 존재하지 않으므로 오독과 날조가 일어나지 않고, 모든 조각을 사용해야 출력이 끝나므로 증발도 일어나지 않습니다. 남는 오류는 배치가 틀리는 경우 하나인데, 이때는 수식의 모양 자체가 달라지므로 렌더 비교로 검출할 수 있습니다. 이것이 EqASM(Equation Assembly Model)의 설계 원리입니다.</p>
+
+<h2>3. 모델 아키텍처 및 학습 설계</h2>
+
+<p>EqASM은 약 3억 파라미터의 encoder–decoder Transformer입니다. 입력은 수식 영역 안의 글자 조각 집합이고, 조각마다 문자 token과 bounding box 기하 정보를 embedding으로 변환해 더합니다. 조각들이 입력되는 순서에 따른 품질 차이를 해소하고자, 순서 정보는 의도적으로 임베딩에서 제외했습니다.</p>
+
+<figure class="shots single">
+  <img src="../assets/research/eqasm/arch.png" alt="EqASM 모델 구조도">
+  <figcaption>EqASM 모델의 전체 구조</figcaption>
+</figure>
+
+<p>encoder는 pre-LayerNorm self-attention 블록입니다. 조각 쌍 사이의 12차원 상대 기하 feature — 중심 offset, 크기 비율, 가로·세로 겹침, 포함 관계 — 를 attention logit에 head별 bias로 더해서, 분수 막대 위에 있다거나 오른쪽 위에 작게 붙어 있다는 공간 관계를 attention이 직접 반영하도록 설계했습니다.</p>
+
+<pre><code class="language-python">dx = cx[:, None, :] - cx[:, :, None]
+wr = torch.log(w[:, None, :] / w[:, :, None])
+contains = ((x0[:, :, None] &lt;= cx[:, None, :]) &amp; (cx[:, None, :] &lt;= x1[:, :, None])
+            &amp; (y0[:, :, None] &lt;= cy[:, None, :]) &amp; (cy[:, None, :] &lt;= y1[:, :, None])).float()
+relations = torch.stack([dx, dy, wr, hr, xov, yov, contains, inside,
+                         hspan, hspan_rev, vspan, vspan_rev], -1)
+
+scores = (q @ k.transpose(-2, -1)) * self.scale
+scores = scores + self.rel(relations).permute(0, 3, 1, 2)</code></pre>
+
+<p>decoder는 표준 autoregressive Transformer지만 생성하는 것은 <code>\frac</code>, <code>^</code>, <code>{ }</code> 같은 구조 token뿐입니다. 문자를 출력해야 하는 시점에는 pointer network가 encoder memory 위의 attention으로 입력 조각 하나를 가리켜 복사합니다. 이미 사용한 조각은 <code>-inf</code>로 masking해 재사용을 방지하고, 조각이 남아 있는 동안은 종료 token을 억제합니다. 1번에서 관찰한 증발 오류가 발생하지 않는 이유입니다.</p>
+
+<pre><code class="language-python">copy_part = combined[:, self.n_struct:].masked_fill(consumed, float("-inf"))
+
+rem = (~(uncopyable | consumed)).sum(-1)
+combined[rem &gt; 0, eos_si] = float("-inf")
+
+consumed = consumed.scatter(1, pos.unsqueeze(1), (~is_struct).unsqueeze(1)) | consumed</code></pre>
+
+<p>학습은 다음과 같이 진행했습니다.</p>
+
+<ul>
+<li><strong>데이터</strong> — 수작업 라벨링 없음. 자체 조판 엔진이 수식 코드를 실제 PDF로 조판하고, 그 결과에서 (조각 집합 → 정답 LaTeX) 쌍을 자동 생성. 인쇄 공백, 가는 분수 막대, 복합 첨자 등 실제 시험지에서 나타나는 형태를 증강으로 추가.</li>
+<li><strong>인프라</strong> — NVIDIA RTX 5090, PyTorch bfloat16 autocast, 배치 256.</li>
+<li><strong>최적화</strong> — AdamW, cosine decay + warmup, gradient clipping 1.0, 30 epoch.</li>
+<li><strong>채점</strong> — 출력 LaTeX를 같은 조판 엔진으로 다시 그려 원본 잉크와 픽셀 대조. 사람의 채점 없이 렌더 비교로 정답 여부를 판정.</li>
+</ul>
+
+<figure class="shots">
+  <img src="../assets/research/eqasm/curve-latex.png" alt="LaTeX exact match 학습 곡선">
+  <img src="../assets/research/eqasm/curve-render.png" alt="Render exact match 학습 곡선">
+  <figcaption>검증셋 학습 곡선. 왼쪽: 출력 LaTeX 문자열이 정답과 정확히 일치한 비율 · 오른쪽: 다시 조판한 렌더가 원본과 일치한 비율</figcaption>
+</figure>
+
+<p>검증 최고치는 LaTeX 문자열 일치 86.9%, 렌더 일치 97.9%<sup>*</sup>입니다. 두 수치의 차이는 같은 모양을 만드는 LaTeX 표기가 여러 가지이기 때문에 생깁니다. 문자열이 달라도 조판 결과가 같으면 정답이므로, 서비스 기준 지표는 렌더 일치입니다.</p>
+
+<p class="fig-fn">* 97.9% 수치는 실제 문항에서의 인식 정확도가 아니라, 실제 시험지에는 등장하지 않는 초고난도 수식을 포함한 검증 데이터셋 내에서 측정한 인식 정확도입니다.</p>
+
+<h2>4. 결과</h2>
+
+<p>1번에서 벤치마크에 쓴 시험지들을 EqASM이 탑재된 문항 추출 파이프라인에 그대로 넣었습니다. 아래 왼쪽은 파이프라인이 검출한 수식 영역(초록 상자)이고, 오른쪽은 그 조각들로 EqASM이 조립한 LaTeX를 다시 렌더링한 것입니다. 파란색으로 표시한 부분이 1번에서 GPT가 오독했던 수식입니다.</p>
+
+<div class="case">
+  <div class="case-head">사례 1 : 2026학년도 6월 모의평가 수학 20번<span class="cr">저작권 : 한국교육과정평가원</span></div>
+  <div class="case-body">
+    <img src="../assets/research/eqasm/ov-m20.png" alt="수학 20번 수식 영역 검출">
+    <div class="case-right">
+      <div class="ans-head">✅ EqASM 인식 결과</div>
+      <div class="ans-eq">$$g(m)=-\log_bm=\frac{\beta}{\log_m\alpha}=\frac{\beta}{\textcolor{#2b5fd9}{-1}+\log_m\beta}=\boxed{(다)}$$</div>
+      <p class="ans-note">사례 1에서 GPT-5.6 Sol이 절반의 확률로 지우던 분모의 $-1$이 정확히 인식되었습니다.</p>
+    </div>
+  </div>
+</div>
+
+<div class="case">
+  <div class="case-head">사례 2 : 2025학년도 수능 미적분 30번<span class="cr">저작권 : 한국교육과정평가원</span></div>
+  <div class="case-body">
+    <img src="../assets/research/eqasm/ov-m30.png" alt="미적분 30번 수식 영역 검출">
+    <div class="case-right">
+      <div class="ans-head">✅ EqASM 인식 결과</div>
+      <div class="ans-eq">$$g(a)\times(\lim_{m\rightarrow \textcolor{#2b5fd9}{a+}}{g(m)})$$</div>
+      <p class="ans-note">사례 2에서 사라지거나 뒤집히던 우극한의 방향 $a+$가 보존됩니다.</p>
+    </div>
+  </div>
+</div>
+
+<div class="case">
+  <div class="case-head">사례 3 : 2026학년도 6월 모의평가 화학Ⅰ 11번<span class="cr">저작권 : 한국교육과정평가원</span></div>
+  <div class="case-body">
+    <img src="../assets/research/eqasm/ov-c11.png" alt="화학Ⅰ 11번 수식 영역 검출">
+    <div class="case-right">
+      <div class="ans-head">✅ EqASM 인식 결과</div>
+      <div class="ans-eq">$$X_2+aY_2+bH_2O\rightarrow2XO_m^{\textcolor{#2b5fd9}{-}}+cY^{(m-2)-}+dH^{+}$$</div>
+      <div class="ans-eq">$$\frac{\text{(나)에서 Y의 산화수 중 가장 작은 값}}{\text{(가)에서 O의 산화수 중 가장 큰 값}}=1$$</div>
+      <p class="ans-note">사례 3에서 오염되던 $\mathrm{XO}_m^-$의 전하가 $-$ 하나로 정확하고, 분수 속 한글 조건도 증발 없이 담깁니다.</p>
+    </div>
+  </div>
+</div>
+
+<div class="case">
+  <div class="case-head">사례 4 : 2026학년도 6월 모의평가 화학Ⅰ 20번<span class="cr">저작권 : 한국교육과정평가원</span></div>
+  <div class="case-body">
+    <img src="../assets/research/eqasm/ov-c20.png" alt="화학Ⅰ 20번 수식 영역 검출">
+    <div class="case-right">
+      <div class="ans-head">✅ EqASM 인식 결과</div>
+      <div class="ans-eq">$$b\times\frac{\textcolor{#2b5fd9}{\text{Ⅱ}}\text{에서 반응 후 전체 기체의 부피(L)}}{\textcolor{#2b5fd9}{\text{Ⅲ}}\text{에서 반응 후 전체 기체의 부피(L)}}$$</div>
+      <p class="ans-note">사례 4에서 뒤바뀌던 분자 Ⅱ와 분모 Ⅲ의 순서가 정확히 유지됩니다.</p>
+    </div>
+  </div>
+</div>
+
+<p>1번에서 GPT가 문항당 10회 중 최대 7회까지 틀리던 수식들이 같은 시험지에서 모두 원본 그대로 인식되었습니다. EqASM은 문자를 새로 생성하지 않기 때문에, 1번에서 관찰된 오독·날조·증발이 발생하지 않습니다. 비용과 처리 시간은 다음과 같습니다.</p>
+
+<table>
+<tr><th></th><th>GPT-5.6 Sol</th><th>EqASM</th></tr>
+<tr><td>모델 규모</td><td>비공개 (상용 최고 성능)</td><td>약 3억 파라미터</td></tr>
+<tr><td>서빙</td><td>외부 API</td><td>자체 서버리스 GPU</td></tr>
+<tr><td>문항당 평균 처리 시간</td><td>14초</td><td>0.5초</td></tr>
+<tr><td>문항당 비용</td><td>약 $0.02</td><td>약 $0.0002</td></tr>
+</table>
+
+<p>이렇게 얻은 수식은 편집 가능한 LaTeX이므로 문항 검색, 유사 문항 추천, 난이도 예측의 입력이 되고, 재조판을 거쳐 교재 제작에도 그대로 쓰일 수 있습니다.</p>
+
+<p>EqASM은 현재 Pipeline API에서 사용되고 있습니다. 전체 사용법은 <a href="../pipeline.html">Pipeline 문서</a>에 있습니다.</p>
+
+</article>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script>
+hljs.highlightAll();
+renderMathInElement(document.querySelector('.post'), {
+  delimiters: [
+    {left: '$$', right: '$$', display: true},
+    {left: '$', right: '$', display: false},
+  ],
+  strict: false,
+  throwOnError: false,
+});
+document.querySelectorAll('pre, .sig').forEach(el => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.type = 'button';
+  const icoCopy = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  const icoDone = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  btn.innerHTML = icoCopy;
+  btn.addEventListener('click', () => {
+    const code = el.querySelector('code');
+    navigator.clipboard.writeText((code || el).innerText.trimEnd()).then(() => {
+      btn.innerHTML = icoDone;
+      setTimeout(() => { btn.innerHTML = icoCopy; }, 1200);
+    });
+  });
+  el.appendChild(btn);
+});
+document.querySelectorAll('.sidebar .group .chev').forEach(ch => {
+  ch.addEventListener('click', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    ch.closest('.group').classList.toggle('open');
+  });
+});
+</script>
+
+</body>
+</html>
