@@ -81,6 +81,13 @@ body {
   transition: transform .15s;
 }
 .sidebar .group.open .chev::before { transform: rotate(45deg); }
+.sidebar .nav-head {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-faint);
+  padding: 10px 10px 2px;
+  margin-top: 16px;
+}
 .sidebar ul { list-style: none; margin: 6px 0 18px; display: none; }
 .sidebar .group.open + ul { display: block; }
 .sidebar li a { padding-left: 20px; }
