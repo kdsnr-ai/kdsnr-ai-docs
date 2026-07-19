@@ -37,7 +37,7 @@
 <tr><td>GPT-5.6 Luna (경량)</td><td>44/50</td><td>23/50</td><td><strong>67%</strong></td><td>76%</td><td>$0.52</td><td>5.1초</td></tr>
 </table>
 
-<p>최고 성능 모델이 100회 중 8회를 틀렸고, 경량 모델은 3회 중 1회꼴로 틀렸습니다. 특히 표기가 밀집된 화학에서 경량 모델의 정확도는 절반 아래(23/50)로 떨어집니다. 일관성 수치는 같은 이미지를 열 번 넣었을 때 같은 결과가 나온 비율입니다 — 열에 두세 번은 지난번과 다른 답을 내놓는다는 뜻이기도 합니다. 아래는 실제로 틀린 대표 사례 네 건입니다. 왼쪽 문항 이미지에 붉게 표시한 수식이 문제가 된 대목입니다.</p>
+<p>최고 성능 모델이 100회 중 8회를 틀렸고, 경량 모델은 3회 중 1회꼴로 틀렸습니다. 특히 표기가 밀집된 화학에서 경량 모델의 정확도는 절반 아래(23/50)로 떨어집니다. 일관성 수치는 같은 이미지를 열 번 넣었을 때 같은 결과가 나온 비율입니다 — 10회 중 2~3회는 이전 실행과 다른 결과가 나온다는 뜻이기도 합니다. 아래는 실제로 틀린 대표 사례 네 건입니다. 왼쪽 문항 이미지에 붉게 표시한 수식이 문제가 된 대목입니다.</p>
 
 <div class="case">
   <div class="case-head">사례 1 : 2026학년도 6월 모의평가 수학 20번<span class="cr">저작권 : 한국교육과정평가원</span></div>
@@ -48,7 +48,7 @@
       <div class="ans-eq">$$g(m)=-\log_b m=\frac{\beta}{\log_m\alpha}=\frac{\beta}{-1+\log_m\beta}$$</div>
       <div class="ans-head bad">❌ GPT-5.6 Sol 출력 · 10회 중 5회</div>
       <div class="ans-eq">$$g(m)=-\log_b m=\frac{\beta}{\log_m\alpha}=\frac{\beta}{1+\log_m\beta}$$</div>
-      <p class="ans-note">최고 성능 모델조차 절반의 확률로 분모의 $-1$을 $+1$로 바꿉니다. 문법적으로 완결된 출력이라 원본 없이는 알 수 없습니다.</p>
+      <p class="ans-note">최고 성능 모델도 절반의 확률로 분모의 $-1$을 $+1$로 바꿉니다. 문법적으로 완결된 출력이라 원본 없이는 가려내기 어렵습니다.</p>
     </div>
   </div>
 </div>
@@ -79,7 +79,7 @@
       <div class="ans-eq"><span class="n">10회 중 3회</span>$$2\mathrm{XO}_m^{(m-2)-}$$</div>
       <div class="ans-eq"><span class="n">10회 중 2회</span>$$2\mathrm{XO}_m^{(2m-2)-}$$</div>
       <div class="ans-eq"><span class="n">10회 중 2회</span>$$2\mathrm{XO}_m$$</div>
-      <p class="ans-note">이웃한 $\mathrm{Y}^{(m-2)-}$의 전하 표기를 끌어다 붙여 존재하지 않는 이온을 만들거나, 전하를 통째로 지웁니다.</p>
+      <p class="ans-note">이웃한 $\mathrm{Y}^{(m-2)-}$의 전하 표기가 옮겨 붙어 존재하지 않는 이온이 되거나, 전하 표기 전체가 사라집니다.</p>
     </div>
   </div>
 </div>
@@ -95,7 +95,7 @@
       <div class="ans-eq"><span class="n">10회 중 4회</span>$$b\times\frac{\text{Ⅲ에서 반응 후 전체 기체의 부피(L)}}{\text{Ⅱ에서 반응 후 전체 기체의 부피(L)}}$$</div>
       <div class="ans-eq"><span class="n">10회 중 1회</span>$$b\times\frac{\text{Ⅲ에서 반응 후 전체 기체의 부피(L)}}{\text{Ⅰ에서 반응 후 전체 기체의 부피(L)}}$$</div>
       <div class="ans-eq"><span class="n">10회 중 1회</span>$$b\times\frac{\text{Ⅲ에서 반응 후 전체 기체의 부피(L)}}{\text{Ⅲ에서 반응 후 전체 기체의 부피(L)}}$$</div>
-      <p class="ans-note">분자와 분모의 실험 번호가 서로 뒤바뀝니다. 문항에 쓰이지도 않은 Ⅰ이 등장하거나 분자·분모가 똑같아지기도 합니다. 값이 역수가 되는 오류입니다.</p>
+      <p class="ans-note">분자와 분모의 실험 번호가 서로 뒤바뀝니다. 문항에 없는 Ⅰ이 등장하거나 분자·분모가 같아지기도 합니다. 값이 역수가 되는 오류입니다.</p>
     </div>
   </div>
 </div>
@@ -104,9 +104,9 @@
 
 <table class="t-types">
 <tr><th>유형</th><th>무엇이 일어나는가</th><th>실측 사례</th></tr>
-<tr><td>오독</td><td>부호·첨자·구조가 다른 의미로 바뀜</td><td>분모의 $-1$이 $+1$로, 우극한이 좌극한으로, 분수의 분자·분모 반전, 옆 항의 전하가 번져 붙음</td></tr>
-<tr><td>날조</td><td>원본에 없는 기호를 만들어 냄</td><td>동위원소 표기에 원자번호를 임의 추가, 한글 조건("모든 이온의 몰 농도 합")을 $\sum$ 기호로 재작성, 없던 절댓값 추가</td></tr>
-<tr><td>증발</td><td>있던 내용이 표시 없이 사라짐</td><td>분수 속 한글 라벨("제3 이온화 에너지")이 $E_3$으로 축약, 지수의 음수 부호 소실, 선택지 통째로 누락</td></tr>
+<tr><td>오독</td><td>부호·첨자·구조가 다른 의미로 바뀜</td><td>분모의 $-1$이 $+1$로, 우극한이 좌극한으로, 분수의 분자·분모 반전, 이웃 항의 전하 표기가 옮겨 붙음</td></tr>
+<tr><td>임의 추가</td><td>원본에 없는 기호가 출력에 들어감</td><td>동위원소 표기에 원자번호를 추가, 한글 조건("모든 이온의 몰 농도 합")을 $\sum$ 기호로 재작성, 없던 절댓값 추가</td></tr>
+<tr><td>누락</td><td>있던 내용이 표시 없이 사라짐</td><td>분수 속 한글 라벨("제3 이온화 에너지")이 $E_3$으로 축약, 지수의 음수 부호 소실, 선택지 전체 누락</td></tr>
 </table>
 
 <p>200회의 출력은 모두 문법적으로 완결된 LaTeX였습니다. 오류는 부호 하나, 첨자 하나 규모로 그 안에 섞여 있어서 출력만 봐서는 가려낼 수 없습니다. 이런 오류는 검증 절차 없이는 그대로 데이터베이스에 쌓이고, 모델이 문자를 새로 생성하는 방식인 한 완전히 사라지지 않습니다.</p>
@@ -122,7 +122,7 @@
   <figcaption>기존 방식은 새 글자를 만들어 쓰고, EqASM은 있는 조각을 조립합니다</figcaption>
 </figure>
 
-<p>역할을 이렇게 나누면 1번에서 관찰한 오류들이 구조적으로 발생하지 않습니다. 모델의 출력에는 새 문자가 존재하지 않으므로 오독과 날조가 일어나지 않고, 모든 조각을 사용해야 출력이 끝나므로 증발도 일어나지 않습니다. 남는 오류는 배치가 틀리는 경우 하나인데, 이때는 수식의 모양 자체가 달라지므로 렌더 비교로 검출할 수 있습니다. 이것이 EqASM(Equation Assembly Model)의 설계 원리입니다.</p>
+<p>역할을 이렇게 나누면 1번에서 관찰한 오류들이 구조적으로 발생하지 않습니다. 모델의 출력에는 새 문자가 존재하지 않으므로 오독과 임의 추가가 일어나지 않고, 모든 조각을 사용해야 출력이 끝나므로 누락도 일어나지 않습니다. 남는 오류는 배치가 틀리는 경우 하나인데, 이때는 수식의 모양 자체가 달라지므로 렌더 비교로 검출할 수 있습니다. 이것이 EqASM(Equation Assembly Model)의 설계 원리입니다.</p>
 
 <h2>3. 모델 아키텍처 및 학습 설계</h2>
 
@@ -145,7 +145,7 @@ relations = torch.stack([dx, dy, wr, hr, xov, yov, contains, inside,
 scores = (q @ k.transpose(-2, -1)) * self.scale
 scores = scores + self.rel(relations).permute(0, 3, 1, 2)</code></pre>
 
-<p>decoder는 표준 autoregressive Transformer지만 생성하는 것은 <code>\frac</code>, <code>^</code>, <code>{ }</code> 같은 구조 token뿐입니다. 문자를 출력해야 하는 시점에는 pointer network가 encoder memory 위의 attention으로 입력 조각 하나를 가리켜 복사합니다. 이미 사용한 조각은 <code>-inf</code>로 masking해 재사용을 방지하고, 조각이 남아 있는 동안은 종료 token을 억제합니다. 1번에서 관찰한 증발 오류가 발생하지 않는 이유입니다.</p>
+<p>decoder는 표준 autoregressive Transformer지만 생성하는 것은 <code>\frac</code>, <code>^</code>, <code>{ }</code> 같은 구조 token뿐입니다. 문자를 출력해야 하는 시점에는 pointer network가 encoder memory 위의 attention으로 입력 조각 하나를 가리켜 복사합니다. 이미 사용한 조각은 <code>-inf</code>로 masking해 재사용을 방지하고, 조각이 남아 있는 동안은 종료 token을 억제합니다. 1번에서 관찰한 누락 오류가 발생하지 않는 이유입니다.</p>
 
 <pre><code class="language-python">copy_part = combined[:, self.n_struct:].masked_fill(consumed, float("-inf"))
 
@@ -184,7 +184,7 @@ consumed = consumed.scatter(1, pos.unsqueeze(1), (~is_struct).unsqueeze(1)) | co
     <div class="case-right">
       <div class="ans-head">✅ EqASM 인식 결과</div>
       <div class="ans-eq">$$g(m)=-\log_bm=\frac{\beta}{\log_m\alpha}=\frac{\beta}{\textcolor{#2b5fd9}{-1}+\log_m\beta}=\boxed{(다)}$$</div>
-      <p class="ans-note">사례 1에서 GPT-5.6 Sol이 절반의 확률로 지우던 분모의 $-1$이 정확히 인식되었습니다.</p>
+      <p class="ans-note">사례 1에서 GPT-5.6 Sol이 절반의 확률로 $+1$로 바꾸던 분모의 $-1$이 정확히 인식되었습니다.</p>
     </div>
   </div>
 </div>
@@ -209,7 +209,7 @@ consumed = consumed.scatter(1, pos.unsqueeze(1), (~is_struct).unsqueeze(1)) | co
       <div class="ans-head">✅ EqASM 인식 결과</div>
       <div class="ans-eq">$$X_2+aY_2+bH_2O\rightarrow2XO_m^{\textcolor{#2b5fd9}{-}}+cY^{(m-2)-}+dH^{+}$$</div>
       <div class="ans-eq">$$\frac{\text{(나)에서 Y의 산화수 중 가장 작은 값}}{\text{(가)에서 O의 산화수 중 가장 큰 값}}=1$$</div>
-      <p class="ans-note">사례 3에서 오염되던 $\mathrm{XO}_m^-$의 전하가 $-$ 하나로 정확하고, 분수 속 한글 조건도 증발 없이 담깁니다.</p>
+      <p class="ans-note">사례 3에서 이웃 항의 표기가 옮겨 붙던 $\mathrm{XO}_m^-$의 전하가 $-$ 하나로 정확하고, 분수 속 한글 조건도 누락 없이 담깁니다.</p>
     </div>
   </div>
 </div>
@@ -226,7 +226,7 @@ consumed = consumed.scatter(1, pos.unsqueeze(1), (~is_struct).unsqueeze(1)) | co
   </div>
 </div>
 
-<p>1번에서 GPT가 문항당 10회 중 최대 7회까지 틀리던 수식들이 같은 시험지에서 모두 원본 그대로 인식되었습니다. EqASM은 문자를 새로 생성하지 않기 때문에, 1번에서 관찰된 오독·날조·증발이 발생하지 않습니다. 비용과 처리 시간은 다음과 같습니다.</p>
+<p>1번에서 GPT가 문항당 10회 중 최대 7회까지 틀리던 수식들이 같은 시험지에서 모두 원본 그대로 인식되었습니다. EqASM은 문자를 새로 생성하지 않기 때문에, 1번에서 관찰된 오독·임의 추가·누락이 발생하지 않습니다. 비용과 처리 시간은 다음과 같습니다.</p>
 
 <table>
 <tr><th></th><th>GPT-5.6 Sol</th><th>EqASM</th></tr>
