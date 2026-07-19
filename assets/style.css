@@ -16,8 +16,8 @@ body {
   font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   color: var(--text);
   background: #fff;
-  line-height: 1.65;
-  font-size: 15.5px;
+  line-height: 1.78;
+  font-size: 16.5px;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -181,7 +181,7 @@ body {
   font-weight: 700;
   margin: 24px 0 10px;
 }
-.content p { margin-bottom: 12px; }
+.content p { margin-bottom: 15px; }
 .content p, .content li { color: var(--text); }
 .content ul { margin: 0 0 12px 20px; }
 .content li { margin-bottom: 4px; }

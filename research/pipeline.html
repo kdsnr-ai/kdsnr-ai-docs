@@ -3,10 +3,33 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>kdsnr-ai · 문항 추출 파이프라인 연구·개발</title>
+<title>kdsnr-ai · Pipeline API</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+<style>
+.draft-banner { background: #fff8e6; border: 1px solid #e8d49a; border-radius: 8px; padding: 10px 14px; font-size: 13px; color: #7a5c00; margin: 18px 0 6px; }
+.case .b { color: #2b5fd9; font-weight: 600; }
+.case .r { color: #c2372f; font-weight: 600; }
+.case .cnt { font-size: 11.5px; color: #a29499; margin-left: 2px; }
+.bad .fn { font-size: 11.5px; color: #a29499; margin-top: 7px; line-height: 1.5; }
+.case-right { gap: 10px; }
+.case-right pre { margin: 0; overflow-x: auto; }
+.case-q { padding: 10px 18px; background: #f4f6fa; border-bottom: 1px solid #e4e8ee; font-size: 13.5px; color: #333c49; }
+.case-q b { font-weight: 700; color: #333c49; }
+.case img.case-wide { width: 100%; display: block; }
+.qr, .ok, .bad { border-radius: 10px; padding: 11px 14px 12px; font-size: 14px; line-height: 1.6; color: #1f2732; }
+.qr { background: #f4f6fa; border: 1px solid #e4e8ee; font-size: 13.5px; color: #333c49; }
+.ok { background: #f3faf6; border: 1px solid #d5e9de; }
+.bad { background: #fdf6f5; border: 1px solid #efdad6; }
+.qr .tag, .ok .tag, .bad .tag { display: block; font-size: 11.5px; font-weight: 700; letter-spacing: .04em; margin-bottom: 5px; }
+.qr .tag { color: #7b8794; }
+.ok .tag { color: #1a7f4b; }
+.bad .tag { color: #b3494e; }
+.ok p, .bad p { margin: 4px 0; }
+.bad .n2 { display: block; font-size: 11.5px; color: #a29499; margin-bottom: 1px; }
+.case-right .ans-note { font-size: 13.5px; color: #4a5361; line-height: 1.6; margin: 2px 2px 0; }
+</style>
 </head>
 <body>
 
@@ -17,43 +40,277 @@
 
 <article class="post">
 
-<h1>문항 추출 파이프라인 연구·개발</h1>
-<p class="post-sub">시험지 한 부가 문항 데이터가 되기까지</p>
+<h1>Pipeline API</h1>
+<p class="post-sub">HWP·PDF 속의 문항 데이터들이 AI에게 전달되기까지</p>
 <p class="post-meta">Infrastructure · 2026-07-18 · 작성자 : 권준희</p>
 
-<p>문항 검색과 출제 자동화, 유사 문항 추천, 난이도 예측 등 AI를 이용한 콘텐츠 비즈니스는 잘 구축된 문항 데이터를 전제로 합니다. 그리고 문항 데이터의 원천은 대부분 PDF와 한글 파일로 저장된 시험지입니다.</p>
+<p>문항 검색과 출제 자동화, 유사 문항 추천, 난이도 예측 등 AI를 이용한 콘텐츠 비즈니스는 잘 구축된 문항 데이터베이스를 전제로 합니다. 문항 데이터베이스를 설계할 때는 다음의 항목들이 고려되어야 합니다.</p>
 
-<p>시험지는 그대로 데이터가 되지 않습니다. 한 페이지에 여러 문항이 2단으로 조판되어 있고, 문항 하나가 단과 페이지를 넘어 이어지기도 하며, 본문에는 수식·표·그림·밑줄 같은 요소가 섞여 있습니다. 이 글에서는 시험지 문서를 문항 단위의 구조화된 데이터로 변환하기 위해 강남대성수능연구소에서 개발한 문항 추출 파이프라인을 소개합니다.</p>
+<ul>
+<li>문항을 어떤 형식으로 저장할 것인가</li>
+<li>문항의 어떤 요소까지 담을 것인가</li>
+<li>AI가 문항을 어떻게 읽게 할 것인가</li>
+</ul>
 
-<h2>1. 무엇이 나오는가</h2>
+<p>수능 문항 콘텐츠 자산은 HWP·HWPX 한글 문서와 PDF 시험지 파일에 저장되어 있습니다. LLM은 이 파일들을 직접 읽지 못하므로, 가장 흔한 선택은 시험지를 페이지 이미지로 변환한 뒤 GPT 등 LLM에게 읽고 받아 적게 하는 것입니다. 이 글에서는 이 방식이 실제로 얼마나 정확한지 측정한 결과를 먼저 살펴보고, 그 한계를 해결하고자 강남대성수능연구소에서 자체 개발한 문항 추출 시스템인 Pipeline API를 소개합니다.</p>
 
-<p>아래는 실제 서비스의 추출 결과입니다. 시험지 한 부를 넣으면 문항 단위로 분리되고, 문항마다 지면과 동일한 이미지, 그리고 본문·수식·표·그림이 구조화된 JSON 객체가 나옵니다. 과목 탭을 바꿔 가며 검출 화면과 출력 JSON을 확인할 수 있습니다.</p>
+<h2>1. 범용 LLM API를 이용한 OCR의 함정</h2>
+
+<p>이미지와 범용 LLM만으로 문항 데이터베이스를 만들 수 있을까요? 이를 확인하기 위해 데이터베이스 구축에서 실제로 수행하는 세 작업 — 문항 단위 분리, 텍스트 저장, 형식 구조 기록 — 을 OpenAI의 최고 성능 모델 GPT-5.6 Sol과 Google의 최고 성능 모델 Gemini 3.1 Pro로 실측했습니다. 재료는 2027학년도 6월 모의평가 시험지, 이미지 해상도는 150dpi이며, 같은 요청을 각 10회씩 반복해 일관성을 함께 측정했습니다.</p>
+
+<h3>실험 ① 문항 분리 — 위치를 찾지 못한다</h3>
+
+<p>물리학Ⅱ 한 페이지에는 12번부터 16번까지 다섯 문항이 실려 있습니다. 이 페이지를 주고 각 문항 영역의 좌표를 반환하게 한 뒤, 반환된 좌표가 실제 문항 영역과 겹치는 비율(IoU, 1에 가까울수록 정확)로 채점했습니다.</p>
+
+<table>
+<tr><th>모델</th><th>평균 IoU (10회)</th><th>비고</th></tr>
+<tr><td>GPT-5.6 Sol</td><td><strong>0.50</strong></td><td>10회 중 2회는 좌표를 반환하지 못함</td></tr>
+<tr><td>Gemini 3.1 Pro</td><td><strong>0.27</strong></td><td>다섯 문항 중 두 문항은 10회 전부 0.0</td></tr>
+</table>
+
+<div class="case">
+  <div class="case-head">모델이 반환한 문항 영역 — 왼쪽 : GPT-5.6 Sol · 오른쪽 : Gemini 3.1 Pro</div>
+  <div class="case-q"><b>요청</b> : 페이지에서 개별 문항의 영역을 인식하여 표시해 주세요.</div>
+  <img class="case-wide" src="../assets/research/pipeline/bbox-compare.png" alt="GPT-5.6 Sol과 Gemini 3.1 Pro가 반환한 문항 영역">
+</div>
+
+<p>문항 번호와 내용은 정확히 읽어 내는 모델들이 좌표는 반환하지 못하거나 크게 어긋난 값을 반환합니다. 좌표가 없으면 시험지에서 문항 단위 이미지를 잘라낼 수 없습니다.</p>
+
+<h3>실험 ② 텍스트 저장 — 글자를 바꿔 쓴다</h3>
+
+<p>국어 시험지에서 고전 시가 지문 (가)~(다)가 실린 페이지를 주고, 지문을 인쇄된 그대로 옮겨 적게 했습니다. 데이터베이스에 원문 텍스트를 저장하는 작업 그대로입니다. 채점은 공백과 문장 부호 차이를 무시하고 글자 단위로 원문과 대조했으며, 대조 기준 원문은 시험지 PDF에 기록된 글자를 그대로 사용했습니다.</p>
+
+<table>
+<tr><th>모델</th><th>글자가 바뀐 회차</th><th>바뀐 글자 수 (10회 합)</th></tr>
+<tr><td>GPT-5.6 Sol</td><td><strong>10회 중 10회</strong></td><td>36곳</td></tr>
+<tr><td>Gemini 3.1 Pro</td><td>10회 중 2회</td><td>2곳</td></tr>
+</table>
+
+<div class="case">
+  <div class="case-head">사례 1 : 2027학년도 6월 모의평가 국어 32~34번 지문</div>
+  <div class="case-body">
+    <img src="../assets/research/pipeline/case-kor-transcribe.png" alt="2027학년도 6월 모의평가 국어 32~34번 지문 (나)·(다)">
+    <div class="case-right">
+      <div class="qr"><span class="tag">요청</span>페이지에 인쇄된 (가), (나), (다) 지문 전체를 글자 하나도 바꾸지 말고 인쇄된 그대로 전사하세요.</div>
+      <div class="ok"><span class="tag">정답 — 지면의 붉은 표시</span>
+      <p>시름을 꺼내 들어 <span class="b">얽어 매고</span> <span class="b">둘러 묶어</span> … <span class="b">자연히</span> 이리저리 떠다니다 절로 삭으리라</p>
+      <p>그 나무에 그 칡이 <span class="b">납거미</span> 나비 감듯</p></div>
+      <div class="bad"><span class="tag">LLM 응답 — GPT-5.6 Sol</span>
+      <p>시름을 꺼내 들어 <span class="r">얹어 매고</span> <span class="r">돌려 묶어</span> … <span class="r">저어히</span> 이리저리 떠다니다 절로 삭으리라</p>
+      <p>그 나무에 그 칡이 <span class="r">넘거미</span> 나비 감듯</p>
+      <p class="fn">* 10회 중 저어히 9회, 넘거미 9회(낭거미·넙거미·늙거미 각 1회 포함), 돌려 묶어 6회, 얹어 매고 5회.</p></div>
+      <p class="ans-note">치환된 단어가 모두 사전에 있는 단어여서 문장이 자연스럽게 읽힙니다. 고전 시가처럼 낯선 표기일수록 모델에게 익숙한 단어로 바뀌는 경향이 뚜렷했습니다.</p>
+    </div>
+  </div>
+</div>
+
+<h3>실험 ③ 형식 구조 — 밑줄과 기호를 오독한다</h3>
+
+<p>밑줄·범위 표시·표처럼 문항의 형식을 확인하는 질문 10종을 만들어 각 10회씩 물었습니다. "㉢ 표시와 함께 밑줄이 쳐진 부분을 그대로 인용하라", "표에서 해역 C 행의 속도 칸에 인쇄된 기호를 답하라" 같은, 해설·검토 원고를 쓸 때 실제로 확인하는 사항들입니다.</p>
+
+<table>
+<tr><th>모델</th><th>정답률 (10종 × 10회)</th><th>오답 내역</th></tr>
+<tr><td>GPT-5.6 Sol</td><td><strong>76/100</strong></td><td>밑줄 라벨 밀림 17회, 표 기호 평탄화 7회</td></tr>
+<tr><td>Gemini 3.1 Pro</td><td><strong>99/100</strong></td><td>밑줄 구절 인용 중 '팡'을 '꽝'으로 오독 1회</td></tr>
+</table>
+
+<div class="case">
+  <div class="case-head">사례 2 : 2027학년도 6월 모의평가 국어 18~21번 지문</div>
+  <div class="case-body">
+    <img src="../assets/research/pipeline/case-kor-underline.png" alt="2027학년도 6월 모의평가 국어 18~21번 지문의 밑줄 ㉢·㉣">
+    <div class="case-right">
+      <div class="qr"><span class="tag">요청</span>지문에서 ㉢ 표시와 함께 밑줄이 쳐진 부분을 처음부터 끝까지 그대로 인용하세요.</div>
+      <div class="ok"><span class="tag">정답 — 지면의 붉은 구간</span>
+      <p>또 오는구나. 또 누굴 데려갈라고……. 술기와 함께 온몸의 피가 얼굴로 치솟는 듯했다. 입술도 부들부들 떨렸다.</p></div>
+      <div class="bad"><span class="tag">LLM 응답 — GPT-5.6 Sol</span>
+      <p><span class="n2">10회 중 8회</span>어디 탈 테면 한번 타 보지, 흥! 콧방귀를 팡 뀌어 준다.</p></div>
+      <p class="ans-note">인용된 문장은 바로 다음 밑줄인 ㉣의 구절(파란 구간)입니다. ㉣을 물으면 10회 중 9회 그다음 밑줄인 ㉤의 구절("흥! 안 되지 안 돼.")을 인용해, 라벨이 정확히 한 칸씩 밀립니다.</p>
+    </div>
+  </div>
+</div>
+
+<p>밑줄 구간·범위 표시·표 구조를 묻는 질문 7종을 추가로 각 10회씩 물었습니다. ㉠ 밑줄 구간의 시작과 끝 어절을 묻는 질문에서 GPT-5.6 Sol은 시작은 10회 모두 맞히고, 끝은 10회 모두 틀렸습니다. [B] 구간의 첫 행을 인용시킨 질문에서는 실험 ②의 글자 치환도 다시 나타났습니다(경경 고침상 → 겅겅·텅텅 고침상, 10회 중 3회).</p>
+
+<div class="case">
+  <div class="case-head">사례 3 : 2027학년도 6월 모의평가 국어 18~21번 지문</div>
+  <div class="case-body">
+    <img src="../assets/research/pipeline/case-kor-grange.png" alt="국어 지문 ㉠ 밑줄 구간과 모델이 답한 경계">
+    <div class="case-right">
+      <div class="qr"><span class="tag">요청</span>지문에서 ㉠ 표시와 함께 밑줄이 쳐진 구간의 시작 어절과 마지막 어절을 답하세요.</div>
+      <div class="ok"><span class="tag">정답 — 지면의 붉은 구간</span>
+      <p>시작 : 삼바우는, 끝 : 아니가?</p></div>
+      <div class="bad"><span class="tag">LLM 응답 — GPT-5.6 Sol, 10회 전부 오답</span>
+      <p><span class="n2">10회 중 7회</span>그렇잖으면 (파란 표시 — 밑줄이 없는 어절)</p>
+      <p><span class="n2">10회 중 2회</span>가까워지는데 (다음 밑줄 ㉡ 구간 안의 어절)</p>
+      <p><span class="n2">10회 중 1회</span>둘인강? (다음 밑줄 ㉡ 구간 안의 어절)</p></div>
+      <p class="ans-note">밑줄이 인쇄된 범위가 아니라 주변 문장 구조로 구간을 추정합니다. 10회 중 7회는 다음 라벨 ㉡ 바로 앞 어절인 '그렇잖으면'까지를 구간으로 답했는데, 이 어절에는 밑줄이 없습니다.</p>
+    </div>
+  </div>
+</div>
+
+<p>세 실험에서 관찰된 오류는 성격이 같습니다. 확률적으로 발생하고, 출력이 그럴듯해서 원본 없이는 가려낼 수 없으며, 모델이 지면을 추정해 새로 쓰는 방식인 한 완전히 사라지지 않습니다. 그래서 모델의 읽기를 사후에 검증하는 접근 대신, 시험지를 처음부터 정확한 문항 데이터로 변환하는 자체 문항 인식 시스템을 만들기로 했습니다.</p>
+
+<h2>2. Pipeline API</h2>
+
+<p>Pipeline API는 시험지 파일을 통째로 입력받아 문항 단위의 Question 객체(JSON)로 반환하는 문항 추출 시스템입니다. HWP·HWPX·PDF를 모두 지원하며, 문항 텍스트와 수식·표·밑줄 같은 형식 구조, 문항 영역을 잘라낸 이미지까지 함께 반환합니다. 아래는 실제 시험지를 처리한 결과입니다.</p>
 
 <section class="demo-sec">
 <div class="demo" id="kdsnr-demo"></div>
-<p class="demo-cap">문항 추출 파이프라인의 실제 출력</p>
+<p class="demo-cap">실제 수능 시험지를 Pipeline API로 처리한 검출 화면과 Question JSON · 과목과 화면을 탭으로 전환할 수 있습니다</p>
 </section>
 
-<p>출력 JSON에서 수식은 편집 가능한 LaTeX로, 표는 셀 단위 구조로, 그림은 이미지로 담깁니다. 문항 순서는 지면의 읽기 순서와 같고, 단이나 페이지에 걸친 문항도 하나의 객체로 복원됩니다. 국어처럼 하나의 지문에 여러 문항이 묶이는 과목은 지시문·지문·문항들이 세트 객체 하나로 나옵니다.</p>
-
-<h2>2. 어떻게 처리되는가</h2>
+<p>내부 처리는 세 단계입니다. 수능 지면으로 학습한 검출 모델이 지시문·지문·문항 영역과 그 안의 세부 요소를 찾고, 지면에 기록된 글자와 선을 각 영역에 배정한 뒤, 읽기 순서대로 조립해 Question 객체를 만듭니다.</p>
 
 <figure class="shots single">
-<img src="../assets/architecture.png" alt="문항 추출 파이프라인 처리 경로">
-<figcaption>입력 문서에서 문항 JSON까지의 처리 경로</figcaption>
+  <img src="../assets/architecture.png" alt="Pipeline API 처리 구조도">
+  <figcaption>Pipeline API의 처리 구조 · 레이아웃 검출 → 수식 인식 → 조립 → 문항 JSON</figcaption>
 </figure>
 
-<p>한글 문서(hwp·hwpx)가 들어오면 자체 조판 엔진이 원본 조판을 보존한 PDF로 먼저 변환합니다. 이후의 처리는 입력 형식과 무관하게 PDF 하나의 경로로 진행됩니다.</p>
+<h3>1) 문항의 위치를 정확하게 인식합니다.</h3>
 
-<p>PDF에서는 두 종류의 정보를 함께 읽습니다. 하나는 인쇄 명령의 기록입니다. 어떤 문자가 어느 좌표에 어떤 크기로 찍혔는지가 파일 안에 남아 있으므로, 글자·수식 조각·괘선은 추측 없이 그대로 추출합니다. 다른 하나는 지면의 시각 구조입니다. 자체 학습한 레이아웃 검출 모델이 문항과 지문의 경계, 그리고 그 안의 수식·표·그림·보기 상자 영역을 찾습니다.</p>
+<p>실험 ①에서 두 모델이 반환하지 못한 문항 좌표는, Pipeline에서는 검출 모델의 출력입니다. 지시문·지문·문항의 큰 영역을 찾는 모델과 그 안의 수식·보기 상자·범위 표시·표·그림·문항 번호를 찾는 모델이 단계적으로 지면을 읽습니다. 2027학년도 6월 모의평가 3개 과목 32페이지를 입력하면 Question 95개가 반환되고, 국어 45문항은 지문을 공유하는 문항 묶음(QuestionSet) 11개와 단독 문항 3개로 분리되어 어느 문항들이 지문을 공유하는지가 데이터에 남습니다.</p>
 
-<p>두 정보를 합쳐 문항을 조립합니다. 검출된 문항 경계로 지면을 문항 단위로 나누고, 각 영역의 문자들을 문단과 블록으로 묶습니다. 수식 영역의 문자 조각들은 <a href="eqasm.html">EqASM</a>이 LaTeX로 조립하고, 표는 괘선 좌표에서 셀 구조와 테두리·정렬을 복원합니다. 이렇게 만들어진 문항 객체가 위 데모에서 본 JSON입니다.</p>
+<figure class="shots">
+  <img src="../assets/research/pipeline/ov-kor.png" alt="국어 지면 검출 결과">
+  <img src="../assets/research/pipeline/ov-sci.png" alt="화학Ⅰ 지면 검출 결과">
+  <figcaption>Pipeline API의 검출 결과 · 왼쪽: 국어 32~34번 지면(공유 지문과 [A]~[C] 범위 표시) · 오른쪽: 화학Ⅰ 지면(표·수식·그림)</figcaption>
+</figure>
 
-<h2>3. 결론</h2>
+<p>문항 분리가 좌표 기반이므로, 문항마다 원본 지면에서 잘라낸 이미지가 함께 반환됩니다. 문항 이미지는 검수 화면과 교재 조판에 그대로 쓰일 수 있습니다.</p>
 
-<p>이 파이프라인으로 시험지 한 부가 사람 손을 거치지 않고 문항 단위의 구조화된 데이터로 변환됩니다. 변환된 문항은 검색과 출제 자동화, 유사 문항 추천, 난이도 예측의 입력으로 쓰일 수 있습니다.</p>
+<h3>2) 내용을 옮겨 쓰지 않습니다. 그대로 '복사'합니다.</h3>
 
-<p>파이프라인은 현재 Pipeline API로 서비스되고 있습니다. 호출 사양과 사용법은 <a href="../pipeline.html">Pipeline 문서</a>에 있습니다.</p>
+<p>PDF 지면에는 어떤 글자가 어느 위치에 어떤 크기로 찍혔는지가 기록으로 남아 있습니다. Pipeline은 문항의 텍스트를 이미지에서 읽어 내지 않고 이 기록에서 복사합니다. 출력에는 애초에 새 글자가 존재하지 않으므로, 실험 ②에서 관찰된 치환이 발생하지 않습니다.</p>
+
+<div class="case">
+  <div class="case-head">재검증 : 실험 ②의 지문을 Pipeline으로 추출</div>
+  <div class="case-body">
+    <img src="../assets/research/pipeline/case-kor-transcribe.png" alt="2027학년도 6월 모의평가 국어 32~34번 지문 (나)·(다)">
+    <div class="case-right">
+      <div class="ok"><span class="tag">Pipeline 출력</span>
+      <p>시름을 꺼내 들어 <span class="b">얽어 매고</span> <span class="b">둘러 묶어</span> … <span class="b">자연히</span> 이리저리 떠다니다 절로 삭으리라</p>
+      <p>그 나무에 그 칡이 <span class="b">납거미</span> 나비 감듯</p></div>
+      <p class="ans-note">실험 ②에서 치환되던 네 단어(파란색)가 원본 그대로 담깁니다. 글자가 지면 기록의 복사이므로 같은 입력에서는 항상 같은 출력이 나옵니다.</p>
+    </div>
+  </div>
+</div>
+
+<p>수식도 같은 원리로 처리합니다. 수식을 이루는 문자 조각을 지면 기록에서 추출하고, 자체 개발 ML 모델 EqASM이 조각의 배치 구조만 생성해 LaTeX로 조립합니다. 수식 인식의 문제 상황과 EqASM의 설계는 <a href="eqasm.html">EqASM 포스트</a>에 있습니다.</p>
+
+<h3>3) 문항 내부의 특수 디테일들을 보존합니다.</h3>
+
+<p>수능 문항에는 일반 문서에 없는 형식 요소가 있습니다. ㄱ·ㄴ·ㄷ 진술이 담기는 보기 상자, 병합 셀이 있는 표, 지문의 [A]~[C] 범위 표시, ㉠~㉤ 밑줄, 발문 속 강조 상자 — Pipeline은 이 요소들을 Question 객체의 명시적인 구조로 저장합니다. 지면의 디테일이 실제로 어떻게 담기는지, 이 글에서 다룬 문항들의 지면과 출력을 나란히 보면 다음과 같습니다.</p>
+
+<div class="case">
+  <div class="case-head">밑줄 : 2027학년도 6월 모의평가 국어 18~21번</div>
+  <div class="case-body">
+    <img src="../assets/research/pipeline/detail-underline.png" alt="국어 지문의 ㉣ 밑줄 확대">
+    <div class="case-right">
+      <pre><code class="language-json">{"type": "Text",
+ "text": "씩 핥으며 고소하게 웃는다. ㉣ &lt;u&gt;어디 탈 테면 한번 타 보지, 흥!  콧방귀를 팡 뀌어 준다.&lt;/u&gt;",
+ "font": 1, "size": 11.0, "align": "justify"}</code></pre>
+      <p class="ans-note">사례 2에서 라벨이 밀리던 밑줄입니다. 라벨 ㉣과 밑줄 구간이 본문 텍스트 안에 태그로 함께 담깁니다.</p>
+    </div>
+  </div>
+</div>
+
+<div class="case">
+  <div class="case-head">범위 표시 : 2027학년도 6월 모의평가 국어 32~34번</div>
+  <div class="case-body">
+    <img src="../assets/research/pipeline/detail-bracket.png" alt="국어 지문의 [A] 범위 표시 확대">
+    <div class="case-right">
+      <pre><code class="language-json">{"type": "Text",
+ "text": "&lt;bracket:A&gt;얼음 위에 댓잎 자리 보아 임과 나와 얼어 죽을망정 얼음 위에 댓잎 자리 보아 임과 나와 얼어 죽을망정 정 둔 오늘 밤 더디 새오시라 더디 새오시라&lt;/bracket:A&gt;",
+ "font": 1, "size": 11.0, "align": "justify"}</code></pre>
+      <p class="ans-note">사례 1 지문의 [A] 구간입니다. 구간의 시작과 끝이 태그로 담깁니다.</p>
+    </div>
+  </div>
+</div>
+
+<div class="case">
+  <div class="case-head">표 : 2027학년도 6월 모의평가 지구과학Ⅱ 13번</div>
+  <div class="case-body">
+    <img src="../assets/research/pipeline/detail-table.png" alt="지구과학Ⅱ 13번 표 확대">
+    <div class="case-right">
+      <pre><code class="language-json">{"type": "Table", "rows": 5, "cols": 4,
+ "grid": [[0, 1, 2, 2],
+          [0, 1, 3, 4],
+          [5, 6, 7, 8],
+          [9, 10, 11, 12],
+          [13, 14, 15, 16]],
+ "cells": [
+   {"id": 0, "content": [
+     {"type": "Text", "text": "해역"}]},
+   {"id": 2, "content": [
+     {"type": "Text", "text": "해파"}]},
+   ...
+   {"id": 16, "content": [
+     {"type": "Text", "text": "㉡"}]}
+ ]}</code></pre>
+      <p class="ans-note">grid의 같은 번호가 하나의 셀입니다. '해역'(0번)과 '수심'(1번)은 두 행에 걸쳐 세로로, '해파'(2번)는 두 열에 걸쳐 가로로 병합되어 있고, 실험 ③에서 묻던 속도 칸의 ㉡은 16번 셀의 값입니다.</p>
+    </div>
+  </div>
+</div>
+
+<div class="case">
+  <div class="case-head">보기 상자 : 2027학년도 6월 모의평가 사회·문화 13번</div>
+  <div class="case-body">
+    <img src="../assets/research/pipeline/detail-bogi.png" alt="사회·문화 13번 보기 상자">
+    <div class="case-right">
+      <pre><code class="language-json">{"type": "BogiBox", "content": [
+  {"type": "Text", "text": "ㄱ. 서구의 제국주의를 옹호하는 논리로 이용될 수 있다."},
+  {"type": "Text", "text": "ㄴ. 사회 변동을 동일한 과정의 주기적 반복으로 설명한다."},
+  {"type": "Text", "text": "ㄷ. 사회가 단순한 형태에서 복잡한 형태로 변동한다고 본다."},
+  {"type": "Text", "text": "ㄹ. 사회 변동이 언제나 진보를 의미하는 것은 아니라고 본다."}]}</code></pre>
+      <p class="ans-note">보기 상자는 ㄱ~ㄹ 진술이 담긴 별도 구조가 됩니다.</p>
+    </div>
+  </div>
+</div>
+
+<p>32페이지 처리분에 담긴 형식 요소는 다음과 같습니다.</p>
+
+<table>
+<tr><th>수식</th><th>보기 상자</th><th>그림</th><th>제시문 상자</th><th>표</th><th>밑줄</th><th>굵은 글씨</th><th>문장 속 상자</th></tr>
+<tr><td>53</td><td>24</td><td>19</td><td>14</td><td>13</td><td>89</td><td>114</td><td>6</td></tr>
+</table>
+
+<p>실험 ③의 형식 질문 10종을, 이미지 대신 같은 문항의 Question 객체를 입력으로 GPT-5.6 Sol에 다시 물었습니다.</p>
+
+<table>
+<tr><th>입력</th><th>정답률 (10종 × 10회)</th></tr>
+<tr><td>시험지 이미지 (실험 ③)</td><td>76/100</td></tr>
+<tr><td>Question 객체 (JSON)</td><td><strong>100/100</strong></td></tr>
+</table>
+
+<p>밑줄은 라벨이 붙은 구간으로, 표는 병합 정보가 있는 격자로 담겨 있으므로, 모델이 지면을 추정할 필요 없이 데이터를 조회해 답하게 됩니다. 라벨 밀림과 기호 평탄화는 이 입력에서 발생하지 않았습니다.</p>
+
+<h3>4) 한글 프로그램 없이도, HWP를 읽고 쓸 수 있습니다.</h3>
+
+<p>문항 자산의 원본은 대부분 한글 문서이고, HWP는 전용 프로그램으로만 열리는 형식입니다. Pipeline에 들어 있는 자체 개발 한글 문서 엔진은 HWP·HWPX 파일을 한컴 프로그램 없이 직접 해석해 문단·표·수식·그림을 하나의 문서 모델로 읽고, 서체별 글자 폭 기준으로 줄나눔과 페이지 흐름을 계산해 글자 기록이 보존된 PDF 지면으로 조판합니다. 그래서 HWP·HWPX·PDF 어느 입력이든 같은 추출 경로 하나로 처리됩니다.</p>
+
+<p>반대 방향도 지원합니다. Question 객체에서 새 HWPX 문서를 조판하는 쓰기 경로가 있어, 추출한 문항이나 LLM이 생성한 문항을 한글 문서로 만들 수 있습니다.</p>
+
+<figure class="shots single">
+  <img src="../assets/research/pipeline/engine.png" alt="Pipeline API가 지원하는 변환 경로">
+  <figcaption>Pipeline API가 지원하는 변환 경로</figcaption>
+</figure>
+
+<h2>3. 활용 방안 및 결론</h2>
+
+<p>Pipeline API는 글자를 인쇄 기록에서 복사하고 문항의 위치와 형식 구조를 전용 검출 모델로 읽기 때문에, 1장에서 관찰된 오류 없이 시험지 파일을 문항 단위 데이터로 변환할 수 있습니다. 변환된 Question 객체에는 원문 그대로의 텍스트와 형식 구조, 문항 이미지가 함께 담깁니다.</p>
+
+<p>이렇게 만들어진 데이터는 다음과 같은 곳에 쓰일 수 있습니다.</p>
+
+<table>
+<tr><th>활용</th><th>방식</th></tr>
+<tr><td>문항 은행 구축</td><td>시험지 아카이브를 문항 단위 Question 객체로 일괄 변환해 검색·분류 가능한 데이터베이스로 저장</td></tr>
+<tr><td>문항 검색 · 유사 문항 추천</td><td>원문 텍스트와 수식·형식 구조를 색인해 조건 검색과 유사도 비교의 입력으로 사용</td></tr>
+<tr><td>난이도 예측</td><td>문항 본문·수식·그림을 예측 모델의 입력으로 사용</td></tr>
+<tr><td>출제 · 검토 보조</td><td>LLM이 Question 객체를 읽어 문항을 검토·생성하고, 결과를 HWPX로 조판해 실무 문서로 전달</td></tr>
+<tr><td>교재 · 시험지 제작</td><td>문항 JSON을 이미지·PDF·HWPX로 조판해 편집 자산으로 사용</td></tr>
+</table>
+
+<p>Pipeline API는 kdsnr-ai Python 라이브러리로 제공되며, 전체 사용법은 <a href="../pipeline.html">Pipeline 문서</a>에 있습니다.</p>
 
 </article>
 
@@ -76,36 +333,37 @@
   const code = document.createElement('code'); code.className = 'language-json';
   pre.appendChild(code);
   root.append(tabs, head, view, pre);
-  const VIEWS = ['검출 화면', '출력 JSON'];
-  let si = 0, vi = 0;
-  VIEWS.forEach((name, i) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.textContent = name;
-    b.onclick = () => { vi = i; render(); };
-    vtabs.appendChild(b);
+  const views = ['검출 화면', '출력 JSON'];
+  let subjectIndex = 0;
+  let viewIndex = 0;
+  views.forEach((name, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = name;
+    button.onclick = () => { viewIndex = index; render(); };
+    vtabs.appendChild(button);
   });
-  data.forEach((d, i) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.textContent = d.tab;
-    b.onclick = () => { si = i; render(); };
-    tabs.appendChild(b);
+  data.forEach((item, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = item.tab;
+    button.onclick = () => { subjectIndex = index; render(); };
+    tabs.appendChild(button);
   });
   function render() {
-    const item = data[si];
-    [...tabs.children].forEach((b, i) => b.classList.toggle('active', i === si));
-    [...vtabs.children].forEach((b, i) => b.classList.toggle('active', i === vi));
+    const item = data[subjectIndex];
+    [...tabs.children].forEach((button, index) => button.classList.toggle('active', index === subjectIndex));
+    [...vtabs.children].forEach((button, index) => button.classList.toggle('active', index === viewIndex));
     title.textContent = item.desc;
-    view.style.display = vi === 0 ? '' : 'none';
-    pre.style.display = vi === 1 ? '' : 'none';
-    if (vi === 0) {
+    view.style.display = viewIndex === 0 ? '' : 'none';
+    pre.style.display = viewIndex === 1 ? '' : 'none';
+    if (viewIndex === 0) {
       view.innerHTML = '';
       item.images.forEach(src => {
-        const im = new Image();
-        im.src = '../' + src;
-        im.alt = item.desc;
-        view.appendChild(im);
+        const image = new Image();
+        image.src = '../' + src;
+        image.alt = item.desc;
+        view.appendChild(image);
       });
       view.scrollTop = 0;
     } else {
@@ -119,22 +377,6 @@
   render();
 })();
 hljs.highlightAll();
-document.querySelectorAll('pre:not(.demo-json), .sig').forEach(el => {
-  const btn = document.createElement('button');
-  btn.className = 'copy-btn';
-  btn.type = 'button';
-  const icoCopy = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
-  const icoDone = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
-  btn.innerHTML = icoCopy;
-  btn.addEventListener('click', () => {
-    const code = el.querySelector('code');
-    navigator.clipboard.writeText((code || el).innerText.trimEnd()).then(() => {
-      btn.innerHTML = icoDone;
-      setTimeout(() => { btn.innerHTML = icoCopy; }, 1200);
-    });
-  });
-  el.appendChild(btn);
-});
 </script>
 
 </body>

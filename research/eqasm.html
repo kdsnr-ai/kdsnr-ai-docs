@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>kdsnr-ai · EqASM 모델 연구·개발</title>
+<title>kdsnr-ai · EqASM</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
@@ -19,13 +19,13 @@
 
 <article class="post">
 
-<h1>EqASM 모델 연구·개발</h1>
+<h1>EqASM</h1>
 <p class="post-sub">흩어진 수식 조각들을 LaTeX로 조립하기</p>
 <p class="post-meta">Model · 2026-07-18 · 작성자 : 권준희</p>
 
-<p>문항 검색과 출제 자동화, 유사 문항 추천, 난이도 예측 등 AI를 이용한 콘텐츠 비즈니스는 잘 구축된 문항 데이터를 전제로 합니다. 종이와 한글 파일에 흩어져 있는 문항을 정확한 디지털 자산으로 변환하는 작업이 그 출발점입니다.</p>
+<p>시험지를 문항 데이터로 변환할 때 가장 까다로운 대상은 수식입니다. 지문과 발문은 글자를 그대로 옮기면 되지만, 수식은 부호 하나만 뒤집혀도 다른 문제가 됩니다. 수학 문항만의 문제도 아닙니다. 화학의 반응식과 이온 표기, 물리학의 단위와 지수처럼, 수능 시험지에서 수식은 과목을 가리지 않고 등장합니다.</p>
 
-<p>이 변환에서 가장 까다로운 대상은 수식입니다. 지문과 발문은 글자를 그대로 옮기면 되지만, 수식은 부호 하나만 뒤집혀도 다른 문제가 됩니다. 최근에는 이미지 속 수식을 LaTeX로 변환하는 작업을 GPT 등 LLM에 맡기는 경우가 많습니다. 하지만 실제 측정 결과 LLM을 이용한 OCR 기반의 수식 인식은 항상 정확하지 않았습니다. 이 글에서는 이러한 문제 상황을 분석하고, 이를 해결하고자 강남대성수능연구소에서 자체 개발한 ML 모델인 EqASM을 소개합니다.</p>
+<p>최근에는 이미지 속 수식을 LaTeX로 변환하는 작업을 GPT 등 LLM에 맡기는 경우가 많습니다. 하지만 실제 측정 결과 LLM을 이용한 OCR 기반의 수식 인식은 항상 정확하지는 않았습니다. 이 글에서는 이러한 문제 상황을 분석하고, 이를 해결하고자 강남대성수능연구소에서 자체 개발한 ML 모델인 EqASM을 소개합니다.</p>
 
 <h2>1. GPT는 수식을 정확하게 읽지 못한다</h2>
 
