@@ -183,8 +183,15 @@ body {
 }
 .content p { margin-bottom: 15px; }
 .content p, .content li { color: var(--text); }
-.content ul { margin: 0 0 12px 20px; }
-.content li { margin-bottom: 4px; }
+.content ul,
+.content ol {
+  margin: 0 0 18px;
+  padding-left: 1.65em;
+}
+.content li {
+  margin-bottom: 6px;
+  padding-left: .18em;
+}
 
 code, pre {
   font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
@@ -499,8 +506,17 @@ td.fields span { color: var(--text-sub); font-size: 13.5px; }
   font-weight: 800;
   letter-spacing: -.015em;
   margin: 56px 0 14px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 .post .shots { margin: 22px 0 30px; }
+.post .shots.compact {
+  width: min(100%, 640px);
+  margin: 24px auto 32px;
+}
+.post .shots.compact-small {
+  width: min(100%, 520px);
+}
 .post .shots.framed img {
   border: 1px solid var(--border);
   border-radius: 10px;

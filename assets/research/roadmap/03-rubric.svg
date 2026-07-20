@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" role="img" aria-labelledby="title desc">
+<title id="title">수능 국어 지문 평가표 예시</title>
+<desc id="desc">개념 정확성, 정보 밀도, 논리 구조, 표현 적절성, 기출 비중복성을 구체적인 판단 기준과 배점으로 나눈 평가표</desc>
+<rect width="960" height="500" fill="#ffffff"/>
+
+<text x="480" y="38" text-anchor="middle" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" font-size="27" font-weight="750" fill="#191f28">수능 국어 지문 평가표 예시</text>
+
+<g transform="translate(30 62)" font-family="Pretendard, Apple SD Gothic Neo, sans-serif" fill="#191f28">
+<rect width="900" height="406" rx="10" fill="#ffffff" stroke="#30343b" stroke-width="2"/>
+<path d="M0 58h900" stroke="#30343b" stroke-width="2"/>
+<path d="M0 116h900M0 174h900M0 232h900M0 290h900M0 348h900" stroke="#d7dce2" stroke-width="1.5"/>
+<path d="M190 0v348M780 0v406" stroke="#d7dce2" stroke-width="1.5"/>
+<path d="M0 58h900" stroke="#30343b" stroke-width="2"/>
+
+<rect x="1" y="1" width="898" height="56" rx="9" fill="#eaf1fb"/>
+<path d="M1 48h898v10H1z" fill="#eaf1fb"/>
+
+<g font-size="19" font-weight="700">
+<text x="95" y="36" text-anchor="middle">평가 항목</text>
+<text x="485" y="36" text-anchor="middle">판단 기준</text>
+<text x="840" y="36" text-anchor="middle">배점</text>
+</g>
+
+<g font-size="17.5">
+<text x="95" y="94" text-anchor="middle" font-weight="650">개념 정확성</text>
+<text x="214" y="94">핵심 개념과 개념 간 관계가 사실에 부합하는가?</text>
+<text x="840" y="94" text-anchor="middle" font-weight="700">25</text>
+
+<text x="95" y="152" text-anchor="middle" font-weight="650">정보 밀도</text>
+<text x="214" y="152">각 문단에 추론에 필요한 정보가 포함되어 있는가?</text>
+<text x="840" y="152" text-anchor="middle" font-weight="700">20</text>
+
+<text x="95" y="210" text-anchor="middle" font-weight="650">논리 구조</text>
+<text x="214" y="210">문단 간 정보를 연결해야 결론을 도출할 수 있는가?</text>
+<text x="840" y="210" text-anchor="middle" font-weight="700">25</text>
+
+<text x="95" y="268" text-anchor="middle" font-weight="650">표현 적절성</text>
+<text x="214" y="268">학술적 문체와 어휘 수준이 일관되게 유지되는가?</text>
+<text x="840" y="268" text-anchor="middle" font-weight="700">15</text>
+
+<text x="95" y="326" text-anchor="middle" font-weight="650">기출 비중복성</text>
+<text x="214" y="326">기존 지문과 소재·구조가 과도하게 겹치지 않는가?</text>
+<text x="840" y="326" text-anchor="middle" font-weight="700">15</text>
+
+<text x="724" y="384" text-anchor="end" font-weight="700">총점</text>
+<text x="840" y="384" text-anchor="middle" font-size="20" font-weight="800" fill="#2b5fd9">100</text>
+</g>
+</g>
+</svg>
