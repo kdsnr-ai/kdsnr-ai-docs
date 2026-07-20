@@ -29,7 +29,7 @@
 
 <h2>1. GPT는 수식을 정확하게 읽지 못한다</h2>
 
-<p>최신 평가원 기출에서 수식 밀도가 높은 수학 5문항(2026 6월 모의평가 15·20번, 2025 수능 미적분 28·30번, 2025 9월 모의평가 미적분 24번)과 화학Ⅰ 5문항(2026 6월 모의평가 9·11·13·19·20번)을 골라, 문항 단위로 잘라낸 동일한 이미지를 OpenAI의 최신 모델 GPT-5.6 두 등급(Sol·Luna)에 문항당 10회씩, 모델당 100회 옮겨 적게 했습니다. 채점은 원본 수식과의 기계 대조로 하되, 불일치로 걸린 출력은 전부 눈으로 재확인해서 <code>\frac{1}{2}</code>과 <code>1/2</code> 같은 단순 표기 차이는 정답으로 인정했습니다.</p>
+<p>최신 평가원 기출에서 수식 밀도가 높은 수학 5문항(2027학년도 6월 모의평가 15·20번, 2026학년도 수능 미적분 28·30번, 2026학년도 9월 모의평가 미적분 24번)과 화학Ⅰ 5문항(2027학년도 6월 모의평가 9·11·13·19·20번)을 골라, 문항 단위로 잘라낸 동일한 이미지를 OpenAI의 최신 모델 GPT-5.6 두 등급(Sol·Luna)에 문항당 10회씩, 모델당 100회 옮겨 적게 했습니다. 채점은 원본 수식과의 기계 대조로 하되, 불일치로 걸린 출력은 전부 눈으로 재확인해서 <code>\frac{1}{2}</code>과 <code>1/2</code> 같은 단순 표기 차이는 정답으로 인정했습니다.</p>
 
 <table>
 <tr><th>모델</th><th>수학 (50회)</th><th>화학 (50회)</th><th>전체 정확도</th><th>10회 일관성</th><th>비용 (100회)</th><th>평균 응답</th></tr>
@@ -40,9 +40,9 @@
 <p>최고 성능 모델이 100회 중 8회를 틀렸고, 경량 모델은 3회 중 1회꼴로 틀렸습니다. 특히 표기가 밀집된 화학에서 경량 모델의 정확도는 절반 아래(23/50)로 떨어집니다. 일관성 수치는 같은 이미지를 열 번 넣었을 때 같은 결과가 나온 비율입니다 — 10회 중 2~3회는 이전 실행과 다른 결과가 나온다는 뜻이기도 합니다. 아래는 실제로 틀린 대표 사례 네 건입니다. 왼쪽 문항 이미지에 붉게 표시한 수식이 문제가 된 대목입니다.</p>
 
 <div class="case">
-  <div class="case-head">사례 1 : 2026학년도 6월 모의평가 수학 20번<span class="cr">저작권 : 한국교육과정평가원</span></div>
+  <div class="case-head">사례 1 : 2027학년도 6월 모의평가 수학 20번<span class="cr">저작권 : 한국교육과정평가원</span></div>
   <div class="case-body">
-    <img src="../assets/research/eqasm/case-m20.png" alt="2026학년도 6월 모의평가 수학 20번">
+    <img src="../assets/research/eqasm/case-m20.png" alt="2027학년도 6월 모의평가 수학 20번">
     <div class="case-right">
       <div class="ans-head">✅ 원본</div>
       <div class="ans-eq">$$g(m)=-\log_b m=\frac{\beta}{\log_m\alpha}=\frac{\beta}{-1+\log_m\beta}$$</div>
@@ -54,9 +54,9 @@
 </div>
 
 <div class="case">
-  <div class="case-head">사례 2 : 2025학년도 수능 미적분 30번<span class="cr">저작권 : 한국교육과정평가원</span></div>
+  <div class="case-head">사례 2 : 2026학년도 수능 미적분 30번<span class="cr">저작권 : 한국교육과정평가원</span></div>
   <div class="case-body">
-    <img src="../assets/research/eqasm/case-m30.png" alt="2025학년도 수능 미적분 30번">
+    <img src="../assets/research/eqasm/case-m30.png" alt="2026학년도 수능 미적분 30번">
     <div class="case-right">
       <div class="ans-head">✅ 원본</div>
       <div class="ans-eq">$$g(a)\times\Bigl(\lim_{m\to a+}g(m)\Bigr)+g(b)\times\Bigl(\frac{\ln b}{b}\Bigr)^2$$</div>
@@ -69,9 +69,9 @@
 </div>
 
 <div class="case">
-  <div class="case-head">사례 3 : 2026학년도 6월 모의평가 화학Ⅰ 11번<span class="cr">저작권 : 한국교육과정평가원</span></div>
+  <div class="case-head">사례 3 : 2027학년도 6월 모의평가 화학Ⅰ 11번<span class="cr">저작권 : 한국교육과정평가원</span></div>
   <div class="case-body">
-    <img src="../assets/research/eqasm/case-c11.png" alt="2026학년도 6월 모의평가 화학Ⅰ 11번">
+    <img src="../assets/research/eqasm/case-c11.png" alt="2027학년도 6월 모의평가 화학Ⅰ 11번">
     <div class="case-right">
       <div class="ans-head">✅ 원본</div>
       <div class="ans-eq">$$\mathrm{X_2}+a\mathrm{Y_2}+b\mathrm{H_2O}\rightarrow 2\mathrm{XO}_m^-+c\mathrm{Y}^{(m-2)-}+d\mathrm{H}^+$$</div>
@@ -85,9 +85,9 @@
 </div>
 
 <div class="case">
-  <div class="case-head">사례 4 : 2026학년도 6월 모의평가 화학Ⅰ 20번<span class="cr">저작권 : 한국교육과정평가원</span></div>
+  <div class="case-head">사례 4 : 2027학년도 6월 모의평가 화학Ⅰ 20번<span class="cr">저작권 : 한국교육과정평가원</span></div>
   <div class="case-body">
-    <img src="../assets/research/eqasm/case-c20.png" alt="2026학년도 6월 모의평가 화학Ⅰ 20번">
+    <img src="../assets/research/eqasm/case-c20.png" alt="2027학년도 6월 모의평가 화학Ⅰ 20번">
     <div class="case-right">
       <div class="ans-head">✅ 원본</div>
       <div class="ans-eq">$$b\times\frac{\text{Ⅱ에서 반응 후 전체 기체의 부피(L)}}{\text{Ⅲ에서 반응 후 전체 기체의 부피(L)}}$$</div>
@@ -178,7 +178,7 @@ consumed = consumed.scatter(1, pos.unsqueeze(1), (~is_struct).unsqueeze(1)) | co
 <p>1번에서 벤치마크에 쓴 시험지들을 EqASM이 탑재된 문항 추출 파이프라인에 그대로 넣었습니다. 아래 왼쪽은 파이프라인이 검출한 수식 영역(초록 상자)이고, 오른쪽은 그 조각들로 EqASM이 조립한 LaTeX를 다시 렌더링한 것입니다. 파란색으로 표시한 부분이 1번에서 GPT가 오독했던 수식입니다.</p>
 
 <div class="case">
-  <div class="case-head">사례 1 : 2026학년도 6월 모의평가 수학 20번<span class="cr">저작권 : 한국교육과정평가원</span></div>
+  <div class="case-head">사례 1 : 2027학년도 6월 모의평가 수학 20번<span class="cr">저작권 : 한국교육과정평가원</span></div>
   <div class="case-body">
     <img src="../assets/research/eqasm/ov-m20.png" alt="수학 20번 수식 영역 검출">
     <div class="case-right">
@@ -190,7 +190,7 @@ consumed = consumed.scatter(1, pos.unsqueeze(1), (~is_struct).unsqueeze(1)) | co
 </div>
 
 <div class="case">
-  <div class="case-head">사례 2 : 2025학년도 수능 미적분 30번<span class="cr">저작권 : 한국교육과정평가원</span></div>
+  <div class="case-head">사례 2 : 2026학년도 수능 미적분 30번<span class="cr">저작권 : 한국교육과정평가원</span></div>
   <div class="case-body">
     <img src="../assets/research/eqasm/ov-m30.png" alt="미적분 30번 수식 영역 검출">
     <div class="case-right">
@@ -202,7 +202,7 @@ consumed = consumed.scatter(1, pos.unsqueeze(1), (~is_struct).unsqueeze(1)) | co
 </div>
 
 <div class="case">
-  <div class="case-head">사례 3 : 2026학년도 6월 모의평가 화학Ⅰ 11번<span class="cr">저작권 : 한국교육과정평가원</span></div>
+  <div class="case-head">사례 3 : 2027학년도 6월 모의평가 화학Ⅰ 11번<span class="cr">저작권 : 한국교육과정평가원</span></div>
   <div class="case-body">
     <img src="../assets/research/eqasm/ov-c11.png" alt="화학Ⅰ 11번 수식 영역 검출">
     <div class="case-right">
@@ -215,7 +215,7 @@ consumed = consumed.scatter(1, pos.unsqueeze(1), (~is_struct).unsqueeze(1)) | co
 </div>
 
 <div class="case">
-  <div class="case-head">사례 4 : 2026학년도 6월 모의평가 화학Ⅰ 20번<span class="cr">저작권 : 한국교육과정평가원</span></div>
+  <div class="case-head">사례 4 : 2027학년도 6월 모의평가 화학Ⅰ 20번<span class="cr">저작권 : 한국교육과정평가원</span></div>
   <div class="case-body">
     <img src="../assets/research/eqasm/ov-c20.png" alt="화학Ⅰ 20번 수식 영역 검출">
     <div class="case-right">
