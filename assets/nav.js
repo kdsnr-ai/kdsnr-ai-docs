@@ -18,10 +18,12 @@
 
   var P = R + 'pipeline.html#';
   var I = R + 'start.html#';
+  var DASH = 'https://kdsnr-ai-dashboard.vercel.app';
   el.innerHTML =
     '<a class="brand" href="' + R + 'research/index.html"><span>KDSNR-AI</span><img src="' + R + 'assets/mark.png" alt=""></a>' +
     '<nav>' +
     group(R + 'research/index.html', 'Research', false, false) +
+    '<a class="group" href="' + DASH + '" target="_blank" rel="noopener">Dashboard</a>' +
     '<div class="nav-head">API Docs</div>' +
     '<div class="nav-tree">' +
     group(R + 'start.html', 'Installation &amp; Start', page === 'start.html', true) +
