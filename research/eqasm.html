@@ -126,7 +126,7 @@
 
 <h2>3. 모델 아키텍처 및 학습 설계</h2>
 
-<p>EqASM은 약 3억 파라미터의 encoder–decoder Transformer입니다. 입력은 수식 영역 안의 글자 조각 집합이고, 조각마다 문자 token과 bounding box 기하 정보를 embedding으로 변환해 더합니다. 조각들이 입력되는 순서에 따른 품질 차이를 해소하고자, 순서 정보는 의도적으로 임베딩에서 제외했습니다.</p>
+<p>EqASM은 약 4.8억 파라미터의 encoder–decoder Transformer입니다. 입력은 수식 영역 안의 글자 조각 집합이고, 조각마다 문자 token과 bounding box 기하 정보를 embedding으로 변환해 더합니다. 조각들이 입력되는 순서에 따른 품질 차이를 해소하고자, 순서 정보는 의도적으로 임베딩에서 제외했습니다.</p>
 
 <figure class="shots single">
   <img src="../assets/research/eqasm/arch.png" alt="EqASM 모델 구조도">
@@ -157,9 +157,9 @@ consumed = consumed.scatter(1, pos.unsqueeze(1), (~is_struct).unsqueeze(1)) | co
 <p>학습은 다음과 같이 진행했습니다.</p>
 
 <ul>
-<li><strong>데이터</strong> — 수작업 라벨링 없음. 자체 조판 엔진이 수식 코드를 실제 PDF로 조판하고, 그 결과에서 (조각 집합 → 정답 LaTeX) 쌍을 자동 생성. 인쇄 공백, 가는 분수 막대, 복합 첨자 등 실제 시험지에서 나타나는 형태를 증강으로 추가.</li>
-<li><strong>인프라</strong> — NVIDIA RTX 5090, PyTorch bfloat16 autocast, 배치 256.</li>
-<li><strong>최적화</strong> — AdamW, cosine decay + warmup, gradient clipping 1.0, 30 epoch.</li>
+<li><strong>데이터</strong> — 수작업 라벨링 없음. 자체 조판 엔진이 수식 코드를 실제 PDF로 조판하고, 그 결과에서 (조각 집합 → 정답 LaTeX) 쌍을 자동 생성. 여기에 기출 시험지 1,196부에서 추출한 실제 수식 약 8만 8천 건을 추가하고, 각 라벨은 다시 조판한 결과를 원본 조각과 좌표로 대조해 검증. 인쇄 공백, 가는 분수 막대, 복합 첨자, 여러 겹으로 중첩된 분수 등 실제 시험지에서 나타나는 형태를 증강으로 추가.</li>
+<li><strong>인프라</strong> — NVIDIA B200, PyTorch bfloat16 autocast, 배치 256.</li>
+<li><strong>최적화</strong> — AdamW, cosine decay + warmup, gradient clipping 1.0, 50 epoch.</li>
 <li><strong>채점</strong> — 출력 LaTeX를 같은 조판 엔진으로 다시 그려 원본 잉크와 픽셀 대조. 사람의 채점 없이 렌더 비교로 정답 여부를 판정.</li>
 </ul>
 
@@ -169,9 +169,9 @@ consumed = consumed.scatter(1, pos.unsqueeze(1), (~is_struct).unsqueeze(1)) | co
   <figcaption>검증셋 학습 곡선. 왼쪽: 출력 LaTeX 문자열이 정답과 정확히 일치한 비율 · 오른쪽: 다시 조판한 렌더가 원본과 일치한 비율</figcaption>
 </figure>
 
-<p>검증 최고치는 LaTeX 문자열 일치 86.9%, 렌더 일치 97.9%<sup>*</sup>입니다. 두 수치의 차이는 같은 모양을 만드는 LaTeX 표기가 여러 가지이기 때문에 생깁니다. 문자열이 달라도 조판 결과가 같으면 정답이므로, 서비스 기준 지표는 렌더 일치입니다.</p>
+<p>검증 최고치는 LaTeX 문자열 일치 87.7%, 렌더 일치 99.6%<sup>*</sup>입니다. 두 수치의 차이는 같은 모양을 만드는 LaTeX 표기가 여러 가지이기 때문에 생깁니다. 문자열이 달라도 조판 결과가 같으면 정답이므로, 서비스 기준 지표는 렌더 일치입니다.</p>
 
-<p class="fig-fn">* 97.9% 수치는 실제 문항에서의 인식 정확도가 아니라, 실제 시험지에는 등장하지 않는 초고난도 수식을 포함한 검증 데이터셋 내에서 측정한 인식 정확도입니다.</p>
+<p class="fig-fn">* 99.6% 수치는 실제 문항에서의 인식 정확도가 아니라, 실제 시험지에는 등장하지 않는 초고난도 수식을 포함한 검증 데이터셋 내에서 측정한 인식 정확도입니다.</p>
 
 <h2>4. 결과</h2>
 
@@ -230,7 +230,7 @@ consumed = consumed.scatter(1, pos.unsqueeze(1), (~is_struct).unsqueeze(1)) | co
 
 <table>
 <tr><th></th><th>GPT-5.6 Sol</th><th>EqASM</th></tr>
-<tr><td>모델 규모</td><td>비공개 (상용 최고 성능)</td><td>약 3억 파라미터</td></tr>
+<tr><td>모델 규모</td><td>비공개 (상용 최고 성능)</td><td>약 4.8억 파라미터</td></tr>
 <tr><td>서빙</td><td>외부 API</td><td>자체 서버리스 GPU</td></tr>
 <tr><td>문항당 평균 처리 시간</td><td>14초</td><td>0.5초</td></tr>
 <tr><td>문항당 비용</td><td>약 $0.02</td><td>약 $0.0002</td></tr>
