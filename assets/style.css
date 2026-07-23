@@ -82,7 +82,7 @@ body {
 }
 .sidebar .group.open .chev::before { transform: rotate(45deg); }
 .sidebar .nav-head {
-  font-size: 12.5px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--text-faint);
   padding: 10px 10px 2px;
@@ -537,6 +537,51 @@ td.fields span { color: var(--text-sub); font-size: 13.5px; }
   border-radius: 10px;
 }
 
+.screenshot-stack {
+  display: grid;
+  gap: 30px;
+  margin: 24px 0 38px;
+}
+.screenshot-stack figure { margin: 0; }
+.screenshot-stack img {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.screenshot-stack figcaption {
+  margin-top: 10px;
+  color: var(--text-faint);
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.screenshot-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 24px 0 38px;
+  align-items: start;
+}
+.screenshot-pair img {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.screenshot-pair figcaption {
+  grid-column: 1 / -1;
+  margin-top: 10px;
+  color: var(--text-faint);
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+@media (max-width: 700px) {
+  .screenshot-pair { grid-template-columns: 1fr; }
+}
+
 .pair {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -743,3 +788,18 @@ pre:hover .copy-btn, .sig:hover .copy-btn { opacity: 1; }
   line-height: 1.6;
   margin: 2px 0 28px;
 }
+
+.nav-badge {
+  display: inline-block;
+  padding: 1px 9px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--bg-code);
+  font-size: 0.9em;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  line-height: 1.5;
+  vertical-align: baseline;
+}
+.nav-badge:hover { border-color: var(--accent); color: var(--accent); }
