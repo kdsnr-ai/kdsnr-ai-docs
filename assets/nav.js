@@ -22,7 +22,7 @@
   el.innerHTML =
     '<a class="brand" href="' + R + 'research/index.html"><span>KDSNR-AI</span><img src="' + R + 'assets/mark.png" alt=""></a>' +
     '<nav>' +
-    group(R + 'research/index.html', 'Research', false, false) +
+    group(R + 'research/index.html', 'Research &amp; Development', false, false) +
     '<a class="group" href="' + DASH + '" target="_blank" rel="noopener">Dashboard</a>' +
     '<div class="nav-head">API Docs</div>' +
     '<div class="nav-tree">' +
@@ -44,6 +44,10 @@
       { href: P + 'hwp-to-pdf', label: 'hwp_to_pdf', sub: true },
       { href: P + 'hwp-to-hwpx', label: 'hwp_to_hwpx', sub: true },
     ]) +
+    '</div>' +
+    '<div class="nav-head">MCP</div>' +
+    '<div class="nav-tree">' +
+    group(R + 'mcp-chatgpt.html', 'Setup', /^mcp-/.test(file), false) +
     '</div>' +
     '</nav>' +
     '<div class="foot">(주)강남대성수능연구소<br>kdsnrai@gmail.com</div>';
