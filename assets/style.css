@@ -957,6 +957,15 @@ pre:hover .copy-btn, .sig:hover .copy-btn { opacity: 1; }
   position: relative;
   padding-left: 54px;
 }
+.setup-info ul {
+  margin: 0;
+  padding-left: 1.2em;
+}
+.setup-info li {
+  margin: 0;
+  color: inherit;
+}
+.setup-info li + li { margin-top: 4px; }
 .setup-info::before {
   content: '!';
   position: absolute;
