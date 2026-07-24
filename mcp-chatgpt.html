@@ -5,20 +5,266 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>kdsnr-ai · MCP Setup</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/style.css?v=20260724-4">
 </head>
 <body>
 
 <aside class="sidebar" id="sidebar">
 </aside>
-<script src="assets/nav.js"></script>
+<script src="assets/nav.js?v=20260724-4"></script>
 
 <main class="content">
 
-<h1>Setup</h1>
-<p>준비 중입니다.</p>
-<p class="fig-fn">(07-28 게시 예정)</p>
+<h1>MCP Setup</h1>
+<p class="lead">kdsnr-ai MCP 연결 안내 페이지입니다.<br>연결·인증은 최초 1회만 진행합니다.</p>
 
+<h2 class="part" id="chatgpt">ChatGPT</h2>
+<section>
+
+<h3>1. Dashboard에서 사용 승인 받기</h3>
+<p>좌측 사이드바의 <a class="nav-badge" href="https://kdsnr-ai-dashboard.vercel.app" target="_blank" rel="noopener">Dashboard</a>를 열고 Google 계정으로 로그인합니다.</p>
+<ol>
+<li>소속과 인적사항을 입력해 승인 요청을 제출합니다.</li>
+<li>관리자 승인이 완료될 때까지 기다립니다.</li>
+<li>승인된 Google 계정을 이후 ChatGPT 연결에도 그대로 사용합니다.</li>
+</ol>
+<div class="note setup-info">Dashboard 승인 계정과 ChatGPT 플러그인 로그인 계정은 같아야 합니다.</div>
+
+<h3>2. 개발자 모드 켜기</h3>
+<p>ChatGPT 좌측 아래의 프로필에서 <strong>설정</strong>을 엽니다. <strong>플러그인 → 개발자 모드</strong>로 이동한 뒤 개발자 모드를 켭니다.</p>
+<div class="setup-gallery three">
+<figure>
+<a href="assets/screenshot/mcp/chatgpt/original/01-account-menu.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/chatgpt/01-account-menu.png" alt="ChatGPT 프로필 메뉴에서 설정을 선택하는 화면"></a>
+<figcaption>프로필에서 설정 열기</figcaption>
+</figure>
+<figure>
+<a href="assets/screenshot/mcp/chatgpt/original/03-plugin-settings.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/chatgpt/03-plugin-settings.png" alt="ChatGPT 설정의 플러그인 메뉴에 개발자 모드 항목이 표시된 화면"></a>
+<figcaption>플러그인에서 개발자 모드 선택</figcaption>
+</figure>
+<figure>
+<a href="assets/screenshot/mcp/chatgpt/original/02-developer-mode.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/chatgpt/02-developer-mode.png" alt="ChatGPT 개발자 모드를 켠 화면"></a>
+<figcaption>개발자 모드 켜기</figcaption>
+</figure>
+</div>
+
+<h3>3. 플러그인 스토어 열기</h3>
+<p>설정을 닫고 ChatGPT 좌측 사이드바에서 <strong>플러그인</strong>을 선택합니다.</p>
+<figure class="setup-figure small">
+<a href="assets/screenshot/mcp/chatgpt/original/04-plugin-menu.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/chatgpt/04-plugin-menu.png" alt="ChatGPT 좌측 사이드바에 플러그인이 표시된 화면"></a>
+<figcaption>좌측 사이드바의 플러그인</figcaption>
+</figure>
+
+<h3>4. 새 플러그인 추가하기</h3>
+<p>플러그인 스토어 우측 상단의 <strong>+</strong> 버튼을 누릅니다.</p>
+<figure class="setup-figure medium">
+<a href="assets/screenshot/mcp/chatgpt/05-plugin-directory.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/chatgpt/05-plugin-directory.png" alt="ChatGPT 플러그인 스토어의 새 플러그인 추가 버튼을 표시한 화면"></a>
+<figcaption>빨간색으로 표시된 + 버튼을 누릅니다.</figcaption>
+</figure>
+
+<h3>5. 플러그인 정보 입력하기</h3>
+<p>새 플러그인 화면에서 아래 항목을 순서대로 설정합니다.</p>
+<table class="setup-config">
+<tr><th>항목</th><th>입력값</th><th>설명</th></tr>
+<tr><td>아이콘</td><td>선택 사항</td><td>아래에서 내려받은 PNG 파일을 사용할 수 있습니다.</td></tr>
+<tr><td>이름</td><td><code>kdsnr-ai</code></td><td>ChatGPT의 플러그인 목록에 표시되는 이름입니다.</td></tr>
+<tr><td>설명</td><td>선택 사항</td><td>입력하지 않아도 됩니다.</td></tr>
+<tr><td>연결</td><td>서버 URL</td><td>터널이 아닌 서버 URL을 선택합니다.</td></tr>
+<tr><td>인증</td><td>OAuth</td><td>고급 OAuth 설정은 변경하지 않습니다.</td></tr>
+</table>
+<p>서버 URL 입력란에는 아래 주소를 그대로 붙여 넣습니다. 마지막으로 위험성 안내 아래의 확인란을 선택하고 <strong>만들기</strong>를 누릅니다.</p>
+<pre><code>https://kdsnr-ai-mcp-223982025046.asia-northeast3.run.app/mcp</code></pre>
+<div class="setup-asset">
+<div class="setup-asset-preview"><img src="assets/download/kdsnr-ai-chatgpt-icon.png" alt="kdsnr-ai 플러그인 아이콘"></div>
+<div class="setup-asset-body">
+<div class="setup-asset-head"><strong>플러그인 아이콘</strong><span>PNG · 512 × 512 · 5.7KB</span></div>
+<p>아이콘은 선택 사항입니다. 필요한 경우 아이콘을 다운로드하여 등록하세요.</p>
+<a class="download-link" href="assets/download/kdsnr-ai-chatgpt-icon.png" download="kdsnr-ai-chatgpt-icon.png"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg><span>아이콘 PNG 다운로드</span></a>
+</div>
+</div>
+<figure class="setup-figure portrait">
+<a href="assets/screenshot/mcp/chatgpt/06-add-plugin.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/chatgpt/06-add-plugin.png" alt="새 플러그인 등록 화면에 kdsnr-ai 이름과 MCP 서버 URL, OAuth 인증을 입력한 화면"></a>
+<figcaption>이름, 서버 URL, OAuth 인증을 확인합니다.</figcaption>
+</figure>
+
+<h3>6. Google 계정으로 로그인하기</h3>
+<p><strong>kdsnr-ai 계정으로 로그인</strong>을 누른 뒤 ChatGPT 계정 접근을 허용합니다.</p>
+<div class="note setup-info">Dashboard에서 관리자 승인을 받은 것과 반드시 같은 Google 계정을 선택합니다.</div>
+<div class="setup-gallery two">
+<figure>
+<a href="assets/screenshot/mcp/chatgpt/original/07-kdsnr-login.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/chatgpt/07-kdsnr-login.png" alt="ChatGPT에 kdsnr-ai를 추가하면서 계정 로그인을 요청하는 화면"></a>
+<figcaption>kdsnr-ai 계정으로 로그인합니다.</figcaption>
+</figure>
+<figure>
+<a href="assets/screenshot/mcp/chatgpt/original/08-chatgpt-access.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/chatgpt/08-chatgpt-access.png" alt="ChatGPT 계정 정보 접근을 허용하는 화면"></a>
+<figcaption>ChatGPT 계정 접근을 허용합니다.</figcaption>
+</figure>
+</div>
+
+<h3>7. 등록 확인하기</h3>
+<p>플러그인 상세 화면에 <strong>연결됨</strong>과 로그인한 계정이 표시되면 등록이 완료된 것입니다.</p>
+<figure class="setup-figure medium">
+<a href="assets/screenshot/mcp/chatgpt/original/09-connected.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/chatgpt/09-connected.png" alt="kdsnr-ai 플러그인이 계정에 연결된 상세 화면"></a>
+<figcaption>연결된 계정과 OAuth 인증 상태를 확인합니다.</figcaption>
+</figure>
+
+<h3>8. 사용하기</h3>
+<h4>대화에 kdsnr-ai 추가</h4>
+<p>새 대화의 입력창에서 <strong>+</strong>를 누르고 <strong>kdsnr-ai</strong>를 선택합니다. 이후 문항 읽기나 HWPX 파일 생성을 평소와 같이 요청합니다.</p>
+<figure class="setup-figure medium">
+<a href="assets/screenshot/mcp/chatgpt/original/10-select-plugin.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/chatgpt/10-select-plugin.png" alt="ChatGPT 입력창의 추가 메뉴에서 kdsnr-ai 플러그인을 선택하는 화면"></a>
+<figcaption>새 대화에서 kdsnr-ai를 선택합니다.</figcaption>
+</figure>
+
+<h4>도구 실행 허용</h4>
+<p>ChatGPT가 kdsnr-ai 기능을 실행하기 전에 확인창을 표시합니다. 한 번만 실행하려면 <strong>이번만 허용</strong>, 이후 같은 확인을 생략하려면 <strong>항상 허용</strong>을 선택합니다.</p>
+<figure class="setup-figure medium">
+<a href="assets/screenshot/mcp/chatgpt/original/11-allow-tool.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/chatgpt/11-allow-tool.png" alt="ChatGPT가 kdsnr-ai 도구 실행 허용을 요청하는 화면"></a>
+<figcaption>실행 범위를 확인하고 허용 방식을 선택합니다.</figcaption>
+</figure>
+
+<h4>결과 파일 확인</h4>
+<p>파일 생성이 끝나면 대화창에 HWPX 파일이 표시됩니다. 파일을 내려받아 한글에서 열면 문장과 수식을 편집할 수 있습니다.</p>
+<div class="setup-gallery two">
+<figure>
+<a href="assets/screenshot/mcp/chatgpt/original/12-download-hwpx.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/chatgpt/12-download-hwpx.png" alt="ChatGPT가 kdsnr-ai를 사용해 만든 HWPX 파일을 반환한 화면"></a>
+<figcaption>대화창에서 HWPX 파일을 내려받습니다.</figcaption>
+</figure>
+<figure>
+<a href="assets/screenshot/mcp/chatgpt/original/13-open-hwpx.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/chatgpt/13-open-hwpx.png" alt="ChatGPT에서 생성한 수학 문항 HWPX 파일을 한글에서 연 화면"></a>
+<figcaption>한글에서 문장과 수식을 편집할 수 있습니다.</figcaption>
+</figure>
+</div>
+
+</section>
+
+<h2 class="part" id="claude">Claude</h2>
+<section>
+
+<h3>1. Dashboard에서 사용 승인 받기</h3>
+<p>좌측 사이드바의 <a class="nav-badge" href="https://kdsnr-ai-dashboard.vercel.app" target="_blank" rel="noopener">Dashboard</a>를 열고 Google 계정으로 로그인합니다.</p>
+<ol>
+<li>소속과 인적사항을 입력해 승인 요청을 제출합니다.</li>
+<li>관리자 승인이 완료될 때까지 기다립니다.</li>
+<li>승인된 Google 계정을 이후 Claude 연결에도 그대로 사용합니다.</li>
+</ol>
+<div class="note setup-info">Dashboard 승인 계정과 Claude 커넥터 로그인 계정은 같아야 합니다.</div>
+
+<h3>2. 커스텀 커넥터 추가 화면 열기</h3>
+<p>Claude 좌측 아래의 계정 메뉴에서 <strong>설정</strong>을 엽니다. <strong>커넥터</strong>로 이동한 뒤 우측 상단의 <strong>추가 → 커스텀 커넥터 추가</strong>를 선택합니다.</p>
+<div class="setup-gallery three">
+<figure>
+<a href="assets/screenshot/mcp/claude/original/01-account-menu.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/01-account-menu.png?v=2" alt="Claude 계정 메뉴에서 설정을 선택하는 화면"></a>
+<figcaption>계정 메뉴에서 설정 열기</figcaption>
+</figure>
+<figure>
+<a href="assets/screenshot/mcp/claude/original/02-connector-settings.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/02-connector-settings.png?v=3" alt="Claude 설정의 커넥터 화면"></a>
+<figcaption>설정에서 커넥터 선택</figcaption>
+</figure>
+<figure>
+<a href="assets/screenshot/mcp/claude/original/03-add-custom-connector.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/03-add-custom-connector.png" alt="Claude의 추가 메뉴에서 커스텀 커넥터 추가를 선택하는 화면"></a>
+<figcaption>커스텀 커넥터 추가 선택</figcaption>
+</figure>
+</div>
+
+<h3>3. 커넥터 정보 입력하기</h3>
+<p>커스텀 커넥터 추가 화면에서 아래 항목을 입력합니다.</p>
+<table class="setup-config">
+<tr><th>항목</th><th>입력값</th><th>설명</th></tr>
+<tr><td>이름</td><td><code>kdsnr-ai</code></td><td>Claude의 커넥터 목록에 표시되는 이름입니다.</td></tr>
+<tr><td>원격 MCP 서버 URL</td><td>아래 주소</td><td>주소 끝의 <code>/mcp</code>까지 입력합니다.</td></tr>
+<tr><td>고급 설정</td><td>입력하지 않음</td><td>OAuth 클라이언트 ID와 시크릿은 비워 둡니다.</td></tr>
+</table>
+<p>원격 MCP 서버 URL 입력란에는 아래 주소를 그대로 붙여 넣고 <strong>추가</strong>를 누릅니다.</p>
+<pre><code>https://kdsnr-ai-mcp-223982025046.asia-northeast3.run.app/mcp</code></pre>
+<figure class="setup-figure medium">
+<a href="assets/screenshot/mcp/claude/original/04-connector-form.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/04-connector-form.png?v=2" alt="Claude 커스텀 커넥터 추가 화면에 이름과 MCP 서버 URL을 입력한 화면"></a>
+<figcaption>이름과 원격 MCP 서버 URL을 입력합니다.</figcaption>
+</figure>
+
+<h3>4. Google 계정으로 연결하기</h3>
+<p>추가된 kdsnr-ai 커넥터에서 <strong>연결</strong>을 누른 뒤 Claude 계정 접근을 허용합니다.</p>
+<div class="note setup-info">Dashboard에서 관리자 승인을 받은 것과 반드시 같은 Google 계정을 선택합니다.</div>
+<div class="setup-gallery two">
+<figure>
+<a href="assets/screenshot/mcp/claude/original/05-connect.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/05-connect.png?v=3" alt="Claude kdsnr-ai 커넥터의 연결 버튼"></a>
+<figcaption>커넥터 상세 화면에서 연결을 누릅니다.</figcaption>
+</figure>
+<figure>
+<a href="assets/screenshot/mcp/claude/original/06-claude-access.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/06-claude-access.png" alt="Claude 계정 정보 접근을 허용하는 화면"></a>
+<figcaption>Claude 계정 접근을 허용합니다.</figcaption>
+</figure>
+</div>
+
+<h3>5. 등록 확인하기</h3>
+<p>커넥터 상세 화면에 <strong>연결 해제</strong> 버튼과 kdsnr-ai 도구 목록이 표시되면 등록이 완료된 것입니다.</p>
+<figure class="setup-figure medium">
+<a href="assets/screenshot/mcp/claude/original/07-connected-tools.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/07-connected-tools.png" alt="Claude kdsnr-ai 커넥터에 연결된 도구 목록"></a>
+<figcaption>연결 상태와 사용할 수 있는 도구를 확인합니다.</figcaption>
+</figure>
+
+<h3>6. 사용하기</h3>
+<h4>대화에 kdsnr-ai 추가</h4>
+<p>새 대화의 입력창에서 <strong>+</strong>를 누르고 <strong>커넥터</strong>에서 <strong>kdsnr-ai</strong>를 켭니다. 이후 문항 읽기나 HWPX 파일 생성을 평소와 같이 요청합니다.</p>
+<figure class="setup-figure medium">
+<a href="assets/screenshot/mcp/claude/original/08-select-connector.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/08-select-connector.png?v=2" alt="Claude 대화에서 kdsnr-ai 커넥터를 켠 화면"></a>
+<figcaption>새 대화에서 kdsnr-ai 커넥터를 켭니다.</figcaption>
+</figure>
+
+<h4>도구 실행 허용</h4>
+<p>Claude가 kdsnr-ai 기능을 실행하기 전에 확인창을 표시합니다. 이후 같은 확인을 생략하려면 <strong>항상 허용</strong>을 선택합니다.</p>
+<figure class="setup-figure medium">
+<a href="assets/screenshot/mcp/claude/original/09-allow-tool.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/09-allow-tool.png?v=3" alt="Claude가 kdsnr-ai 도구 실행 허용을 요청하는 화면"></a>
+<figcaption>실행할 도구를 확인하고 허용합니다.</figcaption>
+</figure>
+
+<h4>결과 파일 확인</h4>
+<p>파일 생성이 끝나면 대화창에서 HWPX 파일을 내려받을 수 있습니다. 내려받은 파일은 한글에서 직접 편집할 수 있습니다.</p>
+<div class="setup-gallery two">
+<figure>
+<a href="assets/screenshot/mcp/claude/original/10-compose-result.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/10-compose-result.png" alt="Claude가 kdsnr-ai를 사용해 HWPX 파일을 생성한 결과 화면"></a>
+<figcaption>Claude가 생성한 내용과 HWPX 파일을 확인합니다.</figcaption>
+</figure>
+<figure>
+<a href="assets/screenshot/mcp/claude/original/11-open-hwpx.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/11-open-hwpx.png" alt="Claude에서 생성한 수학 문항 HWPX 파일을 한글에서 연 화면"></a>
+<figcaption>한글에서 문장과 수식을 편집할 수 있습니다.</figcaption>
+</figure>
+</div>
+
+</section>
+
+<h2 class="part" id="gemini">Gemini</h2>
+<section>
+<p>준비 중입니다.</p>
+</section>
 </main>
+
+<script>
+document.querySelectorAll('pre').forEach(el => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.type = 'button';
+  const icoCopy = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  const icoDone = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  btn.innerHTML = icoCopy;
+  btn.addEventListener('click', () => {
+    navigator.clipboard.writeText(el.querySelector('code').innerText.trimEnd()).then(() => {
+      btn.innerHTML = icoDone;
+      setTimeout(() => { btn.innerHTML = icoCopy; }, 1200);
+    });
+  });
+  el.appendChild(btn);
+});
+const here = location.pathname.split('/').pop() || 'index.html';
+const links = [...document.querySelectorAll('.sidebar li a')].filter(a => a.getAttribute('href').startsWith(here + '#'));
+const secs = links.map(a => document.getElementById(a.getAttribute('href').split('#')[1]));
+function spy() {
+  let cur = 0;
+  secs.forEach((s, i) => { if (s && s.getBoundingClientRect().top < 120) cur = i; });
+  links.forEach((a, i) => a.classList.toggle('active', i === cur));
+}
+addEventListener('scroll', spy, { passive: true });
+spy();
+</script>
+
 </body>
 </html>
