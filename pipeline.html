@@ -71,7 +71,7 @@ client.pipeline.export_preview(
   "instruction": { "type": "Text", "text": "다음 글을 읽고 물음에 답하시오." },
   "passage": [
     { "type": "Text", "text": "&lt;bold&gt;(가)&lt;/bold&gt; 언어는 ..." },
-    { "type": "Figure", "mime": "image/webp", "data": "..." }
+    { "type": "Figure", "format": "webp", "data": "..." }
   ],
   "questions": [
     {
@@ -97,7 +97,7 @@ client.pipeline.export_preview(
 <tr><td><code>metadata</code></td><td>공통</td><td><code>Metadata</code></td><td>번호 · 배점 · 과목 · 라벨 · 발급 id.</td></tr>
 <tr><td><code>source</code></td><td>공통</td><td><code>str | null</code></td><td>원본 pdf를 내려받는 URL (API 키 인증). hwp · hwpx 입력은 변환된 pdf. 직접 작성한 객체는 <code>null</code>.</td></tr>
 <tr><td><code>content</code></td><td><code>Question</code></td><td><code>BodyItem[]</code></td><td>발문 · 자료 · 선지를 읽기 순서대로 담은 블록 리스트.</td></tr>
-<tr><td><code>q_img</code></td><td><code>Question</code></td><td><code>str | null</code></td><td>문항 영역을 잘라낸 PNG 이미지 (base64).</td></tr>
+<tr><td><code>q_img</code></td><td><code>Question</code></td><td><code>str | null</code></td><td>문항 영역을 잘라낸 WebP 이미지 (base64).</td></tr>
 <tr><td><code>instruction</code></td><td><code>QuestionSet</code></td><td><code>Text</code></td><td>세트 지시문.</td></tr>
 <tr><td><code>passage</code></td><td><code>QuestionSet</code></td><td><code>BodyItem[]</code></td><td>지문 블록 리스트.</td></tr>
 <tr><td><code>questions</code></td><td><code>QuestionSet</code></td><td><code>Question[]</code></td><td>소속 문항. 각자 <code>q_id</code>와 <code>q_img</code>를 가집니다.</td></tr>
@@ -131,9 +131,9 @@ client.pipeline.export_preview(
 <div><code>content</code><span>내부 블록 리스트</span></div>
 </td></tr>
 <tr><td><code>Figure</code></td><td>그림·드로잉의 래스터 이미지.</td><td class="fields">
-<div><code>mime</code><span>이미지 형식 — image/webp</span></div>
-<div><code>data</code><span>base64 이미지</span></div>
-<div><code>svg</code><span>SVG 원문. <code>data</code> 대신 씁니다 (입력 전용)</span></div>
+<div><code>format</code><span>그림 형식 — <code>png</code> · <code>jpeg</code> · <code>webp</code> · <code>svg</code></span></div>
+<div><code>data</code><span>base64 이미지 (<code>svg</code>일 때는 SVG 원문)</span></div>
+<div><code>url</code><span>그림 주소. <code>data</code> 대신 씁니다 (입력 전용)</span></div>
 <div><code>width</code> <code>height</code><span>표시 크기 (pt)</span></div>
 <div><code>content</code><span>그림 내부에서 복원된 블록 리스트</span></div>
 </td></tr>
@@ -303,8 +303,8 @@ paths: list[Path] = client.pipeline.compose_hwpx(
 <tr><td><code>export_dir</code></td><td><code>str | Path</code></td><td>—</td><td>산출 파일 디렉터리.</td></tr>
 </table>
 <p>문항·세트 하나가 hwpx 파일 하나가 됩니다. 결과물은 표준 서식으로 새로 조판된 문서이며, 원본 지면의 배치를 복원하지 않습니다.</p>
-<p>그림을 직접 넣을 때는 <code>Figure</code> 블록의 <code>data</code>에 base64 이미지를 넣거나, <code>svg</code>에 SVG 원문을 넣습니다. SVG는 조판 직전에 150dpi 이미지로 그려지므로 좌표축·눈금·라벨이 적은 값 그대로 들어갑니다. <code>width</code> · <code>height</code>를 생략하면 SVG 크기에서 계산하며 최대 폭은 단 폭(317pt)입니다.</p>
-<p>SVG 안의 글꼴은 본문과 같은 두 갈래로만 지정합니다 — <code>font-family="1"</code>이 명조, <code>font-family="2"</code>가 돋움이고, 다른 글꼴 이름을 적으면 이 둘 중 하나로 바뀝니다.</p>
+<h4>Figure 입력</h4>
+<p>직접 작성한 문항에 그림을 넣을 때 <code>Figure</code> 블록에 쓰는 필드입니다.</p>
 <pre><code class="language-python">questions = [
     {
         "type": "Question",
@@ -313,7 +313,8 @@ paths: list[Path] = client.pipeline.compose_hwpx(
             {"type": "Text", "text": "다음 그래프를 보고 물음에 답하시오."},
             {
                 "type": "Figure",
-                "svg": (
+                "format": "svg",
+                "data": (
                     '&lt;svg xmlns="http://www.w3.org/2000/svg" width="240" height="160"&gt;'
                     '&lt;line x1="30" y1="130" x2="220" y2="130" stroke="black"/&gt;'
                     '&lt;line x1="30" y1="130" x2="30" y2="20" stroke="black"/&gt;'
@@ -326,6 +327,19 @@ paths: list[Path] = client.pipeline.compose_hwpx(
 ]
 
 paths: list[Path] = client.pipeline.compose_hwpx(questions, "out/hwpx")</code></pre>
+<table>
+<tr><th>필드</th><th>타입</th><th>설명</th></tr>
+<tr><td><code>format</code></td><td><code>str</code></td><td><code>png</code> · <code>jpeg</code> · <code>webp</code> · <code>svg</code>. <code>data</code>를 SVG 원문으로 읽을지만 정하고, 이미지 형식은 실제 내용에서 판정하므로 생략해도 됩니다.</td></tr>
+<tr><td><code>data</code></td><td><code>str</code></td><td>base64 이미지(<code>data:</code> 접두사 없음). <code>format</code>이 <code>svg</code>면 SVG 원문을 씁니다 — 조판 직전 150dpi 이미지로 그려지므로 좌표축 · 눈금 · 라벨이 적은 값 그대로 들어갑니다.</td></tr>
+<tr><td><code>url</code></td><td><code>str</code></td><td>공개 <code>https://</code> 그림 주소. <code>data</code>와 함께 쓸 수 없습니다.</td></tr>
+<tr><td><code>width</code> <code>height</code></td><td><code>float</code></td><td>표시 크기(pt). 생략하면 SVG 크기 또는 이미지 비율에서 계산하며, 최대 폭은 단 폭 317pt입니다.</td></tr>
+</table>
+<p>SVG 안의 글자는 본문과 같은 두 갈래로 지정합니다. 다른 글꼴 이름을 적으면 이 둘 중 하나로 바뀝니다.</p>
+<table>
+<tr><th><code>font-family</code></th><th>글꼴</th></tr>
+<tr><td><code>"1"</code></td><td>명조 — 지정하지 않을 때의 기본값</td></tr>
+<tr><td><code>"2"</code></td><td>돋움</td></tr>
+</table>
 </section>
 
 <section id="hwp-to-pdf">
