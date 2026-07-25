@@ -203,6 +203,7 @@ questions: list[Question | QuestionSet] = client.pipeline.extract_question(
     doc,
     subject="auto",
     q_img_dpi=150,
+    q_img=True,
 )
 
 for q in questions:
@@ -213,6 +214,7 @@ for q in questions:
 <tr><td><code>subject</code></td><td><code>str</code></td><td><code>"auto"</code></td><td><code>korean</code> · <code>math</code> · <code>social</code> · <code>science</code> (별칭 <code>kor</code> · <code>mat</code> · <code>soc</code> · <code>sci</code>). <code>auto</code>는 문항 단위 자동 분류.</td></tr>
 <tr><td><code>emit_overlay</code></td><td><code>EmitOverlayConfig | None</code></td><td><code>None</code></td><td>지정하면 검출 박스를 그린 pdf를 함께 반환. 반환형이 <code>ExtractResult</code>로 바뀝니다.</td></tr>
 <tr><td><code>q_img_dpi</code></td><td><code>int</code></td><td><code>150</code></td><td>문항 이미지(<code>q_img</code>)의 래스터 해상도.</td></tr>
+<tr><td><code>q_img</code></td><td><code>bool</code></td><td><code>True</code></td><td><code>False</code>면 문항 이미지를 만들지 않습니다. 텍스트 구조만 필요할 때 응답 크기와 처리 시간이 줄어듭니다.</td></tr>
 </table>
 <p>결과는 지면의 읽기 순서를 따릅니다. 각 문항에는 id(<code>metadata.q_id</code> · <code>set_id</code>), 원본 pdf 링크(<code>source</code>), 문항 이미지(<code>q_img</code>)가 담깁니다. 경고(텍스트층 품질 등)는 파이썬 <code>warnings</code>로 전달됩니다.</p>
 <h4>EmitOverlayConfig</h4>
