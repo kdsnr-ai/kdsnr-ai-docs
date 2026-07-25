@@ -133,6 +133,7 @@ client.pipeline.export_preview(
 <tr><td><code>Figure</code></td><td>그림·드로잉의 래스터 이미지.</td><td class="fields">
 <div><code>mime</code><span>이미지 형식 — image/webp</span></div>
 <div><code>data</code><span>base64 이미지</span></div>
+<div><code>svg</code><span>SVG 원문. <code>data</code> 대신 씁니다 (입력 전용)</span></div>
 <div><code>width</code> <code>height</code><span>표시 크기 (pt)</span></div>
 <div><code>content</code><span>그림 내부에서 복원된 블록 리스트</span></div>
 </td></tr>
@@ -302,6 +303,29 @@ paths: list[Path] = client.pipeline.compose_hwpx(
 <tr><td><code>export_dir</code></td><td><code>str | Path</code></td><td>—</td><td>산출 파일 디렉터리.</td></tr>
 </table>
 <p>문항·세트 하나가 hwpx 파일 하나가 됩니다. 결과물은 표준 서식으로 새로 조판된 문서이며, 원본 지면의 배치를 복원하지 않습니다.</p>
+<p>그림을 직접 넣을 때는 <code>Figure</code> 블록의 <code>data</code>에 base64 이미지를 넣거나, <code>svg</code>에 SVG 원문을 넣습니다. SVG는 조판 직전에 150dpi 이미지로 그려지므로 좌표축·눈금·라벨이 적은 값 그대로 들어갑니다. <code>width</code> · <code>height</code>를 생략하면 SVG 크기에서 계산하며 최대 폭은 단 폭(317pt)입니다.</p>
+<p>SVG 안의 글꼴은 본문과 같은 두 갈래로만 지정합니다 — <code>font-family="1"</code>이 명조, <code>font-family="2"</code>가 돋움이고, 다른 글꼴 이름을 적으면 이 둘 중 하나로 바뀝니다.</p>
+<pre><code class="language-python">questions = [
+    {
+        "type": "Question",
+        "metadata": {"q_num": 1},
+        "content": [
+            {"type": "Text", "text": "다음 그래프를 보고 물음에 답하시오."},
+            {
+                "type": "Figure",
+                "svg": (
+                    '&lt;svg xmlns="http://www.w3.org/2000/svg" width="240" height="160"&gt;'
+                    '&lt;line x1="30" y1="130" x2="220" y2="130" stroke="black"/&gt;'
+                    '&lt;line x1="30" y1="130" x2="30" y2="20" stroke="black"/&gt;'
+                    '&lt;text x="120" y="148" font-family="1" font-size="10"&gt;시간 t (초)&lt;/text&gt;'
+                    "&lt;/svg&gt;"
+                ),
+            },
+        ],
+    }
+]
+
+paths: list[Path] = client.pipeline.compose_hwpx(questions, "out/hwpx")</code></pre>
 </section>
 
 <section id="hwp-to-pdf">
