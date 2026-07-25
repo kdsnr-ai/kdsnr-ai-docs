@@ -809,6 +809,11 @@ pre:hover .copy-btn, .sig:hover .copy-btn { opacity: 1; }
   margin: 2px 0 28px;
 }
 
+.fn-below span.fig-fn {
+  display: block;
+  margin: 2px 0 0;
+}
+
 .nav-badge {
   display: inline-block;
   padding: 1px 9px;
@@ -833,6 +838,7 @@ pre:hover .copy-btn, .sig:hover .copy-btn { opacity: 1; }
 }
 .setup-gallery.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .setup-gallery.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.setup-gallery.fit { grid-template-columns: var(--cols, repeat(2, minmax(0, 1fr))); }
 .setup-gallery figure,
 .setup-figure { margin: 0; min-width: 0; }
 .setup-gallery figure {
@@ -987,6 +993,7 @@ pre:hover .copy-btn, .sig:hover .copy-btn { opacity: 1; }
 
 @media (max-width: 640px) {
   .setup-gallery.two,
+  .setup-gallery.fit,
   .setup-gallery.three { grid-template-columns: 1fr; }
   .setup-gallery.three figure { width: min(100%, 300px); margin: 0 auto; }
   .setup-asset { align-items: flex-start; }
