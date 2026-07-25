@@ -47,11 +47,11 @@
     '</div>' +
     '<div class="nav-head">MCP</div>' +
     '<div class="nav-tree">' +
-    group(R + 'mcp-chatgpt.html', '<span class="group-label">Setup <span class="nav-new">NEW</span></span>', /^mcp-/.test(file), true) +
+    group(R + 'mcp-setup.html', '<span class="group-label">Setup <span class="nav-new">NEW</span></span>', /^mcp-/.test(file), true) +
     items([
-      { href: R + 'mcp-chatgpt.html#chatgpt', label: 'ChatGPT' },
-      { href: R + 'mcp-chatgpt.html#claude', label: 'Claude' },
-      { href: R + 'mcp-chatgpt.html#gemini', label: 'Gemini' },
+      { href: R + 'mcp-setup.html#chatgpt', label: 'ChatGPT' },
+      { href: R + 'mcp-setup.html#claude', label: 'Claude' },
+      { href: R + 'mcp-setup.html#gemini', label: 'Gemini' },
     ]) +
     '</div>' +
     '</nav>' +

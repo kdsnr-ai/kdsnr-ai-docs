@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>kdsnr-ai · MCP Setup</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="assets/style.css?v=20260724-5">
+<link rel="stylesheet" href="assets/style.css?v=20260725-2">
 </head>
 <body>
 
@@ -234,7 +234,107 @@
 
 <h2 class="part" id="gemini">Gemini</h2>
 <section>
-<p>준비 중입니다.</p>
+
+<div class="note setup-info">Gemini의 경우, MCP 서버를 연결하기 위해서는 Spark 서비스 이용이 가능한 Gemini 유료 요금제를 구독해야 합니다. <span class="fig-fn">2026년 7월 기준</span> 자세한 내용은 <a href="https://gemini.google/kr/subscriptions/" target="_blank" rel="noopener">여기</a>를 참고해 주세요.</div>
+
+<h3>1. Dashboard에서 사용 승인 받기</h3>
+<p>좌측 사이드바의 <a class="nav-badge" href="https://kdsnr-ai-dashboard.vercel.app" target="_blank" rel="noopener">Dashboard</a>를 열고 Google 계정으로 로그인합니다.</p>
+<ol>
+<li>소속과 인적사항을 입력해 승인 요청을 제출합니다.</li>
+<li>관리자 승인이 완료될 때까지 기다립니다.</li>
+<li>승인된 Google 계정을 이후 Gemini 연결에도 그대로 사용합니다.</li>
+</ol>
+<div class="note setup-info">Dashboard 승인 계정과 Gemini 로그인 계정은 같아야 합니다.</div>
+
+<h3>2. Spark의 연결된 앱 열기</h3>
+<p>Gemini 좌측 위의 <strong>Spark</strong> 탭을 눌러 Spark 모드로 전환합니다. 맞춤설정의 <strong>연결된 앱</strong>으로 이동한 뒤, 화면 가운데의 <strong>맞춤 앱</strong> 탭을 선택합니다.</p>
+<div class="setup-gallery three">
+<figure>
+<a href="assets/screenshot/mcp/gemini/original/01-spark-mode.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/gemini/01-spark-mode.png" alt="Gemini 좌측 사이드바에서 Spark 모드로 전환하는 화면"></a>
+<figcaption>Spark 모드로 전환</figcaption>
+</figure>
+<figure>
+<a href="assets/screenshot/mcp/gemini/original/02-connected-apps.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/gemini/02-connected-apps.png" alt="Spark 모드의 맞춤설정에서 연결된 앱을 선택하는 화면"></a>
+<figcaption>맞춤설정에서 연결된 앱 선택</figcaption>
+</figure>
+<figure>
+<a href="assets/screenshot/mcp/gemini/original/03-custom-app-tab.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/gemini/03-custom-app-tab.png" alt="연결된 앱 화면에서 맞춤 앱 탭을 선택한 화면"></a>
+<figcaption>맞춤 앱 탭 선택</figcaption>
+</figure>
+</div>
+
+<h3>3. 서버 URL 입력하기</h3>
+<p><strong>Spark용 커스텀 앱</strong>의 링크 입력란에 아래 주소를 그대로 붙여 넣고 <strong>다음</strong>을 누릅니다. 이어지는 <strong>맞춤 연결된 앱 설정</strong> 창에서도 주소를 확인한 뒤 <strong>다음</strong>을 누릅니다.</p>
+<pre><code>https://kdsnr-ai-mcp-223982025046.asia-northeast3.run.app/mcp</code></pre>
+<table class="setup-config">
+<tr><th>항목</th><th>입력값</th><th>설명</th></tr>
+<tr><td>맞춤 앱 링크</td><td>위 주소</td><td>주소 끝의 <code>/mcp</code>까지 입력합니다.</td></tr>
+<tr><td>고급 설정</td><td>입력하지 않음</td><td>OAuth 클라이언트 ID와 시크릿은 비워 둡니다.</td></tr>
+</table>
+<div class="setup-gallery fit" style="--cols: 2.04fr 1.23fr">
+<figure>
+<a href="assets/screenshot/mcp/gemini/original/04-app-url.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/gemini/04-app-url.png" alt="Spark용 커스텀 앱 화면의 링크 입력란에 MCP 서버 주소를 입력한 화면"></a>
+<figcaption>맞춤 앱 링크에 서버 URL을 붙여 넣습니다.</figcaption>
+</figure>
+<figure>
+<a href="assets/screenshot/mcp/gemini/original/05-app-settings.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/gemini/05-app-settings.png" alt="맞춤 연결된 앱 설정 창에 입력된 MCP 서버 주소와 고급 설정 항목"></a>
+<figcaption>고급 설정은 그대로 두고 다음을 누릅니다.</figcaption>
+</figure>
+</div>
+
+<h3>4. Google 계정으로 연결하기</h3>
+<p><strong>이 MCP 서버 연결</strong> 창에서 계정을 확인하고 <strong>연결</strong>을 누릅니다. 이어서 Google 계정 연결 화면에서 <strong>계속</strong>, kdsnr-ai 로그인 화면에서 <strong>액세스 허용</strong>을 차례로 누릅니다.</p>
+<div class="note setup-info">Dashboard에서 관리자 승인을 받은 것과 반드시 같은 Google 계정을 선택합니다.</div>
+<div class="setup-gallery three">
+<figure>
+<a href="assets/screenshot/mcp/gemini/original/06-connect-server.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/gemini/06-connect-server.png" alt="이 MCP 서버 연결 창에서 계정과 수행 항목을 확인하는 화면"></a>
+<figcaption>연결할 서버와 계정을 확인합니다.</figcaption>
+</figure>
+<figure>
+<a href="assets/screenshot/mcp/gemini/original/07-google-link.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/gemini/07-google-link.png" alt="Google 계정을 맞춤 앱에 연결할지 묻는 화면"></a>
+<figcaption>Google 계정 연결을 계속합니다.</figcaption>
+</figure>
+<figure>
+<a href="assets/screenshot/mcp/gemini/original/08-kdsnr-access.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/gemini/08-kdsnr-access.png" alt="kdsnr-ai 계정 정보 접근을 허용하는 화면"></a>
+<figcaption>계정 접근을 허용합니다.</figcaption>
+</figure>
+</div>
+
+<h3>5. 이름 확인하고 저장하기</h3>
+<p><strong>맞춤 앱 저장</strong> 창에서 이름이 <code>kdsnr-ai</code>인지 확인하고, 사용할 수 있는 작업 목록이 표시되면 <strong>연결</strong>을 누릅니다.</p>
+<figure class="setup-figure medium">
+<a href="assets/screenshot/mcp/gemini/original/09-save-app.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/gemini/09-save-app.png" alt="맞춤 앱 저장 창에 kdsnr-ai 이름과 사용 가능한 작업 목록이 표시된 화면"></a>
+<figcaption>이름과 사용 가능한 작업을 확인합니다.</figcaption>
+</figure>
+
+<h3>6. 등록 확인하기</h3>
+<p>Spark용 커스텀 앱 목록에 kdsnr-ai 카드가 켜진 상태로 표시되면 등록이 완료된 것입니다.</p>
+<figure class="setup-figure medium">
+<a href="assets/screenshot/mcp/gemini/original/10-connected.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/gemini/10-connected.png" alt="Spark용 커스텀 앱 목록에 연결된 kdsnr-ai 카드가 표시된 화면"></a>
+<figcaption>연결 상태와 마지막 동기화 시각을 확인합니다.</figcaption>
+</figure>
+
+<h3>7. 사용하기</h3>
+<h4>작업 요청하기</h4>
+<p>Spark 모드에서 문항 읽기나 HWPX 파일 생성을 평소와 같이 요청합니다. Gemini가 kdsnr-ai 기능을 실행하기 전에 확인창을 표시하면 <strong>Allow</strong>를 누릅니다.</p>
+<figure class="setup-figure medium">
+<a href="assets/screenshot/mcp/gemini/original/11-allow-tool.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/gemini/11-allow-tool.png" alt="Gemini가 kdsnr-ai 도구 실행 허용을 요청하는 화면"></a>
+<figcaption>실행할 도구를 확인하고 허용합니다.</figcaption>
+</figure>
+
+<h4>결과 파일 확인</h4>
+<p>파일 생성이 끝나면 HWPX 다운로드 링크가 표시됩니다. 링크는 1시간 동안 유효하므로 그 안에 파일을 내려받습니다. 내려받은 파일은 한글에서 직접 편집할 수 있습니다.</p>
+<div class="setup-gallery two">
+<figure>
+<a href="assets/screenshot/mcp/gemini/original/12-compose-result.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/gemini/12-compose-result.png" alt="Gemini가 kdsnr-ai로 만든 HWPX 파일 다운로드 링크와 문항 구성 요약을 표시한 화면"></a>
+<figcaption>다운로드 링크와 생성된 문항 구성을 확인합니다.</figcaption>
+</figure>
+<figure>
+<a href="assets/screenshot/mcp/gemini/original/13-open-hwpx.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/gemini/13-open-hwpx.png" alt="Gemini에서 생성한 수학 문항 HWPX 파일을 한글에서 연 화면"></a>
+<figcaption>한글에서 문장과 수식을 편집할 수 있습니다.</figcaption>
+</figure>
+</div>
+
 </section>
 </main>
 
