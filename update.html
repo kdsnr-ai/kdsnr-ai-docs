@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kdsnr-ai · Update</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="assets/style.css?v=20260726-3">
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+</aside>
+<script src="assets/nav.js?v=20260726-3"></script>
+
+<main class="content">
+
+<h1>Update</h1>
+<p class="lead">서비스 변경 내역입니다.</p>
+
+<div class="note">
+<p class="note-head">수동 업데이트 필요 시 진행 방법</p>
+<ul class="note-list">
+<li>API : <code>pip install -U kdsnr-ai</code>를 실행합니다.</li>
+<li>MCP : 연결된 앱에서 커넥터를 새로고침합니다.</li>
+</ul>
+</div>
+
+<h2 class="part" id="v20260726">2026.07.26</h2>
+<section>
+<table class="update">
+<colgroup>
+<col class="w-svc"><col class="w-kind"><col><col class="w-api"><col class="w-api">
+</colgroup>
+<thead>
+<tr>
+<th rowspan="2">서비스</th>
+<th rowspan="2">유형</th>
+<th rowspan="2">내용</th>
+<th colspan="2" class="c">수동 업데이트 필요</th>
+</tr>
+<tr>
+<th class="c sub">API</th>
+<th class="c sub">MCP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pipeline</td>
+<td>버그 수정</td>
+<td>국어 시험지에서 세트 지시문과 문항 검출이 정확하지 않던 문제를 보완했습니다.</td>
+<td class="c">불필요</td>
+<td class="c">불필요</td>
+</tr>
+<tr>
+<td>Pipeline</td>
+<td>버그 수정</td>
+<td>문항 이미지에 시험지 하단 안내문이 함께 잘려 들어가던 문제를 수정했습니다.</td>
+<td class="c">불필요</td>
+<td class="c">불필요</td>
+</tr>
+<tr>
+<td>MCP</td>
+<td>신규 기능</td>
+<td>Gemini를 지원합니다. 연결 방법은 <a href="mcp-setup.html#gemini">MCP 연결</a>을 참고하세요.</td>
+<td class="c">불필요</td>
+<td class="c">불필요</td>
+</tr>
+<tr>
+<td>MCP</td>
+<td>성능 개선</td>
+<td>응답 안정성과 속도를 개선했습니다.</td>
+<td class="c">불필요</td>
+<td class="c">불필요</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<h2 class="part" id="v20260725">2026.07.25</h2>
+<section>
+<table class="update">
+<colgroup>
+<col class="w-svc"><col class="w-kind"><col><col class="w-api"><col class="w-api">
+</colgroup>
+<thead>
+<tr>
+<th rowspan="2">서비스</th>
+<th rowspan="2">유형</th>
+<th rowspan="2">내용</th>
+<th colspan="2" class="c">수동 업데이트 필요</th>
+</tr>
+<tr>
+<th class="c sub">API</th>
+<th class="c sub">MCP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client</td>
+<td>신규 기능</td>
+<td>Figure의 <code>mime</code> 필드를 없애고 <code>format</code> 필드로 통일했습니다. 이미지 형식은 파일 내용으로 판정하므로 <code>format</code>을 지정하지 않아도 됩니다. (0.1.5)</td>
+<td class="c need">필요</td>
+<td class="c">불필요</td>
+</tr>
+<tr>
+<td>Pipeline</td>
+<td>성능 개선</td>
+<td>추출 처리 속도를 최적화해 소요 시간을 절반 수준으로 줄였습니다. 산출 결과는 이전과 동일합니다.</td>
+<td class="c">불필요</td>
+<td class="c">불필요</td>
+</tr>
+<tr>
+<td>Pipeline</td>
+<td>성능 개선</td>
+<td>이미지 출력 형식을 무손실 WebP로 바꿔 응답 크기를 줄였습니다. 화질 손실은 없습니다.</td>
+<td class="c">불필요</td>
+<td class="c">불필요</td>
+</tr>
+<tr>
+<td>Pipeline</td>
+<td>버그 수정</td>
+<td>한글이 분자·분모로 들어간 분수, 표 안의 그림, 문단 경계 인식 오류를 수정했습니다.</td>
+<td class="c">불필요</td>
+<td class="c">불필요</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+</main>
+
+<script>
+document.querySelectorAll('pre').forEach(el => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.type = 'button';
+  const icoCopy = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  const icoDone = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  btn.innerHTML = icoCopy;
+  btn.addEventListener('click', () => {
+    navigator.clipboard.writeText(el.querySelector('code').innerText.trimEnd()).then(() => {
+      btn.innerHTML = icoDone;
+      setTimeout(() => { btn.innerHTML = icoCopy; }, 1200);
+    });
+  });
+  el.appendChild(btn);
+});
+</script>
+
+</body>
+</html>
