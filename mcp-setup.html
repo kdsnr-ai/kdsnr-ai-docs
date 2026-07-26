@@ -202,18 +202,28 @@
 <figcaption>연결 상태와 사용할 수 있는 도구를 확인합니다.</figcaption>
 </figure>
 
-<h3>6. 사용하기</h3>
+<h3>6. 파일 업로드 허용하기</h3>
+<p>Claude는 대화에 첨부한 파일을 커넥터로 바로 넘기지 못합니다. 대신 Claude가 파일을 kdsnr-ai 저장소로 직접 올릴 수 있도록, 설정에서 네트워크 사용을 한 번 허용합니다.</p>
+<div class="note setup-info">사용자가 Claude에 첨부한 <strong>파일에 한해서만</strong> kdsnr-ai 서버로 전송됩니다.<br>전송된 파일은 1시간 이내 자동 삭제되며, 채팅 내용 및 개인정보에 대한 접근은 일절 불가능합니다.</div>
+<p><strong>설정 → 기능</strong>에서 <strong>네트워크 송신 허용</strong>을 켭니다. <strong>추가 허용 도메인</strong> 입력란에는 아래 주소를 그대로 붙여 넣고 <strong>추가</strong>를 누릅니다.</p>
+<pre><code>storage.googleapis.com</code></pre>
+<figure class="setup-figure medium">
+<a href="assets/screenshot/mcp/claude/original/08-network-egress.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/08-network-egress.png" alt="Claude 설정의 기능 화면에서 네트워크 송신 허용을 켜고 추가 허용 도메인에 storage.googleapis.com을 입력한 화면"></a>
+<figcaption>네트워크 송신을 켜고 허용 도메인을 추가합니다.</figcaption>
+</figure>
+
+<h3>7. 사용하기</h3>
 <h4>대화에 kdsnr-ai 추가</h4>
 <p>새 대화의 입력창에서 <strong>+</strong>를 누르고 <strong>커넥터</strong>에서 <strong>kdsnr-ai</strong>를 켭니다. 이후 문항 읽기나 HWPX 파일 생성을 평소와 같이 요청합니다.</p>
 <figure class="setup-figure medium">
-<a href="assets/screenshot/mcp/claude/original/08-select-connector.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/08-select-connector.png?v=2" alt="Claude 대화에서 kdsnr-ai 커넥터를 켠 화면"></a>
+<a href="assets/screenshot/mcp/claude/original/09-select-connector.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/09-select-connector.png?v=2" alt="Claude 대화에서 kdsnr-ai 커넥터를 켠 화면"></a>
 <figcaption>새 대화에서 kdsnr-ai 커넥터를 켭니다.</figcaption>
 </figure>
 
 <h4>도구 실행 허용</h4>
 <p>Claude가 kdsnr-ai 기능을 실행하기 전에 확인창을 표시합니다. 이후 같은 확인을 생략하려면 <strong>항상 허용</strong>을 선택합니다.</p>
 <figure class="setup-figure medium">
-<a href="assets/screenshot/mcp/claude/original/09-allow-tool.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/09-allow-tool.png?v=3" alt="Claude가 kdsnr-ai 도구 실행 허용을 요청하는 화면"></a>
+<a href="assets/screenshot/mcp/claude/original/10-allow-tool.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/10-allow-tool.png?v=3" alt="Claude가 kdsnr-ai 도구 실행 허용을 요청하는 화면"></a>
 <figcaption>실행할 도구를 확인하고 허용합니다.</figcaption>
 </figure>
 
@@ -221,11 +231,11 @@
 <p>파일 생성이 끝나면 대화창에서 HWPX 파일을 내려받을 수 있습니다. 내려받은 파일은 한글에서 직접 편집할 수 있습니다.</p>
 <div class="setup-gallery two">
 <figure>
-<a href="assets/screenshot/mcp/claude/original/10-compose-result.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/10-compose-result.png" alt="Claude가 kdsnr-ai를 사용해 HWPX 파일을 생성한 결과 화면"></a>
+<a href="assets/screenshot/mcp/claude/original/11-compose-result.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/11-compose-result.png" alt="Claude가 kdsnr-ai를 사용해 HWPX 파일을 생성한 결과 화면"></a>
 <figcaption>Claude가 생성한 내용과 HWPX 파일을 확인합니다.</figcaption>
 </figure>
 <figure>
-<a href="assets/screenshot/mcp/claude/original/11-open-hwpx.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/11-open-hwpx.png" alt="Claude에서 생성한 수학 문항 HWPX 파일을 한글에서 연 화면"></a>
+<a href="assets/screenshot/mcp/claude/original/12-open-hwpx.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/12-open-hwpx.png" alt="Claude에서 생성한 수학 문항 HWPX 파일을 한글에서 연 화면"></a>
 <figcaption>한글에서 문장과 수식을 편집할 수 있습니다.</figcaption>
 </figure>
 </div>
