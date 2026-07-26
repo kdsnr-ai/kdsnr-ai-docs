@@ -301,6 +301,7 @@ table.update col.w-svc { width: 104px; }
 table.update col.w-kind { width: 96px; }
 table.update col.w-api { width: 80px; }
 table.update td.need { color: var(--accent); font-weight: 600; }
+table.update td.new { color: var(--accent); font-weight: 600; }
 
 td.fields div {
   display: flex;
