@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>kdsnr-ai · Pipeline</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/style.css?v=20260726-3">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
 </head>
 <body>
 
 <aside class="sidebar" id="sidebar">
 </aside>
-<script src="assets/nav.js"></script>
+<script src="assets/nav.js?v=20260726-3"></script>
 
 <main class="content">
 
@@ -304,7 +304,9 @@ paths: list[Path] = client.pipeline.compose_hwpx(
 </table>
 <p>문항·세트 하나가 hwpx 파일 하나가 됩니다. 결과물은 표준 서식으로 새로 조판된 문서이며, 원본 지면의 배치를 복원하지 않습니다.</p>
 <h4>Figure 입력</h4>
-<p>직접 작성한 문항에 그림을 넣을 때 <code>Figure</code> 블록에 쓰는 필드입니다.</p>
+<p>직접 작성한 문항에 그림을 넣을 때 <code>Figure</code> 블록에 쓰는 필드입니다. 그림 내용을
+<code>data</code>에 직접 적거나, <code>url</code>로 주소를 가리킵니다. SVG로 적으면 좌표축 · 눈금 ·
+라벨이 적은 값 그대로 들어갑니다.</p>
 <pre><code class="language-python">questions = [
     {
         "type": "Question",
@@ -328,11 +330,11 @@ paths: list[Path] = client.pipeline.compose_hwpx(
 
 paths: list[Path] = client.pipeline.compose_hwpx(questions, "out/hwpx")</code></pre>
 <table>
-<tr><th>필드</th><th>타입</th><th>설명</th></tr>
-<tr><td><code>format</code></td><td><code>str</code></td><td><code>png</code> · <code>jpeg</code> · <code>webp</code> · <code>svg</code>. <code>data</code>를 SVG 원문으로 읽을지만 정하고, 이미지 형식은 실제 내용에서 판정하므로 생략해도 됩니다.</td></tr>
-<tr><td><code>data</code></td><td><code>str</code></td><td>base64 이미지(<code>data:</code> 접두사 없음). <code>format</code>이 <code>svg</code>면 SVG 원문을 씁니다 — 조판 직전 150dpi 이미지로 그려지므로 좌표축 · 눈금 · 라벨이 적은 값 그대로 들어갑니다.</td></tr>
-<tr><td><code>url</code></td><td><code>str</code></td><td>공개 <code>https://</code> 그림 주소. <code>data</code>와 함께 쓸 수 없습니다.</td></tr>
-<tr><td><code>width</code> <code>height</code></td><td><code>float</code></td><td>표시 크기(pt). 생략하면 SVG 크기 또는 이미지 비율에서 계산하며, 최대 폭은 단 폭 317pt입니다.</td></tr>
+<tr><th>필드</th><th>타입</th><th>기본값</th><th>설명</th></tr>
+<tr><td><code>format</code></td><td><code>str</code></td><td>자동</td><td><code>png</code> · <code>jpeg</code> · <code>webp</code> · <code>svg</code>. 생략할 수 있습니다.</td></tr>
+<tr><td><code>data</code></td><td><code>str</code></td><td><code>""</code></td><td>그림 내용. 이미지는 base64(<code>data:</code> 접두사 없음), SVG는 원문.</td></tr>
+<tr><td><code>url</code></td><td><code>str</code></td><td><code>""</code></td><td>공개 <code>https://</code> 그림 주소. <code>data</code>와 둘 중 하나만 씁니다.</td></tr>
+<tr><td><code>width</code> <code>height</code></td><td><code>float</code></td><td>자동</td><td>표시 크기(pt). 최대 폭은 단 폭 317pt입니다.</td></tr>
 </table>
 <p>SVG 안의 글자는 본문과 같은 두 갈래로 지정합니다. 다른 글꼴 이름을 적으면 이 둘 중 하나로 바뀝니다.</p>
 <table>
