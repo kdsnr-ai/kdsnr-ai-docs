@@ -203,13 +203,13 @@
 </figure>
 
 <h3>6. 파일 업로드 허용하기</h3>
-<p>Claude는 대화에 첨부한 파일을 커넥터로 바로 넘기지 못합니다. 대신 Claude가 파일을 kdsnr-ai 저장소로 직접 올릴 수 있도록, 설정에서 네트워크 사용을 한 번 허용합니다.</p>
+<p>Claude는 대화에 첨부한 파일을 커넥터로 바로 넘기지 못합니다. 대신 Claude가 파일을 kdsnr-ai 서버로 직접 올릴 수 있도록, 설정에서 한 번 허용합니다.</p>
 <div class="note setup-info">사용자가 Claude에 첨부한 <strong>파일에 한해서만</strong> kdsnr-ai 서버로 전송됩니다.<br>전송된 파일은 1시간 이내 자동 삭제되며, 채팅 내용 및 개인정보에 대한 접근은 일절 불가능합니다.</div>
-<p><strong>설정 → 기능</strong>에서 <strong>네트워크 송신 허용</strong>을 켭니다. <strong>추가 허용 도메인</strong> 입력란에는 아래 주소를 그대로 붙여 넣고 <strong>추가</strong>를 누릅니다.</p>
-<pre><code>storage.googleapis.com</code></pre>
+<p><strong>설정 → 기능</strong>에서 <strong>클라우드 코드 실행 및 파일 생성</strong>과 <strong>네트워크 송신 허용</strong>을 켭니다. <strong>추가 허용 도메인</strong> 입력란에는 아래 주소를 그대로 붙여 넣고 <strong>추가</strong>를 누릅니다.</p>
+<pre><code>kdsnr-ai-main-223982025046.asia-northeast3.run.app</code></pre>
 <figure class="setup-figure medium">
-<a href="assets/screenshot/mcp/claude/original/08-network-egress.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/08-network-egress.png" alt="Claude 설정의 기능 화면에서 네트워크 송신 허용을 켜고 추가 허용 도메인에 storage.googleapis.com을 입력한 화면"></a>
-<figcaption>네트워크 송신을 켜고 허용 도메인을 추가합니다.</figcaption>
+<a href="assets/screenshot/mcp/claude/original/08-network-egress.png" target="_blank" rel="noopener"><img src="assets/screenshot/mcp/claude/08-network-egress.png" alt="Claude 설정의 기능 화면에서 코드 실행과 네트워크 송신 허용을 켜고 추가 허용 도메인을 입력한 화면"></a>
+<figcaption>두 항목을 켜고 허용 도메인을 추가합니다.</figcaption>
 </figure>
 
 <h3>7. 사용하기</h3>
