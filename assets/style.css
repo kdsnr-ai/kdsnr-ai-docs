@@ -302,6 +302,8 @@ table.update col.w-kind { width: 96px; }
 table.update col.w-api { width: 80px; }
 table.update td.need { color: var(--accent); font-weight: 600; }
 table.update td.new { color: var(--accent); font-weight: 600; }
+table.update td ul { margin: 0; padding-left: 17px; }
+table.update td ul li + li { margin-top: 3px; }
 
 td.fields div {
   display: flex;
