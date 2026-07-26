@@ -75,13 +75,13 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 30px;
-  height: 16px;
-  padding: 0 5px;
-  border-radius: 4px;
+  min-width: 21px;
+  height: 11px;
+  padding: 0 3.5px;
+  border-radius: 3px;
   background: #e5484d;
   color: #fff;
-  font-size: 8px;
+  font-size: 5.6px;
   font-weight: 800;
   letter-spacing: .02em;
   line-height: 1;
@@ -176,7 +176,8 @@ body {
   padding-top: 24px;
   border-top: 1px solid var(--border);
 }
-.content .lead + h2.part {
+.content .lead + h2.part,
+.content .note + h2.part {
   border-top: 0;
   padding-top: 0;
   margin-top: 44px;
@@ -289,6 +290,17 @@ td {
   vertical-align: top;
 }
 td code { white-space: nowrap; }
+
+table.update { table-layout: fixed; }
+table.update th, table.update td { white-space: nowrap; }
+table.update th:nth-child(3), table.update td:nth-child(3) { white-space: normal; }
+table.update th.c, table.update td.c { text-align: center; padding-right: 0; }
+table.update th.c { border-bottom: 0; padding-bottom: 2px; }
+table.update th.sub { border-bottom: 1px solid var(--border); font-weight: 500; padding-top: 2px; }
+table.update col.w-svc { width: 104px; }
+table.update col.w-kind { width: 96px; }
+table.update col.w-api { width: 80px; }
+table.update td.need { color: var(--accent); font-weight: 600; }
 
 td.fields div {
   display: flex;
@@ -427,6 +439,42 @@ td.fields span { color: var(--text-sub); font-size: 13.5px; }
   font-size: 14.5px;
   color: var(--text-sub);
 }
+
+.note .note-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  color: var(--text);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.note .note-head::before {
+  content: '!';
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border: 1.5px solid var(--accent);
+  border-radius: 50%;
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+}
+.note ul.note-list {
+  margin: 8px 0 0 22px;
+  padding-left: 1.1em;
+  font-size: 13.5px;
+}
+.note ul.note-list li {
+  margin: 0;
+  padding-left: .18em;
+  color: inherit;
+}
+.note ul.note-list li + li { margin-top: 4px; }
 
 .pill {
   display: inline-block;

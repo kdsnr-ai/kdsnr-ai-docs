@@ -22,6 +22,7 @@
   el.innerHTML =
     '<a class="brand" href="' + R + 'research/index.html"><span>KDSNR-AI</span><img src="' + R + 'assets/mark.png" alt=""></a>' +
     '<nav>' +
+    group(R + 'update.html', '<span class="group-label">Update</span>', false, false) +
     group(R + 'research/index.html', 'Research &amp; Development', false, false) +
     '<a class="group" href="' + DASH + '" target="_blank" rel="noopener">Dashboard</a>' +
     '<div class="nav-head">API Docs</div>' +
@@ -47,7 +48,7 @@
     '</div>' +
     '<div class="nav-head">MCP</div>' +
     '<div class="nav-tree">' +
-    group(R + 'mcp-setup.html', '<span class="group-label">Setup <span class="nav-new">NEW</span></span>', /^mcp-/.test(file), true) +
+    group(R + 'mcp-setup.html', 'Setup', /^mcp-/.test(file), true) +
     items([
       { href: R + 'mcp-setup.html#chatgpt', label: 'ChatGPT' },
       { href: R + 'mcp-setup.html#claude', label: 'Claude' },
@@ -64,4 +65,25 @@
       ch.closest('.group').classList.toggle('open');
     });
   });
+
+  var NEW_DAYS = 2;
+
+  function dateFromId(id) {
+    var m = /^v(\d{4})(\d{2})(\d{2})$/.exec(id || '');
+    return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+  }
+
+  function markNew(d) {
+    if (!d || Date.now() >= d.getTime() + NEW_DAYS * 86400000) return;
+    var label = el.querySelector('a[href$="update.html"] .group-label');
+    if (label) label.insertAdjacentHTML('beforeend', '<span class="nav-new">NEW</span>');
+  }
+
+  fetch(R + 'update.html', { cache: 'no-cache' })
+    .then(function (r) { return r.ok ? r.text() : ''; })
+    .then(function (html) {
+      var m = html.match(/<h2[^>]*class="part"[^>]*id="(v\d{8})"/);
+      markNew(m ? dateFromId(m[1]) : null);
+    })
+    .catch(function () {});
 })();
