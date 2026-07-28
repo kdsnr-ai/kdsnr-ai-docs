@@ -28,8 +28,29 @@ body {
   border-right: 1px solid var(--border);
   padding: 28px 20px 24px 28px;
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   display: flex;
   flex-direction: column;
+}
+.sidebar::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.sidebar-scrollbar {
+  position: fixed;
+  top: 0;
+  left: calc(var(--sidebar-w) - 3px);
+  width: 3px;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 30;
+}
+.sidebar-scrollbar-thumb {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 3px;
+  min-height: 28px;
+  background: #d6dbe1;
+  border-radius: 999px;
 }
 
 .sidebar .brand {
@@ -291,6 +312,13 @@ td {
 }
 td code { white-space: nowrap; }
 
+table.course-enum th:first-child,
+table.course-enum td:first-child {
+  width: 108px;
+  min-width: 108px;
+  white-space: nowrap;
+}
+
 table.update { table-layout: fixed; }
 table.update th, table.update td { white-space: nowrap; }
 table.update th:nth-child(3), table.update td:nth-child(3) { white-space: normal; }
@@ -301,6 +329,7 @@ table.update col.w-svc { width: 104px; }
 table.update col.w-kind { width: 96px; }
 table.update col.w-api { width: 80px; }
 table.update td.need { color: var(--accent); font-weight: 600; }
+table.update td.need small { display: block; font-size: inherit; font-weight: inherit; color: inherit; }
 table.update td.new { color: var(--accent); font-weight: 600; }
 table.update td ul { margin: 0; padding-left: 17px; }
 table.update td ul li + li { margin-top: 3px; }
@@ -755,7 +784,7 @@ pre:hover .copy-btn, .sig:hover .copy-btn { opacity: 1; }
 .copy-btn:hover { color: #e6edf3; }
 
 @media (max-width: 900px) {
-  .sidebar { display: none; }
+  .sidebar, .sidebar-scrollbar { display: none; }
   .content {
     width: 100%;
     max-width: none;
