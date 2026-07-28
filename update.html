@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>kdsnr-ai · Update</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="assets/style.css?v=20260726-5">
+<link rel="stylesheet" href="assets/style.css?v=20260728-2">
 </head>
 <body>
 
 <aside class="sidebar" id="sidebar">
 </aside>
-<script src="assets/nav.js?v=20260726-3"></script>
+<script src="assets/nav.js?v=20260727-4"></script>
 
 <main class="content">
 
@@ -25,6 +25,43 @@
 <li>MCP : 연결된 앱에서 커넥터를 새로고침합니다.</li>
 </ul>
 </div>
+
+<h2 class="part" id="v20260728">2026.07.28</h2>
+<section>
+<table class="update">
+<colgroup>
+<col class="w-svc"><col class="w-kind"><col><col class="w-api"><col class="w-api">
+</colgroup>
+<thead>
+<tr>
+<th rowspan="2">서비스</th>
+<th rowspan="2">유형</th>
+<th rowspan="2">내용</th>
+<th colspan="2" class="c">수동 업데이트 필요</th>
+</tr>
+<tr>
+<th class="c sub">API</th>
+<th class="c sub">MCP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Archive</td>
+<td class="new">신규 기능</td>
+<td><ul><li>API, MCP 모두 지원</li><li>기출 문항 검색 · 수능특강 내용 검색(예정)</li><li>조건 필터 검색 · 유사도 기반 검색 · LLM 기반 자연어 검색 지원</li></ul></td>
+<td class="c need">필요<small>(0.2.1+)</small></td>
+<td class="c need">필요</td>
+</tr>
+<tr>
+<td>Pipeline</td>
+<td class="new">API 변경</td>
+<td><ul><li>각 <code>Question.q_img</code>에 100dpi WebP 이미지 기본 삽입</li><li><code>extract_question</code>에 <code>EmitPreviewConfig</code> 추가</li><li><code>export_preview</code> 제거, 이전 호출은 한시 지원</li></ul></td>
+<td class="c need">필요<small>(0.2.1+)</small></td>
+<td class="c">불필요</td>
+</tr>
+</tbody>
+</table>
+</section>
 
 <h2 class="part" id="v20260726">2026.07.26</h2>
 <section>

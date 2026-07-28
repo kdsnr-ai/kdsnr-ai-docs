@@ -17,6 +17,7 @@
   }
 
   var P = R + 'pipeline.html#';
+  var A = R + 'archive.html#';
   var I = R + 'start.html#';
   var DASH = 'https://kdsnr-ai-dashboard.vercel.app';
   el.innerHTML =
@@ -40,10 +41,18 @@
       { href: P + 'api-usage', label: 'API 사용법' },
       { href: P + 'import-file', label: 'import_file', sub: true },
       { href: P + 'extract-question', label: 'extract_question', sub: true },
-      { href: P + 'export-preview', label: 'export_preview', sub: true },
       { href: P + 'compose-hwpx', label: 'compose_hwpx', sub: true },
       { href: P + 'hwp-to-pdf', label: 'hwp_to_pdf', sub: true },
       { href: P + 'hwp-to-hwpx', label: 'hwp_to_hwpx', sub: true },
+    ]) +
+    group(R + 'archive.html', 'Archive', page === 'archive.html', true) +
+    items([
+      { href: A + 'overview', label: '개요' },
+      { href: A + 'schema', label: '반환 스키마' },
+      { href: A + 'api-usage', label: 'API 사용법' },
+      { href: A + 'search-questions', label: 'search_questions', sub: true },
+      { href: A + 'get-question', label: 'get_question', sub: true },
+      { href: A + 'find-similar-questions', label: 'find_similar_questions', sub: true },
     ]) +
     '</div>' +
     '<div class="nav-head">MCP</div>' +
@@ -58,11 +67,37 @@
     '</nav>' +
     '<div class="foot">(주)강남대성수능연구소<br>kdsnrai@gmail.com</div>';
 
+  var scrollbar = document.createElement('div');
+  scrollbar.className = 'sidebar-scrollbar';
+  scrollbar.innerHTML = '<div class="sidebar-scrollbar-thumb"></div>';
+  document.body.appendChild(scrollbar);
+  var scrollbarThumb = scrollbar.firstChild;
+
+  function syncScrollbar() {
+    var viewport = el.clientHeight;
+    var total = el.scrollHeight;
+    var range = total - viewport;
+    if (viewport <= 0 || range <= 0) {
+      scrollbar.style.display = 'none';
+      return;
+    }
+    scrollbar.style.display = '';
+    var height = Math.max(28, viewport * viewport / total);
+    var top = el.scrollTop / range * (viewport - height);
+    scrollbarThumb.style.height = height + 'px';
+    scrollbarThumb.style.transform = 'translateY(' + top + 'px)';
+  }
+
+  el.addEventListener('scroll', syncScrollbar, { passive: true });
+  window.addEventListener('resize', syncScrollbar);
+  requestAnimationFrame(syncScrollbar);
+
   el.querySelectorAll('.group .chev').forEach(function (ch) {
     ch.addEventListener('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
       ch.closest('.group').classList.toggle('open');
+      requestAnimationFrame(syncScrollbar);
     });
   });
 
