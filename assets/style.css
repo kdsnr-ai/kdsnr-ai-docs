@@ -783,13 +783,46 @@ pre, .sig { position: relative; }
 pre:hover .copy-btn, .sig:hover .copy-btn { opacity: 1; }
 .copy-btn:hover { color: #e6edf3; }
 
+.nav-toggle { display: none; }
 @media (max-width: 900px) {
-  .sidebar, .sidebar-scrollbar { display: none; }
+  .sidebar-scrollbar { display: none; }
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform .18s ease;
+    background: #fff;
+    z-index: 40;
+  }
+  .sidebar.open { transform: none; }
+  .nav-scrim {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 20, 24, .28);
+    z-index: 35;
+  }
+  .nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    width: 34px;
+    height: 34px;
+    z-index: 50;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-sub);
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    cursor: pointer;
+  }
   .content {
     width: 100%;
     max-width: none;
     margin-left: 0;
-    padding: 32px 24px 80px;
+    padding: 60px 24px 80px;
   }
   .content.content-wide { margin-left: 0; width: 100%; }
 }
