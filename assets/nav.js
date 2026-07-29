@@ -114,6 +114,28 @@
     if (label) label.insertAdjacentHTML('beforeend', '<span class="nav-new">NEW</span>');
   }
 
+  var toggle = document.createElement('button');
+  toggle.className = 'nav-toggle';
+  toggle.type = 'button';
+  toggle.textContent = '>';
+  toggle.setAttribute('aria-label', '메뉴 열기');
+  var scrim = document.createElement('div');
+  scrim.className = 'nav-scrim';
+  scrim.style.display = 'none';
+  function setOpen(on) {
+    el.classList.toggle('open', on);
+    toggle.textContent = on ? '<' : '>';
+    toggle.setAttribute('aria-label', on ? '메뉴 닫기' : '메뉴 열기');
+    scrim.style.display = on ? 'block' : 'none';
+  }
+  toggle.addEventListener('click', function () { setOpen(!el.classList.contains('open')); });
+  scrim.addEventListener('click', function () { setOpen(false); });
+  el.addEventListener('click', function (e) {
+    if (e.target.closest('a')) setOpen(false);
+  });
+  document.body.appendChild(scrim);
+  document.body.appendChild(toggle);
+
   fetch(R + 'update.html', { cache: 'no-cache' })
     .then(function (r) { return r.ok ? r.text() : ''; })
     .then(function (html) {
