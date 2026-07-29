@@ -117,14 +117,14 @@
   var toggle = document.createElement('button');
   toggle.className = 'nav-toggle';
   toggle.type = 'button';
-  toggle.textContent = '>';
+  toggle.textContent = '\u2192';
   toggle.setAttribute('aria-label', '메뉴 열기');
   var scrim = document.createElement('div');
   scrim.className = 'nav-scrim';
   scrim.style.display = 'none';
   function setOpen(on) {
     el.classList.toggle('open', on);
-    toggle.textContent = on ? '<' : '>';
+    toggle.textContent = on ? '\u2190' : '\u2192';
     toggle.setAttribute('aria-label', on ? '메뉴 닫기' : '메뉴 열기');
     scrim.style.display = on ? 'block' : 'none';
   }

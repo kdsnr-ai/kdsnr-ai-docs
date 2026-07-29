@@ -804,20 +804,21 @@ pre:hover .copy-btn, .sig:hover .copy-btn { opacity: 1; }
     align-items: center;
     justify-content: center;
     position: fixed;
-    top: 14px;
+    top: 12px;
     left: 14px;
-    width: 34px;
-    height: 34px;
+    width: 30px;
+    height: 30px;
     z-index: 50;
     font: inherit;
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 20px;
+    line-height: 1;
     color: var(--text-sub);
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 9px;
+    background: none;
+    border: 0;
+    padding: 0;
     cursor: pointer;
   }
+  .nav-toggle:hover, .nav-toggle:focus { background: none; color: var(--text-sub); outline: none; }
   .content {
     width: 100%;
     max-width: none;
