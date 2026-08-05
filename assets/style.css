@@ -312,6 +312,9 @@ td {
 }
 td code { white-space: nowrap; }
 
+.post table th { white-space: nowrap; }
+.post table td { word-break: keep-all; }
+
 table.course-enum th:first-child,
 table.course-enum td:first-child {
   width: 108px;

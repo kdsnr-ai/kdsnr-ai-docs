@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>kdsnr-ai · Update</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="assets/style.css?v=20260728-2">
+<link rel="stylesheet" href="assets/style.css?v=20260804-1">
 </head>
 <body>
 
@@ -22,9 +22,46 @@
 <p class="note-head">수동 업데이트 필요 시 진행 방법</p>
 <ul class="note-list">
 <li>API : <code>pip install -U kdsnr-ai</code>를 실행합니다.</li>
-<li>MCP : 연결된 앱에서 커넥터를 새로고침합니다.</li>
+<li>MCP : 연결된 앱에서 커넥터 · 플러그인을 새로고침하거나 다시 연결합니다.</li>
 </ul>
 </div>
+
+<h2 class="part" id="v20260805">2026.08.05</h2>
+<section>
+<table class="update">
+<colgroup>
+<col class="w-svc"><col class="w-kind"><col><col class="w-api"><col class="w-api">
+</colgroup>
+<thead>
+<tr>
+<th rowspan="2">서비스</th>
+<th rowspan="2">유형</th>
+<th rowspan="2">내용</th>
+<th colspan="2" class="c">수동 업데이트 필요</th>
+</tr>
+<tr>
+<th class="c sub">API</th>
+<th class="c sub">MCP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Archive</td>
+<td>API 변경</td>
+<td><ul><li>과목 이름이 <code>물리학1</code> · <code>생명과학1</code>처럼 바뀌고 사회탐구 11과목이 추가됐습니다.</li><li>바뀐 필드와 새로 추가된 인자는 <a href="archive.html">Archive</a>를 참고하세요.</li></ul></td>
+<td class="c need">필요<small>(0.2.2+)</small></td>
+<td class="c">-</td>
+</tr>
+<tr>
+<td>MCP</td>
+<td>성능 개선</td>
+<td><ul><li>Archive 연동 안정화</li><li>이미지 누락 버그 수정</li></ul></td>
+<td class="c">-</td>
+<td class="c need">필요</td>
+</tr>
+</tbody>
+</table>
+</section>
 
 <h2 class="part" id="v20260803">2026.08.03</h2>
 <section>
