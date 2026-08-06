@@ -23,6 +23,8 @@ jobs:
       name: github-pages
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -43,12 +45,31 @@ jobs:
             -f pages_build_version="$GITHUB_SHA" \
             -f oidc_token="$oidc"
 
-      - name: 올라갈 때까지 기다린다
+      - name: 사이트에 반영될 때까지 기다린다
         env:
           GH_TOKEN: ${{ github.token }}
+          SITE: https://kdsnr-ai.github.io/kdsnr-ai-docs
         run: |
-          for i in $(seq 1 110); do
+          changed=$(git diff --name-only HEAD^ HEAD \
+            | grep -v '^\.github/' \
+            | grep -E '^[A-Za-z0-9._/-]+$' \
+            | head -1 || true)
+          if [ -n "$changed" ] && [ -f "$changed" ]; then
+            want=$(sha256sum "$changed" | cut -d' ' -f1)
+            echo "$changed 이 사이트에서 바뀌는지 본다"
+          else
+            want=""
+            echo "이번 커밋에서 사이트 파일이 바뀌지 않아 상태 보고만 본다"
+          fi
+          for i in $(seq 1 60); do
             sleep 30
+            if [ -n "$want" ]; then
+              got=$(curl -sfL "$SITE/$changed?b=$i" 2>/dev/null | sha256sum | cut -d' ' -f1 || true)
+              if [ "$want" = "$got" ]; then
+                echo "$((i * 30))초 만에 $changed 이 사이트에 반영되었습니다"
+                exit 0
+              fi
+            fi
             state=$(gh api "repos/$GITHUB_REPOSITORY/pages/deployments/$GITHUB_SHA" --jq .status 2>/dev/null || echo 조회실패)
             echo "$((i * 30))초 경과 · 상태 $state"
             case "$state" in
@@ -62,4 +83,4 @@ jobs:
                 ;;
             esac
           done
-          echo "55분 동안 차례가 오지 않았습니다. 취소하지 않았으므로 GitHub이 처리하는 대로 그대로 올라갑니다."
+          echo "30분 동안 반영이 확인되지 않았습니다. 취소하지 않았으므로 요청은 살아 있고, GitHub이 처리하면 그대로 올라갑니다."
