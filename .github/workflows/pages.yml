@@ -34,16 +34,43 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          set -euo pipefail
+          set -uo pipefail
           artifact=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" \
             --jq '[.artifacts[] | select(.name == "github-pages")][0].id')
           echo "올릴 꾸러미 번호 $artifact"
-          oidc=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
-          gh api -X POST "repos/$GITHUB_REPOSITORY/pages/deployments" \
-            -F artifact_id="$artifact" \
-            -f pages_build_version="$GITHUB_SHA" \
-            -f oidc_token="$oidc"
+
+          ask() {
+            oidc=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+              "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
+            gh api -X POST "repos/$GITHUB_REPOSITORY/pages/deployments" \
+              -F artifact_id="$artifact" \
+              -f pages_build_version="$GITHUB_SHA" \
+              -f oidc_token="$oidc" >response.json 2>error.txt
+          }
+
+          if ask; then
+            cat response.json
+            exit 0
+          fi
+          cat error.txt response.json
+
+          blocker=$(grep -hoE '[0-9a-f]{40}' error.txt response.json \
+            | grep -v "$GITHUB_SHA" | head -1)
+          if [ -z "$blocker" ]; then
+            echo "게시 요청이 받아들여지지 않았습니다"
+            exit 1
+          fi
+
+          echo "앞 배포 $blocker 가 아직 줄에 남아 새 게시를 막고 있습니다. 그것만 취소합니다."
+          gh api -X POST "repos/$GITHUB_REPOSITORY/pages/deployments/$blocker/cancel" || true
+          sleep 10
+          if ask; then
+            cat response.json
+            exit 0
+          fi
+          cat error.txt response.json
+          echo "앞 배포를 치운 뒤에도 게시 요청이 받아들여지지 않았습니다"
+          exit 1
 
       - name: 사이트에 반영될 때까지 기다린다
         env:
