@@ -9,6 +9,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: read
 
 concurrency:
   group: pages
@@ -26,21 +27,39 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
-      - id: try1
-        continue-on-error: true
-        uses: actions/deploy-pages@v4
-      - id: try2
-        if: steps.try1.outcome == 'failure'
-        continue-on-error: true
-        uses: actions/deploy-pages@v4
-      - id: try3
-        if: steps.try1.outcome == 'failure' && steps.try2.outcome == 'failure'
-        continue-on-error: true
-        uses: actions/deploy-pages@v4
-      - id: try4
-        if: steps.try1.outcome == 'failure' && steps.try2.outcome == 'failure' && steps.try3.outcome == 'failure'
-        continue-on-error: true
-        uses: actions/deploy-pages@v4
-      - id: try5
-        if: steps.try1.outcome == 'failure' && steps.try2.outcome == 'failure' && steps.try3.outcome == 'failure' && steps.try4.outcome == 'failure'
-        uses: actions/deploy-pages@v4
+
+      - name: 게시를 요청한다
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          artifact=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts" \
+            --jq '[.artifacts[] | select(.name == "github-pages")][0].id')
+          echo "올릴 꾸러미 번호 $artifact"
+          oidc=$(curl -sS -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
+          gh api -X POST "repos/$GITHUB_REPOSITORY/pages/deployments" \
+            -F artifact_id="$artifact" \
+            -f pages_build_version="$GITHUB_SHA" \
+            -f oidc_token="$oidc"
+
+      - name: 올라갈 때까지 기다린다
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for i in $(seq 1 110); do
+            sleep 30
+            state=$(gh api "repos/$GITHUB_REPOSITORY/pages/deployments/$GITHUB_SHA" --jq .status 2>/dev/null || echo 조회실패)
+            echo "$((i * 30))초 경과 · 상태 $state"
+            case "$state" in
+              succeed)
+                echo "사이트에 올라갔습니다"
+                exit 0
+                ;;
+              deployment_failed|deployment_content_failed|deployment_cancelled|deployment_lost)
+                echo "게시가 실패했습니다: $state"
+                exit 1
+                ;;
+            esac
+          done
+          echo "55분 동안 차례가 오지 않았습니다. 취소하지 않았으므로 GitHub이 처리하는 대로 그대로 올라갑니다."
