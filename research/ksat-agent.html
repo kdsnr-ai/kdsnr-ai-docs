@@ -45,6 +45,10 @@
 .intake .state.done { color: #1a7f4b; background: #e7f4ec; }
 .intake .state.doing { color: #9a6300; background: #fdf3df; }
 .intake .state.todo { color: var(--text-faint); background: #f1f3f6; }
+.intake .icon {
+  display: inline-block; vertical-align: -3px; width: 16px; height: 16px;
+  margin: 0 1px;
+}
 </style>
 </head>
 <body>
@@ -86,7 +90,7 @@
 <h3>08-07</h3>
 <table class="intake">
 <tr><th>번호</th><th>내용</th><th>조치여부</th></tr>
-<tr><td>1</td><td class="what"><ul><li>어시스턴트 입력창에 파일·기출 첨부</li><li>클립 단추로 hwp·hwpx·pdf의 쪽 범위와 이미지를 담고, 서가 단추로 기출을 고름</li><li>그림은 붙여넣거나 끌어다 놓아도 바로 담김</li></ul></td><td><span class="state done">완료</span></td></tr>
+<tr><td>1</td><td class="what"><ul><li>어시스턴트 입력창에 파일·기출 첨부</li><li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg> 버튼으로 hwp·hwpx·pdf의 쪽 범위와 이미지를 담고, <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/></svg> 버튼으로 기출을 고름</li><li>그림은 붙여넣거나 끌어다 놓아도 바로 담김</li></ul></td><td><span class="state done">완료</span></td></tr>
 <tr><td>2</td><td class="what"><ul><li>타이핑 반응 속도 개선</li><li>편집 화면에서 글자를 칠 때 화면이 따라오는 속도가 느림</li></ul></td><td><span class="state doing">진행 중</span></td></tr>
 </table>
 
@@ -98,7 +102,7 @@
 <tr><td>3</td><td class="what"><ul><li>소재를 만들 모델을 고르고, 모델마다 하루 생성 횟수와 한 번에 만들 개수를 표로 확인</li></ul></td><td><span class="state done">완료</span></td></tr>
 <tr><td>4</td><td class="what"><ul><li>문항마다 모티브로 삼을 기출을 한 세트씩 붙이기</li></ul></td><td><span class="state done">완료</span></td></tr>
 <tr><td>5</td><td class="what"><ul><li>이미 있는 지문·문항 파일을 올려 작업으로 바로 등록</li><li>hwp·hwpx·pdf에서 읽은 지문 세트를 골라 편집 화면으로</li></ul></td><td><span class="state done">완료</span></td></tr>
-<tr><td>6</td><td class="what"><ul><li>어시스턴트가 인터넷을 검색해 사실을 확인하는 도구</li><li>입력창의 지구본 단추로 켜고 끄며, 켜면 기억 대신 검색한 내용으로 답함</li></ul></td><td><span class="state done">완료</span></td></tr>
+<tr><td>6</td><td class="what"><ul><li>어시스턴트가 인터넷을 검색해 사실을 확인하는 도구</li><li>입력창의 <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg> 버튼으로 켜고 끄며, 켜면 기억 대신 검색한 내용으로 답함</li></ul></td><td><span class="state done">완료</span></td></tr>
 <tr><td>7</td><td class="what"><ul><li>검색해서 답할 때 어느 자료에서 온 내용인지 표시</li><li>문장 끝에 번호를 달고 답변 아래에 사이트 아이콘과 주소를 배지로 나열</li></ul></td><td><span class="state done">완료</span></td></tr>
 <tr><td>8</td><td class="what"><ul><li>어시스턴트가 답하기 전에 무엇을 살피는지 보여 주기</li><li>답변 위에 걸린 시간과 함께 표시되고, 화살표를 누르면 생각이 펼쳐짐</li></ul></td><td><span class="state done">완료</span></td></tr>
 <tr><td>9</td><td class="what"><ul><li>인터넷 검색을 켜도 검색하지 않고 기억으로 답하던 문제</li><li>사실 확인을 요청하면 답을 쓰기 전에 검색하도록 수정</li></ul></td><td><span class="state done">완료</span></td></tr>
