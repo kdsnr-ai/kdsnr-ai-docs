@@ -54,21 +54,18 @@ jobs:
             | grep -v '^\.github/' \
             | grep -E '^[A-Za-z0-9._/-]+$' \
             | head -1 || true)
-          if [ -n "$changed" ] && [ -f "$changed" ]; then
-            want=$(sha256sum "$changed" | cut -d' ' -f1)
-            echo "$changed 이 사이트에서 바뀌는지 본다"
-          else
-            want=""
-            echo "이번 커밋에서 사이트 파일이 바뀌지 않아 상태 보고만 본다"
+          if [ -z "$changed" ] || [ ! -f "$changed" ]; then
+            echo "이번 커밋은 사이트 파일을 바꾸지 않았습니다. 게시는 요청해 두었으므로 여기서 끝냅니다."
+            exit 0
           fi
+          want=$(sha256sum "$changed" | cut -d' ' -f1)
+          echo "$changed 이 사이트에서 바뀌는지 본다"
           for i in $(seq 1 60); do
             sleep 30
-            if [ -n "$want" ]; then
-              got=$(curl -sfL "$SITE/$changed?b=$i" 2>/dev/null | sha256sum | cut -d' ' -f1 || true)
-              if [ "$want" = "$got" ]; then
-                echo "$((i * 30))초 만에 $changed 이 사이트에 반영되었습니다"
-                exit 0
-              fi
+            got=$(curl -sfL "$SITE/$changed?b=$i" 2>/dev/null | sha256sum | cut -d' ' -f1 || true)
+            if [ "$want" = "$got" ]; then
+              echo "$((i * 30))초 만에 $changed 이 사이트에 반영되었습니다"
+              exit 0
             fi
             state=$(gh api "repos/$GITHUB_REPOSITORY/pages/deployments/$GITHUB_SHA" --jq .status 2>/dev/null || echo 조회실패)
             echo "$((i * 30))초 경과 · 상태 $state"
