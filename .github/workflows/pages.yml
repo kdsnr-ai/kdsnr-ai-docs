@@ -1,4 +1,4 @@
-name: 사이트 게시
+name: 독스 사이트 올리기
 
 on:
   push:
@@ -16,19 +16,31 @@ concurrency:
 
 jobs:
   publish:
-    name: 게시
+    name: 사이트를 웹에 올린다
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .
-      - id: deploy
+      - id: try1
+        continue-on-error: true
         uses: actions/deploy-pages@v4
-        with:
-          timeout: 1800000
-          error_count: 60
+      - id: try2
+        if: steps.try1.outcome == 'failure'
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+      - id: try3
+        if: steps.try1.outcome == 'failure' && steps.try2.outcome == 'failure'
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+      - id: try4
+        if: steps.try1.outcome == 'failure' && steps.try2.outcome == 'failure' && steps.try3.outcome == 'failure'
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+      - id: try5
+        if: steps.try1.outcome == 'failure' && steps.try2.outcome == 'failure' && steps.try3.outcome == 'failure' && steps.try4.outcome == 'failure'
+        uses: actions/deploy-pages@v4
