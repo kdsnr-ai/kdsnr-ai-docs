@@ -54,11 +54,15 @@ jobs:
           fi
           cat error.txt response.json
 
-          blocker=$(grep -hoE '[0-9a-f]{40}' error.txt response.json \
-            | grep -v "$GITHUB_SHA" | head -1)
+          blocker=$(grep -hoE 'Please cancel [0-9a-f]{40}' error.txt response.json \
+            | awk '{print $3}' | head -1)
           if [ -z "$blocker" ]; then
             echo "게시 요청이 받아들여지지 않았습니다"
             exit 1
+          fi
+          if [ "$blocker" = "$GITHUB_SHA" ]; then
+            echo "같은 커밋의 게시가 이미 진행 중입니다. 건드리지 않고 끝냅니다."
+            exit 0
           fi
 
           echo "앞 배포 $blocker 가 아직 줄에 남아 새 게시를 막고 있습니다. 그것만 취소합니다."
