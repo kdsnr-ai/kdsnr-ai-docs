@@ -261,7 +261,7 @@
 <tr><td>모델</td><td>Qwen3-32B · BF16 · 최대 8,192 token</td></tr>
 <tr><td>LoRA</td><td>rank 16 · alpha 32 · attention/MLP projection</td></tr>
 <tr><td>배치</td><td>G=8 · per-device 8 · gradient accumulation 8 · reward batch 8</td></tr>
-<tr><td>학습 파라미터</td><td>AdamW 8-bit · learning rate 5e-4 · warmup 10% · 3 epoch</td></tr>
+<tr><td>학습 파라미터</td><td>AdamW 8-bit · learning rate 5e-6 · warmup 10% · 3 epoch</td></tr>
 <tr><td>CE 가중치</td><td>20개 입력 × 8개 CoT의 토큰 위치별 CE 표준편차를 <code>a·exp(-b·t/T)+c</code>에 적합 · <code>0.106537 × exp(-10.8309 × t/T) + 0.062938</code> · R² 0.9007 · half-life 6.4% · 평균 1로 정규화</td></tr>
 </table>
 
