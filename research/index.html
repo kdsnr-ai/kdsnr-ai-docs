@@ -100,6 +100,25 @@
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 <script>
 hljs.highlightAll();
+(function () {
+  const today = Date.parse(new Date().toISOString().slice(0, 10));
+  const within = value => {
+    const day = Date.parse(value || '');
+    if (isNaN(day)) return false;
+    const days = (today - day) / 86400000;
+    return days >= 0 && days <= 3;
+  };
+  document.querySelectorAll('.card-grid .card').forEach(card => {
+    const kind = within(card.dataset.created) ? 'new' : within(card.dataset.updated) ? 'updated' : '';
+    if (!kind) return;
+    const thumb = card.querySelector('.card-thumb');
+    if (!thumb || thumb.querySelector('.card-badge')) return;
+    const badge = document.createElement('span');
+    badge.className = 'card-badge ' + kind;
+    badge.textContent = kind === 'new' ? 'NEW' : 'UPDATED';
+    thumb.appendChild(badge);
+  });
+})();
 const tabs = document.querySelectorAll('.cat-tabs button');
 tabs.forEach(btn => {
   btn.addEventListener('click', () => {
