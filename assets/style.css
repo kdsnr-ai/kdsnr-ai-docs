@@ -322,6 +322,25 @@ table.course-enum td:first-child {
   white-space: nowrap;
 }
 
+table.model-info {
+  border: 1px solid var(--border);
+}
+table.model-info th,
+table.model-info td {
+  border-left: 1px solid var(--border);
+  padding-left: 12px;
+}
+table.model-info th.group {
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  padding: 8px 12px 5px;
+}
+table.model-info th.sub {
+  border-bottom: 1px solid var(--border);
+  font-weight: 500;
+  padding-top: 5px;
+}
+
 table.update { table-layout: fixed; }
 table.update th, table.update td { white-space: nowrap; }
 table.update th:nth-child(3), table.update td:nth-child(3) { white-space: normal; }
