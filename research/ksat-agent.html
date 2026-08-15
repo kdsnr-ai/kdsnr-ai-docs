@@ -61,7 +61,7 @@
 <article class="post">
 
 <h1>KSAT Agent</h1>
-<p class="post-sub">AI 기반 수능 국어 독서영역 출제 도구 연구·개발 일지</p>
+<p class="post-sub">AI 기반 수능국어 독서 영역 출제 도구</p>
 <p class="post-meta">Application · 2026-08-05 · 권준희 · 이어진 · 하성표</p>
 
 <p>수능 국어 독서 문항 세트는 소재 선정·자료 수집·지문 작성·문항 출제에 이르기까지 긴 과정을 거쳐 만들어집니다. KSAT Agent는 이 과정을 단축하고 문항 세트 초안을 효과적으로 생산하기 위해 만들어진 AI 도구입니다.</p>
@@ -74,7 +74,7 @@
 <p>이 글에서는 국어 출제 전문가와 엔지니어의 지속적인 협업을 바탕으로, KSAT Agent를 고도화시키기 위한 연구·개발 과정 및 일정을 다룹니다.</p>
 
 <figure class="shots single compact">
-  <img src="../assets/research/ksat-agent/roadmap.webp" alt="8월 어플리케이션 UI 개선과 KSAT-Flash 1차 업그레이드, 9월 품질 평가 기준 정립과 2차 업그레이드, 10월 취약점 분석과 3차 업그레이드로 이어지며 개선을 반복하는 KSAT Agent 연구 로드맵">
+  <img src="../assets/research/ksat-agent/roadmap.webp" alt="8월 어플리케이션 UI 및 사용성 최적화와 KSAT 전용 모델 1차 학습, 9월 원고 품질 평가기준 정립과 출제 전문가·엔지니어 순환 프로세스 정립, 10월 데이터 정제와 KSAT 전용 모델 2차 학습으로 이어지며 개선을 반복하는 KSAT Agent 연구 로드맵">
 </figure>
 
 <div class="tab-bar" id="journal-tabs">
@@ -151,13 +151,30 @@
 
 <h2>8월 2주차</h2>
 
-<h3>1. KSAT-Flash 1차 학습</h3>
+<h3>1. KSAT 전용 모델 1차 학습 완료</h3>
 
 <figure class="shots single compact">
-  <img src="../assets/research/ksat-agent/flash-training-1.webp" alt="1-1 Supervised Learning, 1-2 Direct Preference Optimization, 1-3 CRPO로 이어지는 KSAT-Flash 1차 학습 3단계 로드맵">
+  <img src="../assets/research/ksat-agent/models.webp" alt="30B+ 파라미터로 1회 생성에 5~10분이 걸리는 경량 모델 KSAT-Flash와 750B+ 파라미터로 20~30분이 걸리는 고성능 모델 KSAT-Max를 좌우 카드로 비교한 도식">
 </figure>
 
-<p>1-3 학습에 사용하는 CRPO의 원리와 실험 결과는 <a href="crpo.html">CRPO</a> 포스트에서 다룹니다.</p>
+<h4>학습 방법</h4>
+<ul>
+  <li>지도학습, 선호도 학습, 강화학습(<a href="crpo.html">CRPO</a>) 등</li>
+  <li>NVIDIA B200 4~12대 GPU 클러스터, 약 100시간 학습</li>
+  <li>Pipeline 추출 기반 학습 데이터셋</li>
+</ul>
+
+<h4>관련 연구글</h4>
+<ul>
+  <li><a href="roadmap.html">Roadmap</a></li>
+  <li><a href="pipeline.html">Pipeline</a></li>
+  <li><a href="crpo.html">CRPO</a></li>
+</ul>
+
+<h4>결과물 및 성능 평가</h4>
+<ul>
+  <li>8월 3주차 공개 예정</li>
+</ul>
 
 </div>
 
