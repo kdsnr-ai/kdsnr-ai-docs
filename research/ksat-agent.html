@@ -49,15 +49,12 @@
   display: inline-block; vertical-align: -3px; width: 16px; height: 16px;
   margin: 0 1px;
 }
-.pdf-frame {
-  display: block; width: 100%; height: 940px;
+.pdf-pages img {
+  display: block; width: 100%; height: auto;
   border: 1px solid var(--border); border-radius: 10px;
-  background: #f6f7f9;
+  margin: 0 0 14px;
 }
-.pdf-frame p { padding: 24px; text-align: center; }
-@media (max-width: 900px) {
-  .pdf-frame { height: 74vh; }
-}
+.pdf-pages img:last-child { margin-bottom: 26px; }
 </style>
 </head>
 <body>
@@ -241,21 +238,24 @@
 </div>
 
 <div class="tab-panel sample active" id="sample-humanities">
-  <object class="pdf-frame" data="../assets/research/ksat-agent/samples/humanities.pdf" type="application/pdf">
-    <p><a href="../assets/research/ksat-agent/samples/humanities.pdf">인문 샘플 PDF 열기</a></p>
-  </object>
+  <div class="pdf-pages">
+    <img src="../assets/research/ksat-agent/samples/pages/humanities-1.webp" alt="인문 결과물 샘플 1쪽" loading="lazy">
+    <img src="../assets/research/ksat-agent/samples/pages/humanities-2.webp" alt="인문 결과물 샘플 2쪽" loading="lazy">
+  </div>
 </div>
 
 <div class="tab-panel sample" id="sample-social">
-  <object class="pdf-frame" data="../assets/research/ksat-agent/samples/social.pdf" type="application/pdf">
-    <p><a href="../assets/research/ksat-agent/samples/social.pdf">사회 샘플 PDF 열기</a></p>
-  </object>
+  <div class="pdf-pages">
+    <img src="../assets/research/ksat-agent/samples/pages/social-1.webp" alt="사회 결과물 샘플 1쪽" loading="lazy">
+    <img src="../assets/research/ksat-agent/samples/pages/social-2.webp" alt="사회 결과물 샘플 2쪽" loading="lazy">
+  </div>
 </div>
 
 <div class="tab-panel sample" id="sample-science">
-  <object class="pdf-frame" data="../assets/research/ksat-agent/samples/science.pdf" type="application/pdf">
-    <p><a href="../assets/research/ksat-agent/samples/science.pdf">과학 샘플 PDF 열기</a></p>
-  </object>
+  <div class="pdf-pages">
+    <img src="../assets/research/ksat-agent/samples/pages/science-1.webp" alt="과학 결과물 샘플 1쪽" loading="lazy">
+    <img src="../assets/research/ksat-agent/samples/pages/science-2.webp" alt="과학 결과물 샘플 2쪽" loading="lazy">
+  </div>
 </div>
 
 <h3>품질 평가</h3>
