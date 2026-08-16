@@ -49,6 +49,15 @@
   display: inline-block; vertical-align: -3px; width: 16px; height: 16px;
   margin: 0 1px;
 }
+.pdf-frame {
+  display: block; width: 100%; height: 940px;
+  border: 1px solid var(--border); border-radius: 10px;
+  background: #f6f7f9;
+}
+.pdf-frame p { padding: 24px; text-align: center; }
+@media (max-width: 900px) {
+  .pdf-frame { height: 74vh; }
+}
 </style>
 </head>
 <body>
@@ -79,7 +88,8 @@
 
 <div class="tab-bar" id="journal-tabs">
   <button data-tab="t0805">8월 1주차</button>
-  <button class="active" data-tab="t0813">8월 2주차</button>
+  <button data-tab="t0813">8월 2주차</button>
+  <button class="active" data-tab="t0816">8월 3주차</button>
 </div>
 
 <div class="tab-panel journal" id="t0805">
@@ -147,7 +157,7 @@
 </table>
 </div>
 
-<div class="tab-panel journal active" id="t0813">
+<div class="tab-panel journal" id="t0813">
 
 <h2>8월 2주차</h2>
 
@@ -213,6 +223,48 @@
 
 </div>
 
+<div class="tab-panel journal active" id="t0816">
+
+<h2>8월 3주차</h2>
+
+<h3>결과물 샘플</h3>
+<ul>
+  <li>KSAT-Max-08-16 기준 결과물</li>
+  <li>텍스트 복사/붙여넣기가 아닌, hwpx파일 직접 생성</li>
+  <li>어떠한 편집이나 조작을 거치지 않은 원본입니다.</li>
+</ul>
+
+<div class="tab-bar seg" id="sample-tabs">
+  <button class="active" data-tab="sample-humanities">인문</button>
+  <button data-tab="sample-social">사회</button>
+  <button data-tab="sample-science">과학</button>
+</div>
+
+<div class="tab-panel sample active" id="sample-humanities">
+  <object class="pdf-frame" data="../assets/research/ksat-agent/samples/humanities.pdf" type="application/pdf">
+    <p><a href="../assets/research/ksat-agent/samples/humanities.pdf">인문 샘플 PDF 열기</a></p>
+  </object>
+</div>
+
+<div class="tab-panel sample" id="sample-social">
+  <object class="pdf-frame" data="../assets/research/ksat-agent/samples/social.pdf" type="application/pdf">
+    <p><a href="../assets/research/ksat-agent/samples/social.pdf">사회 샘플 PDF 열기</a></p>
+  </object>
+</div>
+
+<div class="tab-panel sample" id="sample-science">
+  <object class="pdf-frame" data="../assets/research/ksat-agent/samples/science.pdf" type="application/pdf">
+    <p><a href="../assets/research/ksat-agent/samples/science.pdf">과학 샘플 PDF 열기</a></p>
+  </object>
+</div>
+
+<h3>품질 평가</h3>
+<ul>
+  <li>8월 3~4주차 진행 예정</li>
+</ul>
+
+</div>
+
 </article>
 
 </main>
@@ -233,6 +285,7 @@
     });
   }
   bindTabs('journal-tabs', '.tab-panel.journal');
+  bindTabs('sample-tabs', '.tab-panel.sample');
   hljs.highlightAll();
 })();
 </script>
