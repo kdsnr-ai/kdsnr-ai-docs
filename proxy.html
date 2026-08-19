@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kdsnr-ai · Proxy</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="assets/style.css?v=20260804-1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar"></aside>
+<script src="assets/nav.js?v=20260819-1"></script>
+
+<main class="content">
+
+<h1>Proxy</h1>
+<p class="lead">업무용 프로그램에서 사용하는 LLM API입니다.</p>
+<ul class="lead-list">
+<li>Anthropic Python SDK로 Claude 계열 모델을 호출할 수 있습니다.</li>
+<li>OpenAI Python SDK로 GPT 계열 모델을 호출할 수 있습니다.</li>
+<li>기존 코드에서 <code>base_url</code>과 <code>api_key</code>만 바꾸어 연결합니다.</li>
+</ul>
+
+<h2 class="part">개요</h2>
+
+<section id="overview">
+<figure class="shots single">
+<img src="assets/proxy-overview.png" alt="여러 사용자가 각자의 API Key로 Proxy에 요청하고 Proxy가 GPT 또는 Claude에 연결하는 구조">
+</figure>
+<p>강남대성수능연구소에서 사용되는 업무용 AI 프로그램은 별도의 OpenAI/Anthropic API Key가 없이도, Proxy API를 통해 LLM을 호출할 수 있습니다.</p>
+</section>
+
+<h2 class="part" id="api-usage">API 사용법</h2>
+
+<section id="gpt">
+<h3>OpenAI GPT</h3>
+<h4>1. 설치</h4>
+<pre><code class="language-bash">pip install openai</code></pre>
+<h4>2. Client 설정</h4>
+<pre><code class="language-text">https://kdsnr-ai-main-223982025046.asia-northeast3.run.app/proxy/v1</code></pre>
+<p>위의 주소를 <code>OpenAI</code>의 <code>base_url</code>에, <a class="nav-badge" href="https://kdsnr-ai-dashboard.vercel.app" target="_blank" rel="noopener">Dashboard</a>에서 발급한 API Key는 <code>api_key</code>에 입력합니다.</p>
+<pre><code class="language-python">import os
+
+from openai import OpenAI
+from openai.types.chat import ChatCompletion
+
+client = OpenAI(
+    base_url="https://kdsnr-ai-main-223982025046.asia-northeast3.run.app/proxy/v1",
+    api_key=os.environ["KDSNR_API_KEY"],
+)
+
+completion: ChatCompletion = client.chat.completions.create(
+    model="gpt-5.6-terra",
+    messages=[
+        {
+            "role": "user",
+            "content": "안녕하세요",
+        }
+    ],
+)
+
+print(completion.choices[0].message.content)</code></pre>
+<p>구체적인 API 사용법은 <a href="https://platform.openai.com/docs/api-reference/chat" target="_blank" rel="noopener">공식 홈페이지</a>를 참고하세요.</p>
+</section>
+
+<section id="claude">
+<h3>Anthropic Claude</h3>
+<h4>1. 설치</h4>
+<pre><code class="language-bash">pip install anthropic</code></pre>
+<h4>2. Client 설정</h4>
+<pre><code class="language-text">https://kdsnr-ai-main-223982025046.asia-northeast3.run.app/proxy</code></pre>
+<p>위의 주소를 <code>Anthropic</code>의 <code>base_url</code>에, <a class="nav-badge" href="https://kdsnr-ai-dashboard.vercel.app" target="_blank" rel="noopener">Dashboard</a>에서 발급한 API Key는 <code>api_key</code>에 입력합니다.</p>
+<pre><code class="language-python">import os
+
+from anthropic import Anthropic
+from anthropic.types import Message
+
+client = Anthropic(
+    base_url="https://kdsnr-ai-main-223982025046.asia-northeast3.run.app/proxy",
+    api_key=os.environ["KDSNR_API_KEY"],
+)
+
+message: Message = client.messages.create(
+    model="claude-opus-5",
+    max_tokens=1024,
+    messages=[
+        {
+            "role": "user",
+            "content": "안녕하세요",
+        }
+    ],
+)
+
+print(message.content[0].text)</code></pre>
+<p>구체적인 API 사용법은 <a href="https://platform.claude.com/docs/en/api/messages" target="_blank" rel="noopener">공식 홈페이지</a>를 참고하세요.</p>
+</section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script>
+hljs.highlightAll();
+document.querySelectorAll('pre, .sig').forEach(el => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.type = 'button';
+  const icoCopy = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  const icoDone = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  btn.innerHTML = icoCopy;
+  btn.addEventListener('click', () => {
+    const code = el.querySelector('code');
+    navigator.clipboard.writeText((code || el).innerText.trimEnd()).then(() => {
+      btn.innerHTML = icoDone;
+      setTimeout(() => { btn.innerHTML = icoCopy; }, 1200);
+    });
+  });
+  el.appendChild(btn);
+});
+const here = location.pathname.split('/').pop() || 'index.html';
+const links = [...document.querySelectorAll('.sidebar li a')].filter(a => a.getAttribute('href').startsWith(here + '#'));
+const secs = links.map(a => document.getElementById(a.getAttribute('href').split('#')[1]));
+function spy() {
+  let cur = 0;
+  secs.forEach((s, i) => { if (s && s.getBoundingClientRect().top < 120) cur = i; });
+  links.forEach((a, i) => a.classList.toggle('active', i === cur));
+}
+addEventListener('scroll', spy, { passive: true });
+spy();
+</script>
+
+</body>
+</html>

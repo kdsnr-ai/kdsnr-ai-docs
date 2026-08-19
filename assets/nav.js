@@ -18,6 +18,7 @@
 
   var P = R + 'pipeline.html#';
   var A = R + 'archive.html#';
+  var X = R + 'proxy.html#';
   var I = R + 'start.html#';
   var DASH = 'https://kdsnr-ai-dashboard.vercel.app';
   el.innerHTML =
@@ -53,6 +54,13 @@
       { href: A + 'search-questions', label: 'search_questions', sub: true },
       { href: A + 'get-question', label: 'get_question', sub: true },
       { href: A + 'find-similar-questions', label: 'find_similar_questions', sub: true },
+    ]) +
+    group(R + 'proxy.html', 'Proxy', page === 'proxy.html', true) +
+    items([
+      { href: X + 'overview', label: '개요' },
+      { href: X + 'api-usage', label: 'API 사용법' },
+      { href: X + 'gpt', label: 'OpenAI GPT', sub: true },
+      { href: X + 'claude', label: 'Anthropic Claude', sub: true },
     ]) +
     '</div>' +
     '<div class="nav-head">MCP</div>' +
