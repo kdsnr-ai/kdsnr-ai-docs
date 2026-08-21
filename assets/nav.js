@@ -54,6 +54,7 @@
       { href: A + 'search-questions', label: 'search_questions', sub: true },
       { href: A + 'get-question', label: 'get_question', sub: true },
       { href: A + 'find-similar-questions', label: 'find_similar_questions', sub: true },
+      { href: A + 'list-exams', label: 'list_exams', sub: true },
     ]) +
     group(R + 'proxy.html', 'Proxy', page === 'proxy.html', true) +
     items([

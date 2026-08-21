@@ -315,12 +315,21 @@ td code { white-space: nowrap; }
 .post table th { white-space: nowrap; }
 .post table td { word-break: keep-all; }
 
-table.course-enum th:first-child,
-table.course-enum td:first-child {
-  width: 108px;
-  min-width: 108px;
-  white-space: nowrap;
-}
+.content table.fields,
+.content table.args,
+.content table.terms { table-layout: fixed; }
+
+.content table.fields th:nth-child(1), .content table.fields td:nth-child(1),
+.content table.args th:nth-child(1), .content table.args td:nth-child(1),
+.content table.terms th:nth-child(1), .content table.terms td:nth-child(1) { width: 210px; }
+
+.content table.fields th:nth-child(2), .content table.fields td:nth-child(2),
+.content table.args th:nth-child(2), .content table.args td:nth-child(2) { width: 175px; }
+
+.content table.args th:nth-child(3), .content table.args td:nth-child(3) { width: 90px; }
+
+.content table.fields td:nth-child(2) code,
+.content table.args td:nth-child(2) code { white-space: normal; }
 
 table.model-info {
   border: 1px solid var(--border);
