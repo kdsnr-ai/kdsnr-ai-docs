@@ -32,6 +32,15 @@
 <p>강남대성수능연구소에서 사용되는 업무용 AI 프로그램은 별도의 OpenAI/Anthropic API Key가 없이도, Proxy API를 통해 LLM을 호출할 수 있습니다.</p>
 </section>
 
+<h2 class="part">사용 한도</h2>
+
+<section id="limits">
+<ul>
+<li>일일 호출 한도: 100회</li>
+<li>분당 호출 한도: 30회</li>
+</ul>
+</section>
+
 <h2 class="part" id="api-usage">API 사용법</h2>
 
 <section id="gpt">
@@ -93,7 +102,7 @@ message: Message = client.messages.create(
     ],
 )
 
-print(message.content[0].text)</code></pre>
+print(next(block.text for block in message.content if block.type == "text"))</code></pre>
 <p>구체적인 API 사용법은 <a href="https://platform.claude.com/docs/en/api/messages" target="_blank" rel="noopener">공식 홈페이지</a>를 참고하세요.</p>
 </section>
 
