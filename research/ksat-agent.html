@@ -58,6 +58,29 @@
 @media (max-width: 900px) {
   .pdf-frame { height: 74vh; }
 }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; align-items: start; }
+.two-col .sub { font-size: 15px; font-weight: 700; margin: 8px 0 0; }
+.post table.scores { font-size: 13px; line-height: 1.5; }
+.post table.scores th { font-size: 12.5px; padding: 6px 8px 6px 0; white-space: nowrap; text-align: left; }
+.post table.scores td { padding: 7px 8px 7px 0; text-align: left; }
+.post table.scores td:first-child { color: var(--text-sub); white-space: nowrap; vertical-align: middle; }
+.post table.scores th:first-child, .post table.scores td:first-child { width: 18%; }
+.post table.scores th:nth-child(2), .post table.scores td:nth-child(2) { width: 16%; }
+.post table.scores th:nth-child(2) { text-align: center; }
+.post table.scores td.score { text-align: center; padding-right: 8px; }
+.post table.scores td.score { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; vertical-align: middle; }
+.post table.scores ul { margin: 0; padding-left: 1.1em; }
+.post table.scores li { margin: 0; padding-left: .1em; line-height: 1.5; }
+.badge { display: inline-flex; align-items: center; justify-content: center; height: 22px; min-width: 34px; padding: 1px 6px 0; border-radius: 5px; line-height: 1; }
+.badge.top { background: #c8443f; color: #fff; }
+.badge.bottom { background: #2f5ea8; color: #fff; }
+.post figure.chart { margin: 22px 0 26px; }
+.post .chart svg { width: min(100%, 620px); height: auto; display: block; margin: 0 auto; font-family: "Pretendard Variable", Pretendard, sans-serif; }
+.post table.compare th, .post table.compare td { text-align: left; }
+.post table.compare td:first-child { color: var(--text-sub); white-space: nowrap; }
+.change { display: block; color: #1876ed; font-weight: 700; font-size: 13px; }
+.change.plain { color: var(--text); font-weight: 400; }
+@media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -90,7 +113,8 @@
   <button data-tab="t0805">8월 1주차</button>
   <button data-tab="t0813">8월 2주차</button>
   <button data-tab="t0816">8월 3주차</button>
-  <button class="active" data-tab="t0824">8월 4주차</button>
+  <button data-tab="t0824">8월 4주차</button>
+  <button class="active" data-tab="t0901">9월 1주차</button>
 </div>
 
 <div class="tab-panel journal" id="t0805">
@@ -266,7 +290,7 @@
 
 </div>
 
-<div class="tab-panel journal active" id="t0824">
+<div class="tab-panel journal" id="t0824">
 
 <h2>1차 품질 평가</h2>
 
@@ -283,6 +307,247 @@
 <object class="pdf-frame" data="../assets/research/ksat-agent/evaluation/ksat-agent-first-evaluation.pdf?v=20260825-1" type="application/pdf">
   <p><a href="../assets/research/ksat-agent/evaluation/ksat-agent-first-evaluation.pdf?v=20260825-1">전문가 검토의견 PDF 열기</a></p>
 </object>
+
+</div>
+
+<div class="tab-panel journal active" id="t0901">
+
+<h2>1차 학습 결과 정리</h2>
+
+<h3>1. 조교 평가</h3>
+
+<div class="two-col">
+<div>
+<p class="sub">인문 「존재론과 실존주의」</p>
+<table class="scores">
+  <tr>
+    <th>구분</th>
+    <th>점수</th>
+    <th>주요 의견</th>
+  </tr>
+  <tr>
+    <td>조교 1</td>
+    <td class="score"><span class="badge top">95</span></td>
+    <td><ul>
+      <li>전반적인 난도와 지문 자체가 좋습니다.</li>
+      <li>윤리와 사상 교과에 나오지 않는 사상가나 주장이 중심이 되면 선택과목에 따른 유불리를 줄일 수 있습니다.</li>
+    </ul></td>
+  </tr>
+  <tr>
+    <td>조교 5</td>
+    <td class="score"><span class="badge top">95</span></td>
+    <td><ul>
+      <li>온전히 이해하지 못해도 선지가 잡히는 지문으로 평가원의 인문·윤리학 지문을 연상시킵니다.</li>
+      <li>(나)의 마지막 두 문장과 2문단 마지막 문장이 잉여로 느껴집니다.</li>
+    </ul></td>
+  </tr>
+  <tr>
+    <td>조교 4</td>
+    <td class="score"><span>80</span></td>
+    <td><ul>
+      <li>전체적으로 괜찮은 지문입니다.</li>
+      <li>(가) 2문단 마지막 문장이 어렵고 서술체가 반복되며, 문제가 묻는 지점은 다소 쉽습니다.</li>
+    </ul></td>
+  </tr>
+  <tr>
+    <td>조교 3</td>
+    <td class="score"><span>79</span></td>
+    <td><ul>
+      <li>&lt;보기&gt; 문항의 선지 구성과 판단 근거가 평가원 고난도 문항에 못지않습니다.</li>
+      <li>(가)의 서술이 평가원보다 친절하지 않고 1~4번은 쉽게 느껴집니다.</li>
+    </ul></td>
+  </tr>
+  <tr>
+    <td>조교 2</td>
+    <td class="score"><span class="badge bottom">67</span></td>
+    <td><ul>
+      <li>2026학년도 수능 독서도 난도가 높았기에 이 세트도 유사한 수준으로 봅니다.</li>
+      <li>어휘가 추상적이고 1번은 선지 소거로만 풀렸습니다.</li>
+    </ul></td>
+  </tr>
+</table>
+</div>
+<div>
+<p class="sub">과학기술 「해양 미세플라스틱」</p>
+<table class="scores">
+  <tr>
+    <th>구분</th>
+    <th>점수</th>
+    <th>주요 의견</th>
+  </tr>
+  <tr>
+    <td>조교 6</td>
+    <td class="score"><span class="badge top">87</span></td>
+    <td><ul>
+      <li>논리 구조 18/20, 근거 내재성 19/20, 정보 밀도 14/15로 지문 완성도 항목에 최고점을 주었습니다.</li>
+      <li>정답·오답 선지 설계는 7/10입니다.</li>
+    </ul></td>
+  </tr>
+  <tr>
+    <td>조교 7</td>
+    <td class="score"><span>80</span></td>
+    <td><ul>
+      <li>문단 전개는 대체로 자연스럽습니다.</li>
+      <li>4문단의 경쟁 대목이 결과까지 이어지면 좋겠고, 1번 ⑤와 2번 ①의 내용이 유사합니다.</li>
+    </ul></td>
+  </tr>
+  <tr>
+    <td>조교 8</td>
+    <td class="score"><span>76</span></td>
+    <td><ul>
+      <li>흡착·탈착과 운반의 변수를 차례로 제시해 문단 간 유기성이 매우 높습니다.</li>
+      <li>3번은 추론보다 말장난에 가깝고 4번은 단순 계산에 가깝습니다.</li>
+    </ul></td>
+  </tr>
+  <tr>
+    <td>조교 9</td>
+    <td class="score"><span class="badge bottom">68</span></td>
+    <td><ul>
+      <li>전반적으로 흐름이 있는 편입니다.</li>
+      <li>2문단에서 풍화가 갑자기 등장하고, &lt;보기&gt;는 계산보다 판단을 묻는 선지가 좋겠습니다.</li>
+    </ul></td>
+  </tr>
+</table>
+</div>
+</div>
+
+<h3>2. 생성 및 가공 비용</h3>
+<ul>
+  <li>초안 생성부터 연구진 납품 가능 단계까지의 소요 일수와 실 지불 비용입니다.</li>
+  <li>국어 독서 1지문 세트 기준입니다.</li>
+  <li>비용은 초안 생성부터 편집까지, GPU 클라우드 가동 및 LLM API 비용을 포함한 전체 비용입니다.</li>
+  <li>소요 일수 산정 방법
+    <ul>
+      <li>현행 공정 : 출제·검토 총 2개월(40일)</li>
+      <li>KSAT : 1세트 기준으로 서버에 집계된 작업 시간을 근무시간(8h)로 나눠 구한 작업 일수</li>
+    </ul>
+  </li>
+</ul>
+
+<figure class="chart">
+<svg viewBox="0 0 1010 800" role="img" aria-label="비용과 소요 일수 그래프. 현행 출제 공정 2,000,000원 2개월에서 KSAT 구형 모델 46,130원 7.5일을 거쳐 KSAT-Max 08-16 1,120원 2.5일로 이동합니다.">
+  <defs>
+    <marker id="tip" markerWidth="24" markerHeight="18" refX="22" refY="9" orient="auto" markerUnits="userSpaceOnUse">
+      <path d="M0,0 L22,9 L0,18 L5,9 z" fill="#1876ed"/>
+    </marker>
+  </defs>
+
+  <g stroke="#dde1e6" stroke-width="1.5" stroke-dasharray="2.5 6" stroke-linecap="round">
+    <line x1="380" y1="70" x2="380" y2="710"/>
+    <line x1="570" y1="70" x2="570" y2="710"/>
+    <line x1="760" y1="70" x2="760" y2="710"/>
+    <line x1="950" y1="70" x2="950" y2="710"/>
+    <line x1="190" y1="638.9" x2="950" y2="638.9"/>
+    <line x1="190" y1="567.8" x2="950" y2="567.8"/>
+    <line x1="190" y1="496.7" x2="950" y2="496.7"/>
+    <line x1="190" y1="425.6" x2="950" y2="425.6"/>
+    <line x1="190" y1="354.4" x2="950" y2="354.4"/>
+    <line x1="190" y1="283.3" x2="950" y2="283.3"/>
+    <line x1="190" y1="212.2" x2="950" y2="212.2"/>
+    <line x1="190" y1="141.1" x2="950" y2="141.1"/>
+    <line x1="190" y1="70" x2="950" y2="70"/>
+  </g>
+
+  <line x1="190" y1="70" x2="190" y2="710" stroke="#191f28" stroke-width="2.2"/>
+  <line x1="190" y1="710" x2="950" y2="710" stroke="#191f28" stroke-width="2.2"/>
+
+  <g stroke="#191f28" stroke-width="2">
+    <line x1="380" y1="710" x2="380" y2="719"/>
+    <line x1="570" y1="710" x2="570" y2="719"/>
+    <line x1="760" y1="710" x2="760" y2="719"/>
+    <line x1="950" y1="710" x2="950" y2="719"/>
+    <line x1="181" y1="638.9" x2="190" y2="638.9"/>
+    <line x1="181" y1="567.8" x2="190" y2="567.8"/>
+    <line x1="181" y1="496.7" x2="190" y2="496.7"/>
+    <line x1="181" y1="425.6" x2="190" y2="425.6"/>
+    <line x1="181" y1="354.4" x2="190" y2="354.4"/>
+    <line x1="181" y1="283.3" x2="190" y2="283.3"/>
+    <line x1="181" y1="212.2" x2="190" y2="212.2"/>
+    <line x1="181" y1="141.1" x2="190" y2="141.1"/>
+    <line x1="181" y1="70" x2="190" y2="70"/>
+  </g>
+
+  <g font-size="20" fill="#4e5968" text-anchor="middle">
+    <text x="190" y="746">₩0</text>
+    <text x="380" y="746">₩500,000</text>
+    <text x="570" y="746">₩1,000,000</text>
+    <text x="760" y="746">₩1,500,000</text>
+    <text x="950" y="746">₩2,000,000</text>
+  </g>
+  <g font-size="20" fill="#4e5968" text-anchor="end">
+    <text x="170" y="645.9">5일</text>
+    <text x="170" y="574.8">10일</text>
+    <text x="170" y="503.7">15일</text>
+    <text x="170" y="432.6">20일 (1개월)</text>
+    <text x="170" y="361.4">25일</text>
+    <text x="170" y="290.3">30일</text>
+    <text x="170" y="219.2">35일</text>
+    <text x="170" y="148.1">40일 (2개월)</text>
+    <text x="170" y="77">45일</text>
+  </g>
+  <text x="190" y="40" font-size="22" font-weight="700" fill="#191f28" text-anchor="middle">소요 일수</text>
+  <text x="570" y="790" font-size="22" font-weight="700" fill="#191f28" text-anchor="middle">실 지불 비용</text>
+
+  <g stroke="#1876ed" stroke-width="3" stroke-linecap="round" marker-end="url(#tip)">
+    <line x1="940.7" y1="146.9" x2="217.7" y2="597.0"/>
+    <line x1="204.9" y1="614.0" x2="193.4" y2="661.8"/>
+  </g>
+
+  <g font-size="22" fill="#191f28">
+    <circle cx="950" cy="141.1" r="11" fill="#8b95a1"/>
+    <text x="916" y="122" font-weight="700" text-anchor="end">현행 출제 공정</text>
+    <text x="916" y="148" text-anchor="end">₩2,000,000 · 2개월</text>
+
+    <circle cx="207.5" cy="603.3" r="11" fill="#8b95a1"/>
+    <text x="264" y="600" font-weight="700">KSAT 구형 모델</text>
+    <text x="264" y="626">₩46,130 · 7.5일</text>
+
+    <circle cx="190.4" cy="674.4" r="11" fill="#1876ed"/>
+    <text x="232" y="673" font-weight="700">KSAT-Max 08-16</text>
+    <text x="232" y="699">₩1,120 · 2.5일</text>
+  </g>
+</svg>
+</figure>
+
+<table class="compare">
+  <tr>
+    <th style="width:10%">구분</th>
+    <th style="width:30%">현행 출제 공정</th>
+    <th style="width:30%">KSAT 구형 모델</th>
+    <th style="width:30%">KSAT-Max 08-16</th>
+  </tr>
+  <tr>
+    <td>공정 단계</td>
+    <td>외부 출제자 초고 → 연구진 검토·수정</td>
+    <td colspan="2">AI 초안 10부 중 선택 → S팀 전문가 검수·편집</td>
+  </tr>
+  <tr>
+    <td>비용</td>
+    <td>약 ₩2,000,000</td>
+    <td>₩46,130<span class="change plain">(현행 대비 -97.7%)</span></td>
+    <td>₩1,120<span class="change">(현행 대비 -99.9%)</span></td>
+  </tr>
+  <tr>
+    <td>소요 일수</td>
+    <td>2개월 (40일)</td>
+    <td>7.5일<span class="change plain">(현행 대비 -81.3%)</span></td>
+    <td>2.5일<span class="change">(현행 대비 -93.8%)</span></td>
+  </tr>
+  <tr>
+    <td>편집 횟수</td>
+    <td>연구진과 출제자 왕복 3회 이상</td>
+    <td>AI 어시스턴트 채팅 652회</td>
+    <td>AI 어시스턴트 채팅 214회</td>
+  </tr>
+</table>
+
+<h3>3. 함의 및 개선 방향</h3>
+<ul>
+  <li>지문 구성에 대한 평가는 전반적으로 양호하며, 문항의 난이도와 선지 구성은 보완이 필요합니다.</li>
+  <li>다음 모델에서는 학습 신호가 문항에 집중되도록 데이터셋과 학습 알고리즘을 개선할 예정입니다.</li>
+  <li>학생 평가는 평가자의 선호와 관점에 따라 편차가 매우 크므로, 향후에는 동일한 학생이 두 지문을 연속해서 검토하도록 설계해 평가자 편향을 제거해야 합니다.</li>
+  <li>다음 모델은 9월 말에서 10월 초 출시 예정입니다.</li>
+</ul>
 
 </div>
 
