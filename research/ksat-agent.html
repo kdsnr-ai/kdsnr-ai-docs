@@ -114,7 +114,8 @@
   <button data-tab="t0813">8월 2주차</button>
   <button data-tab="t0816">8월 3주차</button>
   <button data-tab="t0824">8월 4주차</button>
-  <button class="active" data-tab="t0901">9월 1주차</button>
+  <button data-tab="t0901">9월 1주차</button>
+  <button class="active" data-tab="t1006">10월 1주차</button>
 </div>
 
 <div class="tab-panel journal" id="t0805">
@@ -310,7 +311,7 @@
 
 </div>
 
-<div class="tab-panel journal active" id="t0901">
+<div class="tab-panel journal" id="t0901">
 
 <h2>1차 학습 결과 정리</h2>
 
@@ -552,6 +553,68 @@
 
 </div>
 
+<div class="tab-panel journal active" id="t1006">
+
+<h2>KSAT-Max 2 학습 완료 &amp; 결과물 샘플</h2>
+
+<ul>
+  <li>KSAT-Max 2 기준 결과물</li>
+  <li>텍스트 복사/붙여넣기가 아닌, hwpx파일 직접 생성</li>
+  <li>어떠한 편집이나 조작을 거치지 않은 원본입니다.</li>
+</ul>
+
+<div class="tab-bar seg" id="max2-sample-tabs">
+  <button class="active" data-tab="max2-humanities">인문</button>
+  <button data-tab="max2-social">사회</button>
+  <button data-tab="max2-science-1">과학 1</button>
+  <button data-tab="max2-science-2">과학 2</button>
+  <button data-tab="max2-tech-1">기술 1</button>
+  <button data-tab="max2-tech-2">기술 2</button>
+</div>
+
+<div class="tab-panel max2-sample active" id="max2-humanities">
+  <object class="pdf-frame" data="../assets/research/ksat-agent/samples/max2/humanities.pdf?v=20261006-1" type="application/pdf">
+    <p><a href="../assets/research/ksat-agent/samples/max2/humanities.pdf?v=20261006-1">인문 샘플 PDF 열기</a></p>
+  </object>
+</div>
+
+<div class="tab-panel max2-sample" id="max2-social">
+  <object class="pdf-frame" data="../assets/research/ksat-agent/samples/max2/social.pdf?v=20261006-1" type="application/pdf">
+    <p><a href="../assets/research/ksat-agent/samples/max2/social.pdf?v=20261006-1">사회 샘플 PDF 열기</a></p>
+  </object>
+</div>
+
+<div class="tab-panel max2-sample" id="max2-science-1">
+  <object class="pdf-frame" data="../assets/research/ksat-agent/samples/max2/science-1.pdf?v=20261006-1" type="application/pdf">
+    <p><a href="../assets/research/ksat-agent/samples/max2/science-1.pdf?v=20261006-1">과학 1 샘플 PDF 열기</a></p>
+  </object>
+</div>
+
+<div class="tab-panel max2-sample" id="max2-science-2">
+  <object class="pdf-frame" data="../assets/research/ksat-agent/samples/max2/science-2.pdf?v=20261006-1" type="application/pdf">
+    <p><a href="../assets/research/ksat-agent/samples/max2/science-2.pdf?v=20261006-1">과학 2 샘플 PDF 열기</a></p>
+  </object>
+</div>
+
+<div class="tab-panel max2-sample" id="max2-tech-1">
+  <object class="pdf-frame" data="../assets/research/ksat-agent/samples/max2/tech-1.pdf?v=20261006-1" type="application/pdf">
+    <p><a href="../assets/research/ksat-agent/samples/max2/tech-1.pdf?v=20261006-1">기술 1 샘플 PDF 열기</a></p>
+  </object>
+</div>
+
+<div class="tab-panel max2-sample" id="max2-tech-2">
+  <object class="pdf-frame" data="../assets/research/ksat-agent/samples/max2/tech-2.pdf?v=20261006-1" type="application/pdf">
+    <p><a href="../assets/research/ksat-agent/samples/max2/tech-2.pdf?v=20261006-1">기술 2 샘플 PDF 열기</a></p>
+  </object>
+</div>
+
+<h3>품질 평가</h3>
+<ul>
+  <li>10월 2주차 진행 예정</li>
+</ul>
+
+</div>
+
 </article>
 
 </main>
@@ -573,6 +636,7 @@
   }
   bindTabs('journal-tabs', '.tab-panel.journal');
   bindTabs('sample-tabs', '.tab-panel.sample');
+  bindTabs('max2-sample-tabs', '.tab-panel.max2-sample');
 
   hljs.highlightAll();
 })();
