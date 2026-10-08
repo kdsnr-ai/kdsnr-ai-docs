@@ -80,6 +80,21 @@
 .post table.compare td:first-child { color: var(--text-sub); white-space: nowrap; }
 .change { display: block; color: #1876ed; font-weight: 700; font-size: 13px; }
 .change.plain { color: var(--text); font-weight: 400; }
+.post h3.after-frame { margin-top: 56px; }
+.table-wrap { overflow-x: auto; }
+.post table.ta-eval { width: 100%; font-size: 13.5px; }
+.post table.ta-eval th { font-size: 12.5px; white-space: nowrap; }
+.post table.ta-eval td.field { color: var(--text-sub); white-space: nowrap; }
+.post table.ta-eval td.topic { text-align: left; font-weight: 700; white-space: nowrap; }
+.post table.ta-eval td.score { font-weight: 600; font-variant-numeric: tabular-nums; vertical-align: middle; }
+.post table.ta-eval td.avg { color: var(--accent); font-weight: 700; }
+.post table.ta-eval th, .post table.ta-eval td { border-right: 1px solid var(--border); padding-left: 12px; padding-right: 12px; }
+.post table.ta-eval th:last-child, .post table.ta-eval td:last-child { border-right: none; }
+.post table.ta-eval td { vertical-align: middle; }
+.notes-grid { gap: 22px 32px; margin-top: 30px; }
+.set-notes .sub { margin: 0 0 6px; }
+.set-notes ul { margin: 0; padding-left: 1.1em; }
+.set-notes li { margin: 0 0 3px; line-height: 1.6; color: var(--text-sub); font-size: 14px; }
 @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
 </style>
 </head>
@@ -115,7 +130,8 @@
   <button data-tab="t0816">8월 3주차</button>
   <button data-tab="t0824">8월 4주차</button>
   <button data-tab="t0901">9월 1주차</button>
-  <button class="active" data-tab="t1006">10월 1주차</button>
+  <button data-tab="t1006">10월 1주차</button>
+  <button class="active" data-tab="t1013">10월 2주차</button>
 </div>
 
 <div class="tab-panel journal" id="t0805">
@@ -553,7 +569,7 @@
 
 </div>
 
-<div class="tab-panel journal active" id="t1006">
+<div class="tab-panel journal" id="t1006">
 
 <h2>KSAT-Max 2 학습 완료 &amp; 결과물 샘플</h2>
 
@@ -615,6 +631,98 @@
 
 </div>
 
+<div class="tab-panel journal active" id="t1013">
+
+<h2>KSAT-Max 2 품질 평가</h2>
+
+<h3>1. 전문가 검토의견</h3>
+<object class="pdf-frame" data="../assets/research/ksat-agent/evaluation/ksat-max2-evaluation.pdf?v=20261008-1" type="application/pdf">
+  <p><a href="../assets/research/ksat-agent/evaluation/ksat-max2-evaluation.pdf?v=20261008-1">전문가 검토의견 PDF 열기</a></p>
+</object>
+
+<h3 class="after-frame">2. 조교 평가</h3>
+<p>AI가 생성한 뒤 가공과 편집을 거치지 않은, 있는 그대로의 문항 세트를 평가한 결과입니다. 국어 조교 5인이 결과물 샘플 6세트를 같은 100점 평가표로 채점했습니다.</p>
+
+<ul>
+  <li>해당하는 원고 샘플은 <a href="#t1006" class="tab-link" data-tab="t1006">링크</a>에서 확인하실 수 있습니다.</li>
+</ul>
+
+<div class="table-wrap">
+<table class="ta-eval">
+  <tr>
+    <th>분야</th><th>주제</th><th class="avg">평균</th><th>조교 A</th><th>조교 B</th><th>조교 C</th><th>조교 D</th><th>조교 E</th>
+  </tr>
+  <tr>
+    <td class="field">인문</td><td class="topic">동적 평형과 창발</td><td class="score avg">96</td><td class="score"><span>92</span></td><td class="score"><span>99</span></td><td class="score"><span>99</span></td><td class="score"><span class="badge bottom">89</span></td><td class="score"><span class="badge top">100</span></td>
+  </tr>
+  <tr>
+    <td class="field">사회</td><td class="topic">쟁점별 표결과 결론별 표결</td><td class="score avg">92</td><td class="score"><span class="badge bottom">88</span></td><td class="score"><span class="badge top">100</span></td><td class="score"><span>90</span></td><td class="score"><span class="badge bottom">88</span></td><td class="score"><span>95</span></td>
+  </tr>
+  <tr>
+    <td class="field">과학</td><td class="topic">리보스위치</td><td class="score avg">81</td><td class="score"><span>83</span></td><td class="score"><span>84</span></td><td class="score"><span class="badge top">89</span></td><td class="score"><span class="badge top">89</span></td><td class="score"><span class="badge bottom">60</span></td>
+  </tr>
+  <tr>
+    <td class="field">과학</td><td class="topic">비대칭 촉매</td><td class="score avg">91</td><td class="score"><span class="badge top">98</span></td><td class="score"><span class="badge bottom">81</span></td><td class="score"><span>92</span></td><td class="score"><span>87</span></td><td class="score"><span>95</span></td>
+  </tr>
+  <tr>
+    <td class="field">기술</td><td class="topic">추측 디코딩</td><td class="score avg">77</td><td class="score"><span>82</span></td><td class="score"><span class="badge bottom">59</span></td><td class="score"><span class="badge top">94</span></td><td class="score"><span>90</span></td><td class="score"><span>61</span></td>
+  </tr>
+  <tr>
+    <td class="field">기술</td><td class="topic">KV 캐시</td><td class="score avg">88</td><td class="score"><span>90</span></td><td class="score"><span class="badge top">94</span></td><td class="score"><span>88</span></td><td class="score"><span class="badge bottom">81</span></td><td class="score"><span>87</span></td>
+  </tr>
+</table>
+</div>
+
+<div class="two-col notes-grid">
+<div class="set-notes">
+  <p class="sub">인문 「동적 평형과 창발」</p>
+  <ul>
+    <li>논리적 비약이 없고, 검토한 지문 중 가장 수능과 유사합니다.</li>
+    <li>26년 6평 플로리디, 25년 6평 에이어 지문을 푸는 느낌이며 난도가 아주 적절합니다.</li>
+    <li>4번 문항의 완성도가 아주 높습니다.</li>
+  </ul>
+</div>
+<div class="set-notes">
+  <p class="sub">사회 「쟁점별 표결과 결론별 표결」</p>
+  <ul>
+    <li>형식이 수능과 유사하며, 25년 리프킨 지문이 떠오르는 무난한 세트입니다.</li>
+    <li>같은 서술을 반복하거나 지나치게 친절하게 서술한 점이 아쉽습니다.</li>
+  </ul>
+</div>
+<div class="set-notes">
+  <p class="sub">과학 「리보스위치」</p>
+  <ul>
+    <li>난이도는 무난하지만 정보량과 인과관계가 많습니다.</li>
+    <li>정보가 갑자기 등장하는 거친 대목이 있습니다.</li>
+    <li>생명과학 선택자에게 유리할 수 있습니다.</li>
+  </ul>
+</div>
+<div class="set-notes">
+  <p class="sub">과학 「비대칭 촉매」</p>
+  <ul>
+    <li>선택과목에 따른 유불리가 없고 난도가 적절합니다.</li>
+    <li>24년 6평 지문의 강화판 같습니다.</li>
+  </ul>
+</div>
+<div class="set-notes">
+  <p class="sub">기술 「추측 디코딩」</p>
+  <ul>
+    <li>문항 난도는 평이합니다.</li>
+    <li>문장 간 연결이 유기적이지 않아 내용을 이해하기 어렵습니다.</li>
+  </ul>
+</div>
+<div class="set-notes">
+  <p class="sub">기술 「KV 캐시」</p>
+  <ul>
+    <li>앞선 세트와 비슷하지만 더 수능에 가깝습니다.</li>
+    <li>정보량이 다소 많지만 문단 간 유기성이 좋습니다.</li>
+    <li>지문이 친절하게 느껴집니다.</li>
+  </ul>
+</div>
+</div>
+
+</div>
+
 </article>
 
 </main>
@@ -637,6 +745,16 @@
   bindTabs('journal-tabs', '.tab-panel.journal');
   bindTabs('sample-tabs', '.tab-panel.sample');
   bindTabs('max2-sample-tabs', '.tab-panel.max2-sample');
+
+  document.querySelectorAll('a.tab-link').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var btn = document.querySelector('#journal-tabs > button[data-tab="' + link.dataset.tab + '"]');
+      if (!btn) return;
+      e.preventDefault();
+      btn.click();
+      document.getElementById('journal-tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
 
   hljs.highlightAll();
 })();
