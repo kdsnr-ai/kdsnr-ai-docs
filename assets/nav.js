@@ -62,6 +62,7 @@
       { href: X + 'api-usage', label: 'API 사용법' },
       { href: X + 'gpt', label: 'OpenAI GPT', sub: true },
       { href: X + 'claude', label: 'Anthropic Claude', sub: true },
+      { href: X + 'gemini', label: 'Google Gemini', sub: true },
     ]) +
     '</div>' +
     '<div class="nav-head">MCP</div>' +
