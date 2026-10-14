@@ -20,6 +20,7 @@
 <ul class="lead-list">
 <li>Anthropic Python SDK로 Claude 계열 모델을 호출할 수 있습니다.</li>
 <li>OpenAI Python SDK로 GPT 계열 모델을 호출할 수 있습니다.</li>
+<li>Google GenAI Python SDK로 Gemini 계열 모델을 호출할 수 있습니다.</li>
 <li>기존 코드에서 <code>base_url</code>과 <code>api_key</code>만 바꾸어 연결합니다.</li>
 </ul>
 
@@ -27,9 +28,9 @@
 
 <section id="overview">
 <figure class="shots single">
-<img src="assets/proxy-overview.png" alt="여러 사용자가 각자의 API Key로 Proxy에 요청하고 Proxy가 GPT 또는 Claude에 연결하는 구조">
+<img src="assets/proxy-overview.png?v=20261014-1" alt="여러 사용자가 각자의 API Key로 Proxy에 요청하고 Proxy가 GPT, Claude 또는 Gemini에 연결하는 구조">
 </figure>
-<p>강남대성수능연구소에서 사용되는 업무용 AI 프로그램은 별도의 OpenAI/Anthropic API Key가 없이도, Proxy API를 통해 LLM을 호출할 수 있습니다.</p>
+<p>강남대성수능연구소에서 사용되는 업무용 AI 프로그램은 별도의 OpenAI/Anthropic/Google API Key가 없이도, Proxy API를 통해 LLM을 호출할 수 있습니다.</p>
 </section>
 
 <h2 class="part">사용 한도</h2>
@@ -104,6 +105,40 @@ message: Message = client.messages.create(
 
 print(next(block.text for block in message.content if block.type == "text"))</code></pre>
 <p>구체적인 API 사용법은 <a href="https://platform.claude.com/docs/en/api/messages" target="_blank" rel="noopener">공식 홈페이지</a>를 참고하세요.</p>
+</section>
+
+<section id="gemini">
+<h3>Google Gemini</h3>
+<h4>1. 설치</h4>
+<pre><code class="language-bash">pip install google-genai</code></pre>
+<h4>2. Client 설정</h4>
+<pre><code class="language-text">https://kdsnr-ai-main-223982025046.asia-northeast3.run.app/proxy</code></pre>
+<p>위의 주소를 <code>http_options</code>의 <code>base_url</code>에, <a class="nav-badge" href="https://kdsnr-ai-dashboard.vercel.app" target="_blank" rel="noopener">Dashboard</a>에서 발급한 API Key는 <code>api_key</code>에 입력합니다. <code>api_version</code>은 <code>v1beta</code>로 둡니다.</p>
+<pre><code class="language-python">import os
+
+from google import genai
+from google.genai import types
+
+client = genai.Client(
+    api_key=os.environ["KDSNR_API_KEY"],
+    http_options=types.HttpOptions(
+        base_url="https://kdsnr-ai-main-223982025046.asia-northeast3.run.app/proxy",
+        api_version="v1beta",
+    ),
+)
+
+response: types.GenerateContentResponse = client.models.generate_content(
+    model="gemini-4-argon",
+    contents="안녕하세요",
+    config=types.GenerateContentConfig(
+        thinking_config=types.ThinkingConfig(
+            thinking_level="medium",
+        ),
+    ),
+)
+
+print(response.text)</code></pre>
+<p>구체적인 API 사용법은 <a href="https://ai.google.dev/gemini-api/docs" target="_blank" rel="noopener">공식 홈페이지</a>를 참고하세요.</p>
 </section>
 
 </main>
