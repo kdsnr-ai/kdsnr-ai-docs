@@ -26,6 +26,43 @@
 </ul>
 </div>
 
+<h2 class="part" id="v20261017">2026.10.17</h2>
+<section>
+<table class="update">
+<colgroup>
+<col class="w-svc"><col class="w-kind"><col><col class="w-api"><col class="w-api">
+</colgroup>
+<thead>
+<tr>
+<th rowspan="2">서비스</th>
+<th rowspan="2">유형</th>
+<th rowspan="2">내용</th>
+<th colspan="2" class="c">수동 업데이트 필요</th>
+</tr>
+<tr>
+<th class="c sub">API</th>
+<th class="c sub">MCP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pipeline</td>
+<td>API 변경</td>
+<td><ul><li><code>[1.5점]</code>처럼 소수인 배점을 <code>points</code>에 <code>float</code>로 담습니다.</li><li>소수 배점 값은 <code>kdsnr-ai</code> 0.3.1부터 받을 수 있습니다.</li><li>0.3.0 이하에서는 정상 동작하며, 소수 배점만 <code>None</code>으로 받습니다.</li></ul></td>
+<td class="c need">필요</td>
+<td class="c">불필요</td>
+</tr>
+<tr>
+<td>Pipeline</td>
+<td>버그 수정</td>
+<td><ul><li>여러 쪽에 같은 위치로 반복되는 선지 줄이 빠지던 문제를 고쳤습니다.</li><li>상자 안 2단 자료와 문장 사이에 번호가 놓인 선지 목록을 원문 순서대로 읽습니다.</li><li>수식의 <code>cases</code> 정렬, 선분 표시, 지수, 로만체 글자 표기를 고쳤습니다.</li><li>한글 문서 일부에서 그림이 보이지 않던 문제를 고쳤습니다.</li></ul></td>
+<td class="c">불필요</td>
+<td class="c">불필요</td>
+</tr>
+</tbody>
+</table>
+</section>
+
 <h2 class="part" id="v20261016">2026.10.16</h2>
 <section>
 <table class="update">
