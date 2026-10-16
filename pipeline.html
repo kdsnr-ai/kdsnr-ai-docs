@@ -204,7 +204,7 @@ for preview in result.previews:
 <tr><td><code>label</code></td><td><code>str</code></td><td>문서 라벨.</td></tr>
 <tr><td><code>subject</code></td><td><code>"korean" | "math" | "social" | "science"</code></td><td>과목.</td></tr>
 <tr><td><code>q_num</code></td><td><code>int | null</code></td><td>문항 번호.</td></tr>
-<tr><td><code>points</code></td><td><code>int | float | null</code></td><td><code>[N점]</code> 배점. <code>[1.5점]</code>처럼 소수 배점은 <code>float</code>입니다.</td></tr>
+<tr><td><code>points</code></td><td><code>int | null</code></td><td><code>[N점]</code> 배점. <code>[1.5점]</code>처럼 소수인 배점은 <code>null</code>이고 표기가 본문에 그대로 남습니다.</td></tr>
 <tr><td><code>q_nums</code></td><td><code>int[]</code></td><td>세트의 문항 번호 목록 (<code>QuestionSet</code>).</td></tr>
 <tr><td><code>q_id</code></td><td><code>str | null</code></td><td>추출 시 서버가 발급하는 문항 id.</td></tr>
 <tr><td><code>set_id</code></td><td><code>str | null</code></td><td>세트 id (<code>QuestionSet</code>).</td></tr>
