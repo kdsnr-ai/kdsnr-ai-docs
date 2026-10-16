@@ -5,18 +5,29 @@ from pathlib import Path
 
 INDEX = Path("research/index.html")
 CARD = re.compile(r'<a class="card"([^>]*?)href="([^"]+)"([^>]*)>')
+ASSET_VERSION = re.compile(r'^<(script|link)\b[^>]*\?v=[^>]*>(</script>)?$')
+
+
+def git(*args):
+    return subprocess.run(["git", *args], capture_output=True, text=True).stdout
+
+
+def only_asset_versions(sha, path):
+    changed = [
+        line[1:].strip()
+        for line in git("show", "--format=", "-U0", sha, "--", str(path)).splitlines()
+        if line[:1] in "+-" and not line.startswith(("+++", "---"))
+    ]
+    return bool(changed) and all(ASSET_VERSION.match(line) for line in changed)
 
 
 def commit_dates(path):
-    result = subprocess.run(
-        ["git", "log", "--format=%cs", "--", str(path)],
-        capture_output=True,
-        text=True,
-    )
-    dates = [line.strip() for line in result.stdout.splitlines() if line.strip()]
-    if not dates:
+    commits = [line.split() for line in git("log", "--format=%H %cs", "--", str(path)).splitlines() if line.strip()]
+    if not commits:
         return "", ""
-    return dates[-1], dates[0]
+    created = commits[-1][1]
+    updated = next((date for sha, date in commits if not only_asset_versions(sha, path)), created)
+    return created, updated
 
 
 def stamp(match):
