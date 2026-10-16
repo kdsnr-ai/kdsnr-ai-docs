@@ -12,15 +12,15 @@
 
 <aside class="sidebar" id="sidebar">
 </aside>
-<script src="assets/nav.js?v=20260727-4"></script>
+<script src="assets/nav.js?v=20261016-1"></script>
 
 <main class="content">
 
 <h1>Pipeline</h1>
-<p class="lead">PDF·HWP·HWPX 문서에서 문항을 추출하고, Question 객체와 필요한 출력 파일을 만드는 API입니다.</p>
+<p class="lead">PDF·HWP·HWPX 문서에서 문항을 추출해 Question 객체로 만드는 API입니다.</p>
 <ul class="lead-list">
 <li>입력 : 문항이 포함된 문서 파일 (hwp, hwpx, pdf)</li>
-<li>출력 : Question 객체, 문항 이미지, 선택한 미리보기 파일, hwpx</li>
+<li>출력 : Question 객체, 문항 이미지, 선택한 미리보기 파일</li>
 <li>원문 수식, 표, 이미지, 도식, 밑줄, 굵은 글씨, 박스 보존</li>
 <li>2단 구조 또는 페이지에 걸친 문항을 자동 복원</li>
 </ul>
@@ -53,11 +53,9 @@ for preview in result.previews:
 <tr><th>메서드</th><th>역할</th></tr>
 <tr><td><code>import_file</code></td><td>파일 업로드 → <code>Document</code></td></tr>
 <tr><td><code>extract_question</code></td><td>pdf · hwp · hwpx → <code>Question</code> 리스트, 선택 시 미리보기 파일 함께 반환</td></tr>
-<tr><td><code>compose_hwpx</code></td><td><code>Question</code> 리스트 → 문항별 한글 문서(hwpx)</td></tr>
-<tr><td><code>hwp_to_pdf</code></td><td>hwp · hwpx → pdf (원본 조판 보존)</td></tr>
-<tr><td><code>hwp_to_hwpx</code></td><td>hwp → hwpx</td></tr>
 </table>
 <p><code>extract_question</code>이 반환하는 <code>Question</code> 리스트는 JSON으로 직렬화되고, 저장 · 수정 · 직접 작성할 수 있습니다. <code>EmitPreviewConfig</code> 사용 여부와 관계없이, 파이프라인이 추출한 각 <code>Question</code>에는 100dpi WebP 이미지가 <code>q_img</code> 필드로 삽입됩니다.</p>
+<p>한글 문서 조판(<code>compose_hwpx</code>), 미리보기 파일(<code>preview</code>), 한글 문서 변환(<code>hwp_to_pdf</code> · <code>hwp_to_hwpx</code>)은 <a href="composer.html">Composer</a>를 참고하세요.</p>
 </section>
 
 <h2 class="part" id="question-part">Question 스키마</h2>
@@ -310,113 +308,7 @@ result.overlay.save("out/exam.overlay.pdf")</code></pre>
 <tr><td><code>classes</code></td><td><code>list[str] | None</code></td><td><code>None</code></td><td>그릴 클래스. <code>None</code>이면 전부. <code>passage</code> · <code>instruction</code> · <code>question</code> · <code>eq</code> · <code>bogi</code> · <code>plainbox</code> · <code>inlinebox</code> · <code>bracket</code> · <code>table</code> · <code>figure</code> · <code>qnum</code> · <code>cell</code>(표 격자). 그 외 이름은 오류.</td></tr>
 </table>
 <p><code>ExtractResult</code>는 <code>questions</code>, <code>overlay</code>, <code>previews</code>를 가집니다. 요청하지 않은 추가 결과는 <code>None</code> 또는 빈 리스트이며, <code>Document.save(path)</code>로 파일을 저장합니다.</p>
-<p>0.1.x의 <code>q_img_dpi</code> · <code>q_img</code> 인자와 <code>export_preview</code> · <code>ExportPreviewConfig</code>는 기존 코드 호환을 위해 한시 지원되며, 사용 시 <code>DeprecationWarning</code>이 발생합니다.</p>
-</section>
-
-<section id="compose-hwpx">
-<h3>compose_hwpx</h3>
-<p><code>Question</code> 리스트를 한글 문서(hwpx)로 조판합니다.</p>
-<pre><code class="language-python">from pathlib import Path
-
-from kdsnr_ai import Client
-
-client = Client(api_key="YOUR_API_KEY")
-
-doc = client.pipeline.import_file("exam.pdf")
-questions = client.pipeline.extract_question(doc)
-
-paths: list[Path] = client.pipeline.compose_hwpx(
-    questions,
-    "out/hwpx",
-)</code></pre>
-<table>
-<tr><th>인자</th><th>타입</th><th>기본값</th><th>설명</th></tr>
-<tr><td><code>questions</code></td><td><code>list[Question | QuestionSet]</code></td><td>—</td><td>조판할 문항. 추출 결과 또는 직접 작성한 객체 — id가 없어도 됩니다.</td></tr>
-<tr><td><code>export_dir</code></td><td><code>str | Path</code></td><td>—</td><td>산출 파일 디렉터리.</td></tr>
-</table>
-<p>문항·세트 하나가 hwpx 파일 하나가 됩니다. 결과물은 표준 서식으로 새로 조판된 문서이며, 원본 지면의 배치를 복원하지 않습니다.</p>
-<p><code>Figure.caption</code>은 그림 아래에, <code>Table.caption</code>은 표 위에 가운데 정렬로 조판됩니다. <code>Text.inlineimg</code> 그림은 글자처럼 줄 안에 놓입니다.</p>
-<h4>Figure 입력</h4>
-<p>직접 작성한 문항에 그림을 넣을 때 <code>Figure</code> 블록에 쓰는 필드입니다. 그림 내용을
-<code>data</code>에 직접 적거나, <code>url</code>로 주소를 가리킵니다. SVG로 적으면 좌표축 · 눈금 ·
-라벨이 적은 값 그대로 들어갑니다.</p>
-<pre><code class="language-python">questions = [
-    {
-        "type": "Question",
-        "metadata": {"q_num": 1},
-        "content": [
-            {"type": "Text", "text": "다음 그래프를 보고 물음에 답하시오."},
-            {
-                "type": "Figure",
-                "format": "svg",
-                "data": (
-                    '&lt;svg xmlns="http://www.w3.org/2000/svg" width="240" height="160"&gt;'
-                    '&lt;line x1="30" y1="130" x2="220" y2="130" stroke="black"/&gt;'
-                    '&lt;line x1="30" y1="130" x2="30" y2="20" stroke="black"/&gt;'
-                    '&lt;text x="120" y="148" font-family="1" font-size="10"&gt;시간 t (초)&lt;/text&gt;'
-                    "&lt;/svg&gt;"
-                ),
-            },
-        ],
-    }
-]
-
-paths: list[Path] = client.pipeline.compose_hwpx(questions, "out/hwpx")</code></pre>
-<table>
-<tr><th>필드</th><th>타입</th><th>기본값</th><th>설명</th></tr>
-<tr><td><code>format</code></td><td><code>str</code></td><td>자동</td><td><code>png</code> · <code>jpeg</code> · <code>webp</code> · <code>svg</code>. 생략할 수 있습니다.</td></tr>
-<tr><td><code>data</code></td><td><code>str</code></td><td><code>""</code></td><td>그림 내용. 이미지는 base64(<code>data:</code> 접두사 없음), SVG는 원문.</td></tr>
-<tr><td><code>url</code></td><td><code>str</code></td><td><code>""</code></td><td>공개 <code>https://</code> 그림 주소. <code>data</code>와 둘 중 하나만 씁니다.</td></tr>
-<tr><td><code>width</code> <code>height</code></td><td><code>float</code></td><td>자동</td><td>표시 크기(pt). 최대 폭은 단 폭 317pt입니다.</td></tr>
-</table>
-<p>SVG 안의 글자는 본문과 같은 두 갈래로 지정합니다. 다른 글꼴 이름을 적으면 이 둘 중 하나로 바뀝니다.</p>
-<table>
-<tr><th><code>font-family</code></th><th>글꼴</th></tr>
-<tr><td><code>"1"</code></td><td>명조 — 지정하지 않을 때의 기본값</td></tr>
-<tr><td><code>"2"</code></td><td>돋움</td></tr>
-</table>
-</section>
-
-<section id="hwp-to-pdf">
-<h3>hwp_to_pdf</h3>
-<p>hwp · hwpx 문서를 원본 조판 그대로 pdf로 변환합니다.</p>
-<pre><code class="language-python">from pathlib import Path
-
-from kdsnr_ai import Client
-
-client = Client(api_key="YOUR_API_KEY")
-
-pdf_path: Path = client.pipeline.hwp_to_pdf(
-    "exam.hwp",
-    "out/exam.pdf",
-    enable_vec=True,
-)</code></pre>
-<table>
-<tr><th>인자</th><th>타입</th><th>기본값</th><th>설명</th></tr>
-<tr><td><code>file</code></td><td><code>str | Path</code></td><td>—</td><td>파일 경로. <code>.hwp</code> · <code>.hwpx</code>.</td></tr>
-<tr><td><code>save_path</code></td><td><code>str | Path</code></td><td>—</td><td>저장할 pdf 경로. 중간 디렉터리 자동 생성.</td></tr>
-<tr><td><code>enable_vec</code></td><td><code>bool</code></td><td><code>True</code></td><td><code>True</code>=벡터 글리프 + 검색·복사 가능한 텍스트층. <code>False</code>=300dpi 래스터 페이지.</td></tr>
-</table>
-</section>
-
-<section id="hwp-to-hwpx">
-<h3>hwp_to_hwpx</h3>
-<p>구형 바이너리 hwp 문서를 hwpx로 변환합니다.</p>
-<pre><code class="language-python">from pathlib import Path
-
-from kdsnr_ai import Client
-
-client = Client(api_key="YOUR_API_KEY")
-
-hwpx_path: Path = client.pipeline.hwp_to_hwpx(
-    "exam.hwp",
-    "out/exam.hwpx",
-)</code></pre>
-<table>
-<tr><th>인자</th><th>타입</th><th>기본값</th><th>설명</th></tr>
-<tr><td><code>file</code></td><td><code>str | Path</code></td><td>—</td><td>파일 경로. <code>.hwp</code>.</td></tr>
-<tr><td><code>save_path</code></td><td><code>str | Path</code></td><td>—</td><td>저장할 hwpx 경로. 중간 디렉터리 자동 생성.</td></tr>
-</table>
+<p>0.1.x의 <code>q_img_dpi</code> · <code>q_img</code> 인자와 <code>export_preview</code> · <code>ExportPreviewConfig</code>는 기존 코드 호환을 위해 한시 지원되며, 사용 시 <code>DeprecationWarning</code>이 발생합니다. 추출 뒤에 미리보기 파일을 받으려면 <a href="composer.html#preview">Composer의 preview</a>를 씁니다.</p>
 </section>
 
 

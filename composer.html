@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kdsnr-ai · Composer</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="assets/style.css?v=20260804-1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+</aside>
+<script src="assets/nav.js?v=20261016-1"></script>
+
+<main class="content">
+
+<h1>Composer</h1>
+<p class="lead">Question 객체를 한글 문서로 조판하고, 문항 미리보기 파일과 한글 문서 변환 결과를 만드는 API입니다.</p>
+<ul class="lead-list">
+<li>입력 : Question 객체, 한글 문서 파일 (hwp, hwpx)</li>
+<li>출력 : 한글 문서(hwpx), 문항 미리보기 파일 (png, jpeg, pdf, svg), pdf</li>
+<li>표준 서식으로 새로 조판, 직접 작성한 Question 객체도 조판</li>
+<li>hwp · hwpx를 원본 조판 그대로 pdf로 변환</li>
+</ul>
+
+<h2 class="part">개요</h2>
+
+<section id="overview">
+
+<pre><code class="language-python">from pathlib import Path
+
+from kdsnr_ai import Client
+
+client = Client(api_key="YOUR_API_KEY")
+
+doc = client.pipeline.import_file("exam.pdf")
+questions = client.pipeline.extract_question(doc)
+
+paths: list[Path] = client.composer.compose_hwpx(
+    questions,
+    "out/hwpx",
+)</code></pre>
+<table>
+<tr><th>메서드</th><th>역할</th></tr>
+<tr><td><code>compose_hwpx</code></td><td><code>Question</code> 리스트 → 문항별 한글 문서(hwpx)</td></tr>
+<tr><td><code>preview</code></td><td>추출한 <code>Question</code> 리스트 → 원본 영역 미리보기 <code>Document</code> 리스트</td></tr>
+<tr><td><code>export_preview</code></td><td>추출한 <code>Question</code> 리스트 → 미리보기 파일 저장</td></tr>
+<tr><td><code>hwp_to_pdf</code></td><td>hwp · hwpx → pdf (원본 조판 보존)</td></tr>
+<tr><td><code>hwp_to_hwpx</code></td><td>hwp → hwpx</td></tr>
+</table>
+<p><code>client.composer</code>는 <code>kdsnr-ai</code> 0.3.0부터 제공됩니다. 0.2.x의 <code>client.pipeline.compose_hwpx</code> · <code>hwp_to_pdf</code> · <code>hwp_to_hwpx</code> · <code>export_preview</code>는 기존 코드 호환을 위해 같은 기능으로 계속 동작하며, 0.3.0에서 사용하면 <code>DeprecationWarning</code>이 발생합니다.</p>
+</section>
+
+<h2 class="part" id="api-usage">API 사용법</h2>
+
+<section id="compose-hwpx">
+<h3>compose_hwpx</h3>
+<p><code>Question</code> 리스트를 한글 문서(hwpx)로 조판합니다.</p>
+<pre><code class="language-python">from pathlib import Path
+
+from kdsnr_ai import Client
+
+client = Client(api_key="YOUR_API_KEY")
+
+doc = client.pipeline.import_file("exam.pdf")
+questions = client.pipeline.extract_question(doc)
+
+paths: list[Path] = client.composer.compose_hwpx(
+    questions,
+    "out/hwpx",
+)</code></pre>
+<table>
+<tr><th>인자</th><th>타입</th><th>기본값</th><th>설명</th></tr>
+<tr><td><code>questions</code></td><td><code>list[Question | QuestionSet]</code></td><td>—</td><td>조판할 문항. 추출 결과 또는 직접 작성한 객체 — id가 없어도 됩니다.</td></tr>
+<tr><td><code>export_dir</code></td><td><code>str | Path</code></td><td>—</td><td>산출 파일 디렉터리.</td></tr>
+</table>
+<p>문항·세트 하나가 hwpx 파일 하나가 됩니다. 결과물은 표준 서식으로 새로 조판된 문서이며, 원본 지면의 배치를 복원하지 않습니다.</p>
+<p><code>Figure.caption</code>은 그림 아래에, <code>Table.caption</code>은 표 위에 가운데 정렬로 조판됩니다. <code>Text.inlineimg</code> 그림은 글자처럼 줄 안에 놓입니다.</p>
+<h4>Figure 입력</h4>
+<p>직접 작성한 문항에 그림을 넣을 때 <code>Figure</code> 블록에 쓰는 필드입니다. 그림 내용을
+<code>data</code>에 직접 적거나, <code>url</code>로 주소를 가리킵니다. SVG로 적으면 좌표축 · 눈금 ·
+라벨이 적은 값 그대로 들어갑니다.</p>
+<pre><code class="language-python">questions = [
+    {
+        "type": "Question",
+        "metadata": {"q_num": 1},
+        "content": [
+            {"type": "Text", "text": "다음 그래프를 보고 물음에 답하시오."},
+            {
+                "type": "Figure",
+                "format": "svg",
+                "data": (
+                    '&lt;svg xmlns="http://www.w3.org/2000/svg" width="240" height="160"&gt;'
+                    '&lt;line x1="30" y1="130" x2="220" y2="130" stroke="black"/&gt;'
+                    '&lt;line x1="30" y1="130" x2="30" y2="20" stroke="black"/&gt;'
+                    '&lt;text x="120" y="148" font-family="1" font-size="10"&gt;시간 t (초)&lt;/text&gt;'
+                    "&lt;/svg&gt;"
+                ),
+            },
+        ],
+    }
+]
+
+paths: list[Path] = client.composer.compose_hwpx(questions, "out/hwpx")</code></pre>
+<table>
+<tr><th>필드</th><th>타입</th><th>기본값</th><th>설명</th></tr>
+<tr><td><code>format</code></td><td><code>str</code></td><td>자동</td><td><code>png</code> · <code>jpeg</code> · <code>webp</code> · <code>svg</code>. 생략할 수 있습니다.</td></tr>
+<tr><td><code>data</code></td><td><code>str</code></td><td><code>""</code></td><td>그림 내용. 이미지는 base64(<code>data:</code> 접두사 없음), SVG는 원문.</td></tr>
+<tr><td><code>url</code></td><td><code>str</code></td><td><code>""</code></td><td>공개 <code>https://</code> 그림 주소. <code>data</code>와 둘 중 하나만 씁니다.</td></tr>
+<tr><td><code>width</code> <code>height</code></td><td><code>float</code></td><td>자동</td><td>표시 크기(pt). 최대 폭은 단 폭 317pt입니다.</td></tr>
+</table>
+<p>SVG 안의 글자는 본문과 같은 두 갈래로 지정합니다. 다른 글꼴 이름을 적으면 이 둘 중 하나로 바뀝니다.</p>
+<table>
+<tr><th><code>font-family</code></th><th>글꼴</th></tr>
+<tr><td><code>"1"</code></td><td>명조 — 지정하지 않을 때의 기본값</td></tr>
+<tr><td><code>"2"</code></td><td>돋움</td></tr>
+</table>
+</section>
+
+<section id="preview">
+<h3>preview</h3>
+<p>추출한 <code>Question</code> · <code>QuestionSet</code>의 원본 영역을 이미지 · pdf · svg 파일로 받습니다.</p>
+<pre><code class="language-python">from pathlib import Path
+
+from kdsnr_ai import Client, Document, PreviewConfig
+
+client = Client(api_key="YOUR_API_KEY")
+
+doc = client.pipeline.import_file("exam.pdf")
+questions = client.pipeline.extract_question(doc)
+
+previews: list[Document] = client.composer.preview(
+    questions,
+    PreviewConfig(
+        format="png",
+        dpi=300,
+    ),
+)
+
+for preview in previews:
+    preview.save(Path("out/preview") / preview.filename)</code></pre>
+<table>
+<tr><th>인자</th><th>타입</th><th>기본값</th><th>설명</th></tr>
+<tr><td><code>questions</code></td><td><code>list[Question | QuestionSet]</code></td><td>—</td><td><code>extract_question</code>이 반환한 문항. <code>metadata.q_id</code> · <code>metadata.set_id</code>로 원본 영역을 찾습니다.</td></tr>
+<tr><td><code>config</code></td><td><code>PreviewConfig | None</code></td><td><code>None</code></td><td>파일 형식과 해상도. 생략하면 300dpi png.</td></tr>
+</table>
+
+<h4>PreviewConfig</h4>
+<table>
+<tr><th>필드</th><th>타입</th><th>기본값</th><th>설명</th></tr>
+<tr><td><code>format</code></td><td><code>str</code></td><td><code>"png"</code></td><td><code>png</code> · <code>jpeg</code> · <code>pdf</code> · <code>svg</code>.</td></tr>
+<tr><td><code>dpi</code></td><td><code>int</code></td><td><code>300</code></td><td><code>png</code> · <code>jpeg</code>의 래스터 해상도. <code>pdf</code> · <code>svg</code>에는 적용되지 않습니다. 50~600 범위.</td></tr>
+</table>
+<p><code>Question</code>은 문항 영역이 파일 하나가 됩니다. 컬럼이나 페이지에 걸친 문항은 위아래로 이어 붙습니다. <code>QuestionSet</code>은 세트가 실린 페이지 전체가 반환됩니다. 추출과 동시에 받으려면 <code>extract_question</code>의 <code>emit_preview</code>를 씁니다.</p>
+</section>
+
+<section id="export-preview">
+<h3>export_preview</h3>
+<p><code>preview</code> 결과를 디렉터리에 바로 저장하고 저장한 경로를 반환합니다.</p>
+<pre><code class="language-python">from pathlib import Path
+
+from kdsnr_ai import Client, PreviewConfig
+
+client = Client(api_key="YOUR_API_KEY")
+
+doc = client.pipeline.import_file("exam.pdf")
+questions = client.pipeline.extract_question(doc)
+
+paths: list[Path] = client.composer.export_preview(
+    questions,
+    "out/preview",
+    PreviewConfig(
+        format="pdf",
+        dpi=300,
+    ),
+)</code></pre>
+<table>
+<tr><th>인자</th><th>타입</th><th>기본값</th><th>설명</th></tr>
+<tr><td><code>questions</code></td><td><code>list[Question | QuestionSet]</code></td><td>—</td><td><code>extract_question</code>이 반환한 문항.</td></tr>
+<tr><td><code>export_dir</code></td><td><code>str | Path</code></td><td>—</td><td>저장할 디렉터리. 중간 디렉터리 자동 생성.</td></tr>
+<tr><td><code>config</code></td><td><code>PreviewConfig | None</code></td><td><code>None</code></td><td>파일 형식과 해상도. 생략하면 300dpi png.</td></tr>
+</table>
+</section>
+
+<section id="hwp-to-pdf">
+<h3>hwp_to_pdf</h3>
+<p>hwp · hwpx 문서를 원본 조판 그대로 pdf로 변환합니다.</p>
+<pre><code class="language-python">from pathlib import Path
+
+from kdsnr_ai import Client
+
+client = Client(api_key="YOUR_API_KEY")
+
+pdf_path: Path = client.composer.hwp_to_pdf(
+    "exam.hwp",
+    "out/exam.pdf",
+    enable_vec=True,
+)</code></pre>
+<table>
+<tr><th>인자</th><th>타입</th><th>기본값</th><th>설명</th></tr>
+<tr><td><code>file</code></td><td><code>str | Path</code></td><td>—</td><td>파일 경로. <code>.hwp</code> · <code>.hwpx</code>.</td></tr>
+<tr><td><code>save_path</code></td><td><code>str | Path</code></td><td>—</td><td>저장할 pdf 경로. 중간 디렉터리 자동 생성.</td></tr>
+<tr><td><code>enable_vec</code></td><td><code>bool</code></td><td><code>True</code></td><td><code>True</code>=벡터 글리프 + 검색·복사 가능한 텍스트층. <code>False</code>=300dpi 래스터 페이지.</td></tr>
+</table>
+</section>
+
+<section id="hwp-to-hwpx">
+<h3>hwp_to_hwpx</h3>
+<p>구형 바이너리 hwp 문서를 hwpx로 변환합니다.</p>
+<pre><code class="language-python">from pathlib import Path
+
+from kdsnr_ai import Client
+
+client = Client(api_key="YOUR_API_KEY")
+
+hwpx_path: Path = client.composer.hwp_to_hwpx(
+    "exam.hwp",
+    "out/exam.hwpx",
+)</code></pre>
+<table>
+<tr><th>인자</th><th>타입</th><th>기본값</th><th>설명</th></tr>
+<tr><td><code>file</code></td><td><code>str | Path</code></td><td>—</td><td>파일 경로. <code>.hwp</code>.</td></tr>
+<tr><td><code>save_path</code></td><td><code>str | Path</code></td><td>—</td><td>저장할 hwpx 경로. 중간 디렉터리 자동 생성.</td></tr>
+</table>
+</section>
+
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script>
+hljs.highlightAll();
+document.querySelectorAll('pre, .sig').forEach(el => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.type = 'button';
+  const icoCopy = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  const icoDone = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  btn.innerHTML = icoCopy;
+  btn.addEventListener('click', () => {
+    const code = el.querySelector('code');
+    navigator.clipboard.writeText((code || el).innerText.trimEnd()).then(() => {
+      btn.innerHTML = icoDone;
+      setTimeout(() => { btn.innerHTML = icoCopy; }, 1200);
+    });
+  });
+  el.appendChild(btn);
+});
+const here = location.pathname.split('/').pop() || 'index.html';
+const links = [...document.querySelectorAll('.sidebar li a')].filter(a => a.getAttribute('href').startsWith(here + '#'));
+const secs = links.map(a => document.getElementById(a.getAttribute('href').split('#')[1]));
+function spy() {
+  let cur = 0;
+  secs.forEach((s, i) => { if (s && s.getBoundingClientRect().top < 120) cur = i; });
+  links.forEach((a, i) => a.classList.toggle('active', i === cur));
+}
+addEventListener('scroll', spy, { passive: true });
+spy();
+</script>
+
+</body>
+</html>

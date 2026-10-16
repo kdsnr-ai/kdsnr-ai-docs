@@ -17,6 +17,7 @@
   }
 
   var P = R + 'pipeline.html#';
+  var C = R + 'composer.html#';
   var A = R + 'archive.html#';
   var X = R + 'proxy.html#';
   var I = R + 'start.html#';
@@ -42,9 +43,16 @@
       { href: P + 'api-usage', label: 'API 사용법' },
       { href: P + 'import-file', label: 'import_file', sub: true },
       { href: P + 'extract-question', label: 'extract_question', sub: true },
-      { href: P + 'compose-hwpx', label: 'compose_hwpx', sub: true },
-      { href: P + 'hwp-to-pdf', label: 'hwp_to_pdf', sub: true },
-      { href: P + 'hwp-to-hwpx', label: 'hwp_to_hwpx', sub: true },
+    ]) +
+    group(R + 'composer.html', 'Composer', page === 'composer.html', true) +
+    items([
+      { href: C + 'overview', label: '개요' },
+      { href: C + 'api-usage', label: 'API 사용법' },
+      { href: C + 'compose-hwpx', label: 'compose_hwpx', sub: true },
+      { href: C + 'preview', label: 'preview', sub: true },
+      { href: C + 'export-preview', label: 'export_preview', sub: true },
+      { href: C + 'hwp-to-pdf', label: 'hwp_to_pdf', sub: true },
+      { href: C + 'hwp-to-hwpx', label: 'hwp_to_hwpx', sub: true },
     ]) +
     group(R + 'archive.html', 'Archive', page === 'archive.html', true) +
     items([
