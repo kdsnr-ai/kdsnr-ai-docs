@@ -11,7 +11,7 @@
 <body>
 
 <aside class="sidebar" id="sidebar"></aside>
-<script src="assets/nav.js?v=20260821-1"></script>
+<script src="assets/nav.js?v=20261016-1"></script>
 
 <main class="content">
 
@@ -410,7 +410,7 @@ question: ArchivedQuestion | ArchivedQuestionSet = client.archive.get_question(
     include_image=False,
 )
 
-client.pipeline.compose_hwpx(
+client.composer.compose_hwpx(
     [question],
     "out/hwpx",
 )</code></pre>
