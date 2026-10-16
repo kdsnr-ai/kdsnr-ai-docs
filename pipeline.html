@@ -140,12 +140,11 @@ for preview in result.previews:
 <tr><td><code>PlainBox</code></td><td>헤더 없는 테두리 박스.</td><td class="fields">
 <div><code>content</code><span>내부 블록 리스트</span></div>
 </td></tr>
-<tr><td><code>Figure</code></td><td>그림·드로잉의 래스터 이미지.</td><td class="fields">
+<tr><td><code>Figure</code></td><td>그림·드로잉의 래스터 이미지. 그림 영역 안의 글자·표·수식은 이미지에 포함되고 따로 추출하지 않습니다.</td><td class="fields">
 <div><code>format</code><span>그림 형식 — <code>png</code> · <code>jpeg</code> · <code>webp</code> · <code>svg</code></span></div>
 <div><code>data</code><span>base64 이미지 (<code>svg</code>일 때는 SVG 원문)</span></div>
 <div><code>url</code><span>그림 주소. <code>data</code> 대신 씁니다 (입력 전용)</span></div>
 <div><code>width</code> <code>height</code><span>표시 크기 (pt)</span></div>
-<div><code>content</code><span>그림 내부에서 복원된 블록 리스트</span></div>
 <div><code>caption</code><span>그림에 붙는 이름 · 설명. <code>Text</code> 하나</span></div>
 </td></tr>
 <tr><td><code>Object</code></td><td>본문 옆에 떠 있는 표·그림 래퍼.</td><td class="fields">
