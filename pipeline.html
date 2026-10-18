@@ -227,7 +227,7 @@ doc: Document = client.pipeline.import_file(
 )</code></pre>
 <table>
 <tr><th>인자</th><th>타입</th><th>기본값</th><th>설명</th></tr>
-<tr><td><code>file</code></td><td><code>str | Path</code></td><td>—</td><td>파일 경로. <code>.pdf</code> · <code>.hwp</code> · <code>.hwpx</code>만 허용, 그 외는 <code>ValueError</code>.</td></tr>
+<tr><td><code>file</code></td><td><code>str | Path | list[str | Path]</code></td><td>—</td><td>파일 경로. <code>.pdf</code> · <code>.hwp</code> · <code>.hwpx</code>만 허용, 그 외는 <code>ValueError</code>. 리스트를 넘기면 최대 64개를 한 번에 업로드하고 <code>Document</code> 리스트를 반환.</td></tr>
 <tr><td><code>label</code></td><td><code>str | None</code></td><td><code>None</code></td><td>문서 라벨. 생략하면 확장자를 뗀 파일명. 추출 결과의 <code>metadata.label</code>로 전파.</td></tr>
 </table>
 <p>hwp · hwpx는 pdf로 변환되어 저장되며, <code>source</code> 링크는 이 pdf를 가리킵니다.</p>
@@ -252,7 +252,7 @@ for q in questions:
     print(q.type, q.metadata.q_num, q.metadata.points)</code></pre>
 <table>
 <tr><th>인자</th><th>타입</th><th>기본값</th><th>설명</th></tr>
-<tr><td><code>doc</code></td><td><code>Document</code></td><td>—</td><td><code>import_file</code>이 반환한 문서.</td></tr>
+<tr><td><code>doc</code></td><td><code>Document | list[Document]</code></td><td>—</td><td><code>import_file</code>이 반환한 문서. 리스트를 넘기면 최대 64부를 한 번에 처리하고 문서별 결과 리스트를 반환.</td></tr>
 <tr><td><code>subject</code></td><td><code>str</code></td><td><code>"auto"</code></td><td><code>korean</code> · <code>math</code> · <code>social</code> · <code>science</code> (별칭 <code>kor</code> · <code>mat</code> · <code>soc</code> · <code>sci</code>). <code>auto</code>는 문항 단위 자동 분류.</td></tr>
 <tr><td><code>emit_overlay</code></td><td><code>EmitOverlayConfig | None</code></td><td><code>None</code></td><td>지정하면 검출 박스를 그린 pdf를 함께 반환.</td></tr>
 <tr><td><code>emit_preview</code></td><td><code>EmitPreviewConfig | None</code></td><td><code>None</code></td><td>지정하면 추출과 동시에 선택한 형식의 문항별 미리보기 파일을 함께 반환.</td></tr>
@@ -308,6 +308,37 @@ result.overlay.save("out/exam.overlay.pdf")</code></pre>
 </table>
 <p><code>ExtractResult</code>는 <code>questions</code>, <code>overlay</code>, <code>previews</code>를 가집니다. 요청하지 않은 추가 결과는 <code>None</code> 또는 빈 리스트이며, <code>Document.save(path)</code>로 파일을 저장합니다.</p>
 <p>0.1.x의 <code>q_img_dpi</code> · <code>q_img</code> 인자와 <code>export_preview</code> · <code>ExportPreviewConfig</code>는 기존 코드 호환을 위해 한시 지원되며, 사용 시 <code>DeprecationWarning</code>이 발생합니다. 추출 뒤에 미리보기 파일을 받으려면 <a href="composer.html#preview">Composer의 preview</a>를 씁니다.</p>
+</section>
+
+<section id="batch">
+<h3>여러 문서 한 번에 처리</h3>
+<p>파일 리스트를 넘기면 최대 64부를 한 번에 업로드하고, 한 번의 요청으로 추출해 입력과 같은 순서의 결과 리스트를 반환합니다.</p>
+<pre><code class="language-python">from pathlib import Path
+
+from kdsnr_ai import BatchError, Client, Document
+from kdsnr_ai.ir import Question, QuestionSet
+
+client = Client(api_key="YOUR_API_KEY")
+
+docs: list[Document] = client.pipeline.import_file(
+    sorted(Path("exams").glob("*.pdf")),
+)
+
+try:
+    results: list[list[Question | QuestionSet]] = client.pipeline.extract_question(
+        docs,
+        subject="auto",
+    )
+except BatchError as e:
+    results = e.results
+    for index, error in e.errors.items():
+        print(docs[index].filename, error.code, error.message)</code></pre>
+<table>
+<tr><th>이름</th><th>타입</th><th>설명</th></tr>
+<tr><td><code>BatchError.results</code></td><td><code>list</code></td><td>입력 순서의 문서별 결과. 실패한 문서 자리는 <code>None</code>.</td></tr>
+<tr><td><code>BatchError.errors</code></td><td><code>dict[int, JobError]</code></td><td>실패한 문서의 순번과 오류. <code>code</code>는 <code>scanned_pdf</code> · <code>bad_pdf</code> 등.</td></tr>
+</table>
+<p>65부 이상을 넘기면 <code>ValueError</code>입니다. 일부 문서가 실패해도 나머지 문서의 결과는 <code>BatchError.results</code>에 남습니다. 일일 요청 한도는 문서 수만큼 차감됩니다.</p>
 </section>
 
 

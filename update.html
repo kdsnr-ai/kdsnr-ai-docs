@@ -26,6 +26,43 @@
 </ul>
 </div>
 
+<h2 class="part" id="v20261018">2026.10.18</h2>
+<section>
+<table class="update">
+<colgroup>
+<col class="w-svc"><col class="w-kind"><col><col class="w-api"><col class="w-api">
+</colgroup>
+<thead>
+<tr>
+<th rowspan="2">서비스</th>
+<th rowspan="2">유형</th>
+<th rowspan="2">내용</th>
+<th colspan="2" class="c">수동 업데이트 필요</th>
+</tr>
+<tr>
+<th class="c sub">API</th>
+<th class="c sub">MCP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pipeline</td>
+<td>기능 추가</td>
+<td><ul><li><code>import_file</code>과 <code>extract_question</code>에 리스트를 넘겨 최대 64부를 한 번에 처리합니다.</li><li>자세한 내용은 <a href="pipeline.html#batch">Pipeline 문서</a>를 참고하세요.</li></ul></td>
+<td class="c need">필요<small>(0.3.2+)</small></td>
+<td class="c">불필요</td>
+</tr>
+<tr>
+<td>Pipeline</td>
+<td>성능 개선</td>
+<td><ul><li>처리 속도 및 안정성 개선</li></ul></td>
+<td class="c">불필요</td>
+<td class="c">불필요</td>
+</tr>
+</tbody>
+</table>
+</section>
+
 <h2 class="part" id="v20261016">2026.10.16</h2>
 <section>
 <table class="update">
@@ -49,7 +86,7 @@
 <td>Composer</td>
 <td>API 변경</td>
 <td><ul><li>한글 문서 조판 · 미리보기 · 한글 문서 변환 메서드가 <code>client.composer</code>로 옮겨졌습니다.</li><li>기존 코드는 버전 경고와 함께 정상 동작합니다.</li><li>자세한 내용은 <a href="composer.html">Composer</a>를 참고하세요.</li></ul></td>
-<td class="c need">필요</td>
+<td class="c need">필요<small>(0.3.0+)</small></td>
 <td class="c">불필요</td>
 </tr>
 <tr>
