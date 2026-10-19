@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>kdsnr-ai · LayoutASM</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="../assets/style.css?v=20260804-1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github-dark.min.css">
+<style>
+.comparison-card { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin: 22px 0 26px; }
+.comparison-head { background: #fafbfc; border-bottom: 1px solid var(--border); color: var(--text); font-size: 13px; font-weight: 700; padding: 10px 18px; }
+.comparison-pane { margin: 0; padding: 16px 20px; }
+.comparison-pane + .comparison-head { border-top: 1px solid var(--border); }
+.comparison-pane img { background: #fff; display: block; width: 100%; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar">
+</aside>
+<script src="../assets/nav.js?v=20261016-1"></script>
+
+<main class="content">
+
+<article class="post">
+
+<h1>LayoutASM · Pipeline 2.0</h1>
+<p class="post-sub">1 Forward-pass 구조의 문항 검출 전용 신경망</p>
+<p class="post-meta">Model · 2026-10-19 · 권준희</p>
+
+<p><a href="pipeline.html">Pipeline API</a>는 시험지 PDF를 문항 단위의 Question 객체로 변환합니다.</p>
+
+<p>7월에 공개한 Pipeline 1.0은 여러 모델을 단계마다 호출하고 그 결과를 규칙으로 합치는 구조였습니다.</p>
+
+<p>그러나 기존에는 다중 모델 구조로 인해 앞 단계의 결과가 나온 뒤에야 다음 모델을 호출할 수 있어 병렬 처리와 다중 프로세스 처리에 한계가 있었고, GPU를 효율적으로 활용하지 못했습니다. 또한 각 모델이 독립적으로 동작하여 모델의 Attention 사이에서 정보를 주고받지 못했습니다. 줄 판정 모델은 이웃한 두 줄만 입력으로 받아 검출 모델이 찾은 영역 정보를 활용하지 못했고, 이는 검출 정확도 향상의 한계로 이어졌습니다.</p>
+
+<p>LayoutASM은 이러한 문제를 해결하기 위해 단 <strong>1 Forward pass</strong>만으로 수능형 시험지면에서 문항 요소를 검출하여 JSON으로 변환할 수 있도록 설계되었습니다.</p>
+
+<h2>1. LayoutASM 아키텍처</h2>
+
+<figure class="shots single">
+  <img src="../assets/research/layoutasm/arch.png?v=8" alt="LayoutASM 모델 구조도">
+  <figcaption>LayoutASM의 전체 구조</figcaption>
+</figure>
+
+<h3>비전 검출 인코더</h3>
+
+<p>긴 변 2048px의 페이지 이미지 한 장을 입력받아 13종의 상자를 한 번에 검출합니다. 문항, 문항 번호, 지시문, 지문, 보기, 글 상자, 그림, 표, 빈칸 상자, 줄 안 그림, 범위 표시, 수식, 캡션입니다.</p>
+
+<p>페이지 전체를 보고 모든 상자를 찾으므로, 영역을 먼저 잘라낸 뒤 그 안에서 요소를 다시 찾는 단계가 없습니다.</p>
+
+<h3>줄 단위 포인터 결합 판정 인코더</h3>
+
+<p>검출된 영역 안의 글자를 좌표 기준으로 줄로 묶고, 줄과 줄을 어떻게 이을지 판정합니다. 줄 묶기는 라벨된 1,385부의 줄 639,457개 중 99.75%가 정답과 같은 글자 순서였습니다.</p>
+
+<p>입력은 페이지의 모든 줄을 이어 붙인 하나의 시퀀스입니다.</p>
+
+<table>
+<tr><th>구성</th><th>내용</th></tr>
+<tr><td>영역 토큰</td><td>영역마다 맨 앞에 비전 검출이 판정한 영역 종류 토큰 하나</td></tr>
+<tr><td>글자 토큰</td><td>줄의 글자를 토큰화하고 줄마다 끝에 줄끝 토큰 하나</td></tr>
+<tr><td>기하 특징</td><td>토큰마다 줄의 위치, 영역 안 여백, 높이, 앞뒤 줄 간격 등 10개 값을 임베딩에 더함</td></tr>
+<tr><td>다음 조각</td><td>단이나 쪽을 넘어 이어지는 영역은 다음 조각의 첫 두 줄을 뒤에 붙임</td></tr>
+<tr><td>길이</td><td>최대 4,096토큰. 라벨된 시험지 페이지의 99%가 글자 2,344자 이하</td></tr>
+</table>
+
+<p>출력은 줄끝 토큰 위치의 상태만 사용합니다. 다음 줄과의 관계를 이어짐, 띄어쓰기, 새 문단 중 하나로 분류하고 문단 정렬을 함께 예측합니다. 페이지의 모든 줄 경계가 같은 Forward pass에서 페이지 전체 문맥과 영역 종류를 보고 판정됩니다.</p>
+
+<pre><code class="language-python">x = self.embed(ids) + self.features(feats)
+hidden = self.trunk(inputs_embeds=x, attention_mask=mask).last_hidden_state
+h = self.norm(hidden[b, marks])
+return self.brk(h), self.align(h)</code></pre>
+
+<h3>베이스 모델</h3>
+
+<table>
+<tr><th>부품</th><th>베이스 모델</th><th>파라미터</th><th>입력</th></tr>
+<tr><td>비전 검출</td><td>YOLO26-X (Ultralytics)</td><td>5,880만</td><td>페이지 이미지, 긴 변 2048px</td></tr>
+<tr><td>줄 결합 판정</td><td>EmbeddingGemma 2 (Google), 24층</td><td>2억 7,130만</td><td>페이지 줄 시퀀스, 최대 4,096토큰</td></tr>
+<tr><td>표 구조</td><td>ConvNeXt-B, DINOv3 사전학습</td><td>9,460만</td><td>표 이미지와 위치 채널 6개</td></tr>
+</table>
+
+<h3>학습 데이터 및 파라미터</h3>
+
+<p>기출 시험지 1,385부에 영역 상자, 표의 행·열·병합 칸, 줄 경계의 이어짐·띄어쓰기·새 문단을 라벨링했습니다. 이 중 40부 360쪽은 검증용으로 분리했습니다.</p>
+
+<table>
+<tr><th>모델</th><th>학습 설정</th><th>GPU</th><th>검증 결과</th></tr>
+<tr><td>비전 검출</td><td>9,575쪽, 배치 6, 36 epoch</td><td>RTX 5090</td><td>mAP50 0.898, mAP50-95 0.853</td></tr>
+<tr><td>줄 결합 판정</td><td>9,428쪽, 학습률 2e-5, 1,000 step</td><td>RTX 5090</td><td>줄 경계 19,153개 중 98.1% 일치</td></tr>
+<tr><td>표 구조</td><td>배치 16, 30 epoch, 학습률 1e-4</td><td>RTX 5090</td><td>표 218개 중 206개 일치</td></tr>
+</table>
+
+<h2>2. Pipeline 2.0 구조</h2>
+
+<div class="comparison-card">
+  <div class="comparison-head">Pipeline 1.0</div>
+  <figure class="comparison-pane"><img src="../assets/architecture.png" alt="Pipeline 1.0 처리 구조"></figure>
+  <div class="comparison-head">Pipeline 2.0</div>
+  <figure class="comparison-pane"><img src="../assets/research/layoutasm/pipeline2.png?v=8" alt="Pipeline 2.0 처리 구조"></figure>
+</div>
+
+<h3>처리 과정 단순화</h3>
+
+<table>
+<tr><th>항목</th><th>Pipeline 1.0</th><th>Pipeline 2.0</th></tr>
+<tr><td>지면 검출</td><td>영역 검출, 영역 자르기, 요소 검출</td><td>1 Forward pass</td></tr>
+<tr><td>텍스트 연결</td><td>줄 쌍마다 모델 3개, 읽기 순서 모델, 규칙</td><td>페이지당 1 Forward pass</td></tr>
+<tr><td>표</td><td>셀 검출 2개, 표 분류 1개</td><td>표 구조 모델 1개</td></tr>
+<tr><td>서빙</td><td>상시 켜 둔 GPU 서버</td><td>요청이 있을 때만 켜지는 Cloud Run GPU</td></tr>
+</table>
+
+<h2>3. GPU 워커 병렬 처리 구조 개선</h2>
+
+<h3>이전 구조</h3>
+
+<figure class="shots single">
+  <img src="../assets/research/layoutasm/worker_before.png?v=3" alt="이전 구조의 문서 처리 흐름">
+</figure>
+
+<ul>
+<li>프로세스 3개가 문서를 한 부씩 맡아 PDF 파싱, 모델 추론, 문항 조립을 순서대로 수행했습니다.</li>
+<li>세 프로세스가 같은 시점에 CPU 단계를 지나는 동안 GPU는 대기했고, GPU Utilization은 36.1%였습니다.</li>
+<li>프로세스마다 모델 4종의 Model Replica를 VRAM에 적재하여 24.0GB 한도에 도달했고, 프로세스를 더 늘릴 수 없었습니다.</li>
+</ul>
+
+<h3>Pipeline 2.0</h3>
+
+<figure class="shots single">
+  <img src="../assets/research/layoutasm/worker_after.png?v=2" alt="Pipeline 2.0의 문서 처리 흐름">
+</figure>
+
+<ul>
+<li>모델 가중치가 없는 CPU Worker 16개가 PDF 파싱과 문항 조립을 맡고, 모델 추론은 단일 GPU 프로세스에 요청합니다.</li>
+<li>문서마다 처리 단계가 어긋나게 진행되어 한 문서의 CPU 단계와 다른 문서의 GPU 단계가 겹치고, GPU가 연속으로 가동됩니다.</li>
+<li>GPU 프로세스는 모델 가중치를 한 벌만 적재하고, 같은 모델로 들어온 여러 문서의 요청을 Dynamic Batching으로 묶어 한 번에 추론합니다.</li>
+<li>EqASM 디코딩은 CUDA Graph로 캡처하여 디코딩 단계마다 반복되던 커널 실행 오버헤드를 줄였습니다.</li>
+</ul>
+
+<h2>4. 성능 개선 결과</h2>
+
+<h3>처리 속도</h3>
+
+<figure class="shots single">
+  <img src="../assets/research/layoutasm/speed.png?v=5" alt="Pipeline 1.0과 2.0의 처리 시간 비교" style="max-width:640px;display:block;margin:0 auto">
+</figure>
+<p class="fig-fn">* 검증용 시험지 40부 기준. 1부 처리는 문서당 중앙값, 40부 처리는 서버 처리 시간 합계입니다.</p>
+
+<h3>정확도</h3>
+
+<p>라벨된 시험지 1,385부, 33,378문항에서 측정한 결과입니다.</p>
+
+<table>
+<tr><th>지표</th><th>Pipeline 2.0</th></tr>
+<tr><td>문항 경계 일치</td><td>99.88%</td></tr>
+<tr><td>문항 번호 일치</td><td>99.92%</td></tr>
+<tr><td>문항별 글자 일치</td><td>99.90%</td></tr>
+</table>
+
+<section class="demo-sec">
+<div class="demo" id="kdsnr-demo"></div>
+<p class="demo-cap">2026학년도 수능 문항 검출 결과, 한국교육과정평가원</p>
+</section>
+
+<h3>GPU 활용도</h3>
+
+<table>
+<tr><th>항목</th><th>이전 구조</th><th>Pipeline 2.0</th></tr>
+<tr><td>GPU 사용률</td><td>36.1%</td><td>95~99%</td></tr>
+<tr><td>VRAM 사용량</td><td>24.0GB, 한도 도달</td><td>14.4GB</td></tr>
+</table>
+
+<p class="fig-fn">* RTX PRO 4000 기준 측정</p>
+
+<p>LayoutASM 신경망은 사내 GPU 클라우드에서 운영되며, <a href="../pipeline.html">Pipeline API</a>를 통해 사용할 수 있습니다.</p>
+
+</article>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+<script src="../assets/research/layoutasm/demo_data.js?v=2"></script>
+<script>
+hljs.highlightAll();
+document.querySelectorAll('pre:not(.demo-json), .sig').forEach(el => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.type = 'button';
+  const icoCopy = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  const icoDone = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  btn.innerHTML = icoCopy;
+  btn.addEventListener('click', () => {
+    const code = el.querySelector('code');
+    navigator.clipboard.writeText((code || el).innerText.trimEnd()).then(() => {
+      btn.innerHTML = icoDone;
+      setTimeout(() => { btn.innerHTML = icoCopy; }, 1200);
+    });
+  });
+  el.appendChild(btn);
+});
+(function () {
+  const data = window.LAYOUTASM_DEMO || [];
+  const root = document.getElementById('kdsnr-demo');
+  if (!root || !data.length) return;
+  const tabs = document.createElement('div'); tabs.className = 'demo-tabs';
+  const head = document.createElement('div'); head.className = 'demo-head';
+  const title = document.createElement('div'); title.className = 'demo-title';
+  const vtabs = document.createElement('div'); vtabs.className = 'demo-vtabs';
+  head.append(title, vtabs);
+  const view = document.createElement('div'); view.className = 'demo-view';
+  const pre = document.createElement('pre'); pre.className = 'demo-json';
+  const code = document.createElement('code'); code.className = 'language-json';
+  pre.appendChild(code);
+  root.append(tabs, head, view, pre);
+  const views = ['검출 화면', '출력 JSON'];
+  let subjectIndex = 0;
+  let viewIndex = 0;
+  views.forEach((name, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = name;
+    button.onclick = () => { viewIndex = index; render(); };
+    vtabs.appendChild(button);
+  });
+  data.forEach((item, index) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = item.tab;
+    button.onclick = () => { subjectIndex = index; render(); };
+    tabs.appendChild(button);
+  });
+  function render() {
+    const item = data[subjectIndex];
+    [...tabs.children].forEach((button, index) => button.classList.toggle('active', index === subjectIndex));
+    [...vtabs.children].forEach((button, index) => button.classList.toggle('active', index === viewIndex));
+    title.textContent = item.desc;
+    view.style.display = viewIndex === 0 ? '' : 'none';
+    pre.style.display = viewIndex === 1 ? '' : 'none';
+    if (viewIndex === 0) {
+      view.innerHTML = '';
+      item.images.forEach(src => {
+        const image = new Image();
+        image.src = '../' + src;
+        image.alt = item.desc;
+        view.appendChild(image);
+      });
+      view.scrollTop = 0;
+    } else {
+      code.textContent = item.json;
+      code.removeAttribute('data-highlighted');
+      if (window.hljs) hljs.highlightElement(code);
+      pre.scrollTop = 0;
+      pre.scrollLeft = 0;
+    }
+  }
+  render();
+})();
+</script>
+
+</body>
+</html>
