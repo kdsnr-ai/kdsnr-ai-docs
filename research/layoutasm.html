@@ -40,13 +40,13 @@
 <h2>1. LayoutASM 아키텍처</h2>
 
 <figure class="shots single">
-  <img src="../assets/research/layoutasm/arch.png?v=8" alt="LayoutASM 모델 구조도">
+  <img src="../assets/research/layoutasm/arch.png?v=9" alt="LayoutASM 모델 구조도">
   <figcaption>LayoutASM의 전체 구조</figcaption>
 </figure>
 
 <h3>비전 검출 인코더</h3>
 
-<p>긴 변 2048px의 페이지 이미지 한 장을 입력받아 13종의 상자를 한 번에 검출합니다. 문항, 문항 번호, 지시문, 지문, 보기, 글 상자, 그림, 표, 빈칸 상자, 줄 안 그림, 범위 표시, 수식, 캡션입니다.</p>
+<p>페이지 이미지 한 장을 입력받아 13종의 상자를 한 번에 검출합니다. 문항, 문항 번호, 지시문, 지문, 보기, 글 상자, 그림, 표, 빈칸 상자, 줄 안 그림, 범위 표시, 수식, 캡션입니다.</p>
 
 <p>페이지 전체를 보고 모든 상자를 찾으므로, 영역을 먼저 잘라낸 뒤 그 안에서 요소를 다시 찾는 단계가 없습니다.</p>
 
@@ -60,9 +60,8 @@
 <tr><th>구성</th><th>내용</th></tr>
 <tr><td>영역 토큰</td><td>영역마다 맨 앞에 비전 검출이 판정한 영역 종류 토큰 하나</td></tr>
 <tr><td>글자 토큰</td><td>줄의 글자를 토큰화하고 줄마다 끝에 줄끝 토큰 하나</td></tr>
-<tr><td>기하 특징</td><td>토큰마다 줄의 위치, 영역 안 여백, 높이, 앞뒤 줄 간격 등 10개 값을 임베딩에 더함</td></tr>
+<tr><td>기하 특징</td><td>토큰마다 줄의 위치, 영역 안 여백, 높이, 앞뒤 줄 간격 등을 임베딩에 더함</td></tr>
 <tr><td>다음 조각</td><td>단이나 쪽을 넘어 이어지는 영역은 다음 조각의 첫 두 줄을 뒤에 붙임</td></tr>
-<tr><td>길이</td><td>최대 4,096토큰. 라벨된 시험지 페이지의 99%가 글자 2,344자 이하</td></tr>
 </table>
 
 <p>출력은 줄끝 토큰 위치의 상태만 사용합니다. 다음 줄과의 관계를 이어짐, 띄어쓰기, 새 문단 중 하나로 분류하고 문단 정렬을 함께 예측합니다. 페이지의 모든 줄 경계가 같은 Forward pass에서 페이지 전체 문맥과 영역 종류를 보고 판정됩니다.</p>
@@ -72,24 +71,24 @@ hidden = self.trunk(inputs_embeds=x, attention_mask=mask).last_hidden_state
 h = self.norm(hidden[b, marks])
 return self.brk(h), self.align(h)</code></pre>
 
-<h3>베이스 모델</h3>
+<h3>구성 모델</h3>
 
 <table>
-<tr><th>부품</th><th>베이스 모델</th><th>파라미터</th><th>입력</th></tr>
-<tr><td>비전 검출</td><td>YOLO26-X (Ultralytics)</td><td>5,880만</td><td>페이지 이미지, 긴 변 2048px</td></tr>
-<tr><td>줄 결합 판정</td><td>EmbeddingGemma 2 (Google), 24층</td><td>2억 7,130만</td><td>페이지 줄 시퀀스, 최대 4,096토큰</td></tr>
-<tr><td>표 구조</td><td>ConvNeXt-B, DINOv3 사전학습</td><td>9,460만</td><td>표 이미지와 위치 채널 6개</td></tr>
+<tr><th>부품</th><th>모델</th><th>입력</th></tr>
+<tr><td>비전 검출</td><td>객체 검출 모델</td><td>페이지 이미지</td></tr>
+<tr><td>줄 결합 판정</td><td>사전학습 임베딩 모델</td><td>페이지 줄 시퀀스</td></tr>
+<tr><td>표 구조</td><td>사전학습 비전 인코더</td><td>표 이미지와 위치 정보</td></tr>
 </table>
 
-<h3>학습 데이터 및 파라미터</h3>
+<h3>학습 데이터 및 검증 결과</h3>
 
 <p>기출 시험지 1,385부에 영역 상자, 표의 행·열·병합 칸, 줄 경계의 이어짐·띄어쓰기·새 문단을 라벨링했습니다. 이 중 40부 360쪽은 검증용으로 분리했습니다.</p>
 
 <table>
-<tr><th>모델</th><th>학습 설정</th><th>GPU</th><th>검증 결과</th></tr>
-<tr><td>비전 검출</td><td>9,575쪽, 배치 6, 36 epoch</td><td>RTX 5090</td><td>mAP50 0.898, mAP50-95 0.853</td></tr>
-<tr><td>줄 결합 판정</td><td>9,428쪽, 학습률 2e-5, 1,000 step</td><td>RTX 5090</td><td>줄 경계 19,153개 중 98.1% 일치</td></tr>
-<tr><td>표 구조</td><td>배치 16, 30 epoch, 학습률 1e-4</td><td>RTX 5090</td><td>표 218개 중 206개 일치</td></tr>
+<tr><th>모델</th><th>검증 결과</th></tr>
+<tr><td>비전 검출</td><td>mAP50 0.898, mAP50-95 0.853</td></tr>
+<tr><td>줄 결합 판정</td><td>줄 경계 19,153개 중 98.1% 일치</td></tr>
+<tr><td>표 구조</td><td>표 218개 중 206개 일치</td></tr>
 </table>
 
 <h2>2. Pipeline 2.0 구조</h2>
