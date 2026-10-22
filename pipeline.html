@@ -341,6 +341,18 @@ except BatchError as e:
 <p>65부 이상을 넘기면 <code>ValueError</code>입니다. 일부 문서가 실패해도 나머지 문서의 결과는 <code>BatchError.results</code>에 남습니다. 일일 요청 한도는 문서 수만큼 차감됩니다.</p>
 </section>
 
+<section id="upload-limits">
+<h3>업로드 제한 용량</h3>
+<table>
+<tr><th>항목</th><th>한도</th></tr>
+<tr><td>문서 파일 1개 (pdf · hwp · hwpx)</td><td>32MB</td></tr>
+<tr><td>조판 요청 1건의 Question 본문</td><td>28MB</td></tr>
+<tr><td>이미지 1장</td><td>8MB</td></tr>
+<tr><td>한 번에 처리하는 문서 수</td><td>64부</td></tr>
+</table>
+<p>한도를 넘기면 413 오류를 돌려줍니다.</p>
+</section>
+
 
 </main>
 
