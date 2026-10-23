@@ -42,7 +42,7 @@
 <div class="case">
   <div class="case-head">사례 1 : 2027학년도 6월 모의평가 수학 20번<span class="cr">저작권 : 한국교육과정평가원</span></div>
   <div class="case-body">
-    <img src="../assets/research/eqasm/case-m20.png" alt="2027학년도 6월 모의평가 수학 20번">
+    <img src="../assets/research/eqasm/case-m20.webp" alt="2027학년도 6월 모의평가 수학 20번">
     <div class="case-right">
       <div class="ans-head">✅ 원본</div>
       <div class="ans-eq">$$g(m)=-\log_b m=\frac{\beta}{\log_m\alpha}=\frac{\beta}{-1+\log_m\beta}$$</div>
@@ -56,7 +56,7 @@
 <div class="case">
   <div class="case-head">사례 2 : 2026학년도 수능 미적분 30번<span class="cr">저작권 : 한국교육과정평가원</span></div>
   <div class="case-body">
-    <img src="../assets/research/eqasm/case-m30.png" alt="2026학년도 수능 미적분 30번">
+    <img src="../assets/research/eqasm/case-m30.webp" alt="2026학년도 수능 미적분 30번">
     <div class="case-right">
       <div class="ans-head">✅ 원본</div>
       <div class="ans-eq">$$g(a)\times\Bigl(\lim_{m\to a+}g(m)\Bigr)+g(b)\times\Bigl(\frac{\ln b}{b}\Bigr)^2$$</div>
@@ -71,7 +71,7 @@
 <div class="case">
   <div class="case-head">사례 3 : 2027학년도 6월 모의평가 화학Ⅰ 11번<span class="cr">저작권 : 한국교육과정평가원</span></div>
   <div class="case-body">
-    <img src="../assets/research/eqasm/case-c11.png" alt="2027학년도 6월 모의평가 화학Ⅰ 11번">
+    <img src="../assets/research/eqasm/case-c11.webp" alt="2027학년도 6월 모의평가 화학Ⅰ 11번">
     <div class="case-right">
       <div class="ans-head">✅ 원본</div>
       <div class="ans-eq">$$\mathrm{X_2}+a\mathrm{Y_2}+b\mathrm{H_2O}\rightarrow 2\mathrm{XO}_m^-+c\mathrm{Y}^{(m-2)-}+d\mathrm{H}^+$$</div>
@@ -87,7 +87,7 @@
 <div class="case">
   <div class="case-head">사례 4 : 2027학년도 6월 모의평가 화학Ⅰ 20번<span class="cr">저작권 : 한국교육과정평가원</span></div>
   <div class="case-body">
-    <img src="../assets/research/eqasm/case-c20.png" alt="2027학년도 6월 모의평가 화학Ⅰ 20번">
+    <img src="../assets/research/eqasm/case-c20.webp" alt="2027학년도 6월 모의평가 화학Ⅰ 20번">
     <div class="case-right">
       <div class="ans-head">✅ 원본</div>
       <div class="ans-eq">$$b\times\frac{\text{Ⅱ에서 반응 후 전체 기체의 부피(L)}}{\text{Ⅲ에서 반응 후 전체 기체의 부피(L)}}$$</div>
@@ -118,7 +118,7 @@
 <p>그렇다면 모델이 할 일은 수식을 다시 쓰는 것이 아니라, 추출된 조각을 올바르게 배치하는 것입니다. 이렇게 하면 최종 출력은 기존 방식과 같은 LaTeX이지만 문자의 출처가 달라집니다. 기존 방식에서는 모든 문자를 모델이 생성합니다. 새로운 방식에서 문자는 전부 PDF에서 추출한 조각의 복사이고, 모델이 생성하는 것은 조각의 배치를 결정하는 구조뿐입니다.</p>
 
 <figure class="shots single narrow">
-  <img src="../assets/research/eqasm/compare.png" alt="기존 방식과 새로운 방식의 비교">
+  <img src="../assets/research/eqasm/compare.webp" alt="기존 방식과 새로운 방식의 비교">
   <figcaption>기존 방식은 새 글자를 만들어 쓰고, EqASM은 있는 조각을 조립합니다</figcaption>
 </figure>
 
@@ -129,7 +129,7 @@
 <p>EqASM은 약 4.8억 파라미터의 encoder–decoder Transformer입니다. 입력은 수식 영역 안의 글자 조각 집합이고, 조각마다 문자 token과 bounding box 기하 정보를 embedding으로 변환해 더합니다. 조각들이 입력되는 순서에 따른 품질 차이를 해소하고자, 순서 정보는 의도적으로 임베딩에서 제외했습니다.</p>
 
 <figure class="shots single">
-  <img src="../assets/research/eqasm/arch.png" alt="EqASM 모델 구조도">
+  <img src="../assets/research/eqasm/arch.webp" alt="EqASM 모델 구조도">
   <figcaption>EqASM 모델의 전체 구조</figcaption>
 </figure>
 
@@ -164,8 +164,8 @@ consumed = consumed.scatter(1, pos.unsqueeze(1), (~is_struct).unsqueeze(1)) | co
 </ul>
 
 <figure class="shots">
-  <img src="../assets/research/eqasm/curve-latex.png" alt="LaTeX exact match 학습 곡선">
-  <img src="../assets/research/eqasm/curve-render.png" alt="Render exact match 학습 곡선">
+  <img src="../assets/research/eqasm/curve-latex.webp" alt="LaTeX exact match 학습 곡선">
+  <img src="../assets/research/eqasm/curve-render.webp" alt="Render exact match 학습 곡선">
   <figcaption>검증셋 학습 곡선. 왼쪽: 출력 LaTeX 문자열이 정답과 정확히 일치한 비율 · 오른쪽: 다시 조판한 렌더가 원본과 일치한 비율</figcaption>
 </figure>
 
@@ -180,7 +180,7 @@ consumed = consumed.scatter(1, pos.unsqueeze(1), (~is_struct).unsqueeze(1)) | co
 <div class="case">
   <div class="case-head">사례 1 : 2027학년도 6월 모의평가 수학 20번<span class="cr">저작권 : 한국교육과정평가원</span></div>
   <div class="case-body">
-    <img src="../assets/research/eqasm/ov-m20.png" alt="수학 20번 수식 영역 검출">
+    <img src="../assets/research/eqasm/ov-m20.webp" alt="수학 20번 수식 영역 검출">
     <div class="case-right">
       <div class="ans-head">✅ EqASM 인식 결과</div>
       <div class="ans-eq">$$g(m)=-\log_bm=\frac{\beta}{\log_m\alpha}=\frac{\beta}{\textcolor{#2b5fd9}{-1}+\log_m\beta}=\boxed{(다)}$$</div>
@@ -192,7 +192,7 @@ consumed = consumed.scatter(1, pos.unsqueeze(1), (~is_struct).unsqueeze(1)) | co
 <div class="case">
   <div class="case-head">사례 2 : 2026학년도 수능 미적분 30번<span class="cr">저작권 : 한국교육과정평가원</span></div>
   <div class="case-body">
-    <img src="../assets/research/eqasm/ov-m30.png" alt="미적분 30번 수식 영역 검출">
+    <img src="../assets/research/eqasm/ov-m30.webp" alt="미적분 30번 수식 영역 검출">
     <div class="case-right">
       <div class="ans-head">✅ EqASM 인식 결과</div>
       <div class="ans-eq">$$g(a)\times(\lim_{m\rightarrow \textcolor{#2b5fd9}{a+}}{g(m)})$$</div>
@@ -204,7 +204,7 @@ consumed = consumed.scatter(1, pos.unsqueeze(1), (~is_struct).unsqueeze(1)) | co
 <div class="case">
   <div class="case-head">사례 3 : 2027학년도 6월 모의평가 화학Ⅰ 11번<span class="cr">저작권 : 한국교육과정평가원</span></div>
   <div class="case-body">
-    <img src="../assets/research/eqasm/ov-c11.png" alt="화학Ⅰ 11번 수식 영역 검출">
+    <img src="../assets/research/eqasm/ov-c11.webp" alt="화학Ⅰ 11번 수식 영역 검출">
     <div class="case-right">
       <div class="ans-head">✅ EqASM 인식 결과</div>
       <div class="ans-eq">$$X_2+aY_2+bH_2O\rightarrow2XO_m^{\textcolor{#2b5fd9}{-}}+cY^{(m-2)-}+dH^{+}$$</div>
@@ -217,7 +217,7 @@ consumed = consumed.scatter(1, pos.unsqueeze(1), (~is_struct).unsqueeze(1)) | co
 <div class="case">
   <div class="case-head">사례 4 : 2027학년도 6월 모의평가 화학Ⅰ 20번<span class="cr">저작권 : 한국교육과정평가원</span></div>
   <div class="case-body">
-    <img src="../assets/research/eqasm/ov-c20.png" alt="화학Ⅰ 20번 수식 영역 검출">
+    <img src="../assets/research/eqasm/ov-c20.webp" alt="화학Ⅰ 20번 수식 영역 검출">
     <div class="case-right">
       <div class="ans-head">✅ EqASM 인식 결과</div>
       <div class="ans-eq">$$b\times\frac{\textcolor{#2b5fd9}{\text{Ⅱ}}\text{에서 반응 후 전체 기체의 부피(L)}}{\textcolor{#2b5fd9}{\text{Ⅲ}}\text{에서 반응 후 전체 기체의 부피(L)}}$$</div>

@@ -593,7 +593,7 @@ dialog.qd::backdrop { background: rgba(15, 18, 25, 0.45); }
   <div class="alignment-copy">
     <p>공통문항은 선택과목 집단별 실제 정답률에 해당 시험의 실제 응시자 비율을 곱해 전체 정답률을 계산했습니다. 선택문항은 해당 선택과목 집단의 정답률만 관측되므로, 같은 시험의 공통 22문항에서 측정한 집단 간 차이로 나머지 집단의 정답률을 계산한 뒤 실제 응시자 비율로 합산했습니다. 이 계산값은 학습에만 사용했습니다.</p>
     <figure class="shots single weighted-example">
-      <img src="../assets/research/predictor/weighted-rate-example.png" alt="2025년 6월 평가원 수학 10번 공통문항의 선택과목별 응시자 비율과 정답률을 합산해 전체 정답률 78.5%를 계산한 예시">
+      <img src="../assets/research/predictor/weighted-rate-example.webp" alt="2025년 6월 평가원 수학 10번 공통문항의 선택과목별 응시자 비율과 정답률을 합산해 전체 정답률 78.5%를 계산한 예시">
       <figcaption>2025년 6월 평가원 수학 10번의 실제 선택과목별 정답률과 응시자 비율</figcaption>
     </figure>
     <p>2016~2020년 수학은 가형·나형을 합산하고, 2021~2026년에는 국어의 화법과 작문·언어와 매체와 수학의 확률과 통계·미적분·기하를 합산합니다. 평가원은 해당 시험의 실제 응시 비율, 교육청은 평가원 기준으로 환산한 뒤 평가원의 실제 응시 비율, 강K 수학은 같은 회차의 선택과목 응시 비율을 사용합니다. 더프는 수집한 국어 전체 정답률을 사용하며 수학 자료는 없습니다.</p>
@@ -616,7 +616,7 @@ dialog.qd::backdrop { background: rgba(15, 18, 25, 0.45); }
   <div class="alignment-copy">
     <p>2024년 6월부터 2026년 6월까지 평가원 시험 5회에서 대성학원 재학생이 실제로 제출한 답지반응률과 평가원 전체 응시자 정답률을 같은 문항끼리 비교했습니다. 비교한 값은 국어 170문항과 수학 110문항으로 모두 280쌍입니다.</p>
     <figure class="shots single population-fit">
-      <img src="../assets/research/predictor/bridge-fit.png" alt="평가원 전체 응시자 정답률과 대성학원 재학생 답지반응률 280쌍 및 국어·수학 환산선">
+      <img src="../assets/research/predictor/bridge-fit.webp" alt="평가원 전체 응시자 정답률과 대성학원 재학생 답지반응률 280쌍 및 국어·수학 환산선">
       <figcaption>같은 환산식이 백분위 정답률 기준에서는 곡선, 로짓 정답률 기준에서는 직선으로 나타납니다</figcaption>
     </figure>
     <p>두 집단의 환산식을 직선 형태로 단순화하기 위해 백분위 정답률을 로짓 정답률로 변환했습니다. 평가원 시험 5회 중 한 회씩을 번갈아 제외해 검증한 결과, 환산값과 실제 대성학원 답지반응률의 평균 차이는 국어 1.91%p, 수학 2.16%p였습니다.</p>
@@ -722,7 +722,7 @@ dialog.qd::backdrop { background: rgba(15, 18, 25, 0.45); }
 
   function show(page) {
     current = Math.min(Math.max(page, 1), pages);
-    img.src = base + '-p' + current + '.png';
+    img.src = base + '-p' + current + '.webp';
     pageLabel.textContent = current + ' / ' + pages;
     prev.disabled = current <= 1;
     next.disabled = current >= pages;

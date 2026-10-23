@@ -13,12 +13,19 @@ def git(*args):
 
 
 def only_asset_versions(sha, path):
-    changed = [
-        line[1:].strip()
+    lines = [
+        line
         for line in git("show", "--format=", "-U0", sha, "--", str(path)).splitlines()
         if line[:1] in "+-" and not line.startswith(("+++", "---"))
     ]
-    return bool(changed) and all(ASSET_VERSION.match(line) for line in changed)
+    changed = [line[1:].strip() for line in lines]
+    if not changed:
+        return False
+    if all(ASSET_VERSION.match(line) for line in changed):
+        return True
+    removed = {re.sub(r"\.(png|jpg)\b", ".webp", line[1:]) for line in lines if line[0] == "-"}
+    added = {line[1:] for line in lines if line[0] == "+"}
+    return removed == added
 
 
 def commit_dates(path):

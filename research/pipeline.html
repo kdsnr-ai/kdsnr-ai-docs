@@ -71,7 +71,7 @@
 <div class="case">
   <div class="case-head">모델이 반환한 문항 영역 — 왼쪽 : GPT-5.6 Sol · 오른쪽 : Gemini 3.1 Pro</div>
   <div class="case-q"><b>요청</b> : 페이지에서 개별 문항의 영역을 인식하여 표시해 주세요.</div>
-  <img class="case-wide" src="../assets/research/pipeline/bbox-compare.png" alt="GPT-5.6 Sol과 Gemini 3.1 Pro가 반환한 문항 영역">
+  <img class="case-wide" src="../assets/research/pipeline/bbox-compare.webp" alt="GPT-5.6 Sol과 Gemini 3.1 Pro가 반환한 문항 영역">
 </div>
 
 <p>두 모델 모두 문항 번호와 내용은 정확히 읽지만, 문항이 인쇄된 위치는 반환하지 못하거나 실제 영역과 크게 어긋난 값을 반환합니다. 좌표가 없으면 시험지에서 문항 단위 이미지를 잘라낼 수 없습니다.</p>
@@ -89,7 +89,7 @@
 <div class="case">
   <div class="case-head">사례 1 : 2027학년도 6월 모의평가 국어 32~34번 지문</div>
   <div class="case-body">
-    <img src="../assets/research/pipeline/case-kor-transcribe.png" alt="2027학년도 6월 모의평가 국어 32~34번 지문 (나)·(다)">
+    <img src="../assets/research/pipeline/case-kor-transcribe.webp" alt="2027학년도 6월 모의평가 국어 32~34번 지문 (나)·(다)">
     <div class="case-right">
       <div class="qr"><span class="tag">요청</span>페이지에 인쇄된 (가), (나), (다) 지문 전체를 글자 하나도 바꾸지 말고 인쇄된 그대로 전사하세요.</div>
       <div class="ok"><span class="tag">정답 — 지면의 붉은 표시</span>
@@ -117,7 +117,7 @@
 <div class="case">
   <div class="case-head">사례 2 : 2027학년도 6월 모의평가 국어 18~21번 지문</div>
   <div class="case-body">
-    <img src="../assets/research/pipeline/case-kor-underline.png" alt="2027학년도 6월 모의평가 국어 18~21번 지문의 밑줄 ㉢·㉣">
+    <img src="../assets/research/pipeline/case-kor-underline.webp" alt="2027학년도 6월 모의평가 국어 18~21번 지문의 밑줄 ㉢·㉣">
     <div class="case-right">
       <div class="qr"><span class="tag">요청</span>지문에서 ㉢ 표시와 함께 밑줄이 쳐진 부분을 처음부터 끝까지 그대로 인용하세요.</div>
       <div class="ok"><span class="tag">정답 — 지면의 붉은 구간</span>
@@ -134,7 +134,7 @@
 <div class="case">
   <div class="case-head">사례 3 : 2027학년도 6월 모의평가 국어 18~21번 지문</div>
   <div class="case-body">
-    <img src="../assets/research/pipeline/case-kor-grange.png" alt="국어 지문 ㉠ 밑줄 구간과 모델이 답한 경계">
+    <img src="../assets/research/pipeline/case-kor-grange.webp" alt="국어 지문 ㉠ 밑줄 구간과 모델이 답한 경계">
     <div class="case-right">
       <div class="qr"><span class="tag">요청</span>지문에서 ㉠ 표시와 함께 밑줄이 쳐진 구간의 시작 어절과 마지막 어절을 답하세요.</div>
       <div class="ok"><span class="tag">정답 — 지면의 붉은 구간</span>
@@ -162,7 +162,7 @@
 <p>내부 처리는 세 단계입니다. 수능 지면으로 학습한 검출 모델이 지시문·지문·문항 영역과 그 안의 세부 요소를 찾고, 지면에 기록된 글자와 선을 각 영역에 배정한 뒤, 읽기 순서대로 조립해 Question 객체를 만듭니다.</p>
 
 <figure class="shots single">
-  <img src="../assets/architecture.png" alt="Pipeline API 처리 구조도">
+  <img src="../assets/architecture.webp" alt="Pipeline API 처리 구조도">
   <figcaption>Pipeline API의 처리 구조 · 레이아웃 검출 → 수식 인식 → 조립 → 문항 JSON</figcaption>
 </figure>
 
@@ -171,8 +171,8 @@
 <p>실험 ①에서 두 모델이 반환하지 못한 문항 좌표를, Pipeline에서는 전용 검출 모델이 계산합니다. 지시문·지문·문항의 큰 영역을 찾는 모델과 그 안의 수식·보기 상자·범위 표시·표·그림·문항 번호를 찾는 모델이 단계적으로 지면을 읽습니다. 2027학년도 6월 모의평가 3개 과목 32페이지를 입력하면 Question 95개가 반환되고, 국어 45문항은 지문을 공유하는 문항 묶음(QuestionSet) 11개와 단독 문항 3개로 분리되어 어느 문항들이 지문을 공유하는지가 데이터에 남습니다.</p>
 
 <figure class="shots">
-  <img src="../assets/research/pipeline/ov-kor.png" alt="국어 지면 검출 결과">
-  <img src="../assets/research/pipeline/ov-sci.png" alt="화학Ⅰ 지면 검출 결과">
+  <img src="../assets/research/pipeline/ov-kor.webp" alt="국어 지면 검출 결과">
+  <img src="../assets/research/pipeline/ov-sci.webp" alt="화학Ⅰ 지면 검출 결과">
   <figcaption>Pipeline API의 검출 결과 · 왼쪽: 국어 32~34번 지면(공유 지문과 [A]~[C] 범위 표시) · 오른쪽: 화학Ⅰ 지면(표·수식·그림)</figcaption>
 </figure>
 
@@ -185,7 +185,7 @@
 <div class="case">
   <div class="case-head">재검증 : 실험 ②의 지문을 Pipeline으로 추출</div>
   <div class="case-body">
-    <img src="../assets/research/pipeline/case-kor-transcribe.png" alt="2027학년도 6월 모의평가 국어 32~34번 지문 (나)·(다)">
+    <img src="../assets/research/pipeline/case-kor-transcribe.webp" alt="2027학년도 6월 모의평가 국어 32~34번 지문 (나)·(다)">
     <div class="case-right">
       <div class="ok"><span class="tag">Pipeline 출력</span>
       <p>시름을 꺼내 들어 <span class="b">얽어 매고</span> <span class="b">둘러 묶어</span> … <span class="b">자연히</span> 이리저리 떠다니다 절로 삭으리라</p>
@@ -204,7 +204,7 @@
 <div class="case">
   <div class="case-head">밑줄 : 2027학년도 6월 모의평가 국어 18~21번</div>
   <div class="case-body">
-    <img src="../assets/research/pipeline/detail-underline.png" alt="국어 지문의 ㉣ 밑줄 확대">
+    <img src="../assets/research/pipeline/detail-underline.webp" alt="국어 지문의 ㉣ 밑줄 확대">
     <div class="case-right">
       <pre><code class="language-json">{"type": "Text",
  "text": "씩 핥으며 고소하게 웃는다. ㉣ &lt;u&gt;어디 탈 테면 한번 타 보지, 흥!  콧방귀를 팡 뀌어 준다.&lt;/u&gt;",
@@ -217,7 +217,7 @@
 <div class="case">
   <div class="case-head">범위 표시 : 2027학년도 6월 모의평가 국어 32~34번</div>
   <div class="case-body">
-    <img src="../assets/research/pipeline/detail-bracket.png" alt="국어 지문의 [A] 범위 표시 확대">
+    <img src="../assets/research/pipeline/detail-bracket.webp" alt="국어 지문의 [A] 범위 표시 확대">
     <div class="case-right">
       <pre><code class="language-json">{"type": "Text",
  "text": "&lt;bracket:A&gt;얼음 위에 댓잎 자리 보아 임과 나와 얼어 죽을망정 얼음 위에 댓잎 자리 보아 임과 나와 얼어 죽을망정 정 둔 오늘 밤 더디 새오시라 더디 새오시라&lt;/bracket:A&gt;",
@@ -230,7 +230,7 @@
 <div class="case">
   <div class="case-head">표 : 2027학년도 6월 모의평가 지구과학Ⅱ 13번</div>
   <div class="case-body">
-    <img src="../assets/research/pipeline/detail-table.png" alt="지구과학Ⅱ 13번 표 확대">
+    <img src="../assets/research/pipeline/detail-table.webp" alt="지구과학Ⅱ 13번 표 확대">
     <div class="case-right">
       <pre><code class="language-json">{"type": "Table", "rows": 5, "cols": 4,
  "grid": [[0, 1, 2, 2],
@@ -255,7 +255,7 @@
 <div class="case">
   <div class="case-head">보기 상자 : 2027학년도 6월 모의평가 사회·문화 13번</div>
   <div class="case-body">
-    <img src="../assets/research/pipeline/detail-bogi.png" alt="사회·문화 13번 보기 상자">
+    <img src="../assets/research/pipeline/detail-bogi.webp" alt="사회·문화 13번 보기 상자">
     <div class="case-right">
       <pre><code class="language-json">{"type": "BogiBox", "content": [
   {"type": "Text", "text": "ㄱ. 서구의 제국주의를 옹호하는 논리로 이용될 수 있다."},
@@ -291,7 +291,7 @@
 <p>반대 방향도 지원합니다. Question 객체에서 새 HWPX 문서를 조판하는 쓰기 경로가 있어, 추출한 문항이나 LLM이 생성한 문항을 한글 문서로 만들 수 있습니다.</p>
 
 <figure class="shots single">
-  <img src="../assets/research/pipeline/engine.png" alt="Pipeline API가 지원하는 변환 경로">
+  <img src="../assets/research/pipeline/engine.webp" alt="Pipeline API가 지원하는 변환 경로">
   <figcaption>Pipeline API가 지원하는 변환 경로</figcaption>
 </figure>
 
