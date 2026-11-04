@@ -101,7 +101,7 @@ for item in result.items:
 <tr><td><code>question_type</code></td><td><code>QuestionType</code></td><td>단독 문항인지 지문 세트인지 구분합니다.</td></tr>
 <tr><td><code>question_numbers</code></td><td><code>list[int]</code></td><td>문항 번호입니다. 단독 문항은 번호 하나, 지문 세트는 속한 문항의 번호가 모두 들어 있습니다.</td></tr>
 <tr><td><code>label</code></td><td><code>str | None</code></td><td>원본 문서의 라벨입니다.</td></tr>
-<tr><td><code>points</code></td><td><code>int | None</code></td><td>문항의 배점입니다.</td></tr>
+<tr><td><code>points</code></td><td><code>int | float | None</code></td><td>문항의 배점입니다.</td></tr>
 <tr><td><code>has_figure</code></td><td><code>bool</code></td><td>문항에 그림이 있으면 <code>True</code>입니다.</td></tr>
 <tr><td><code>has_table</code></td><td><code>bool</code></td><td>문항에 표가 있으면 <code>True</code>입니다.</td></tr>
 <tr><td><code>has_equation</code></td><td><code>bool</code></td><td>한 줄을 통째로 차지하는 수식이 있으면 <code>True</code>입니다.</td></tr>
@@ -117,7 +117,7 @@ for item in result.items:
 <tr><td><code>unit</code></td><td><code>str | None</code></td><td>문항의 단원입니다.</td></tr>
 <tr><td><code>keywords</code></td><td><code>list[str] | None</code></td><td>문항에 입력된 검색 키워드 목록입니다.</td></tr>
 <tr><td><code>answer</code></td><td><code>int | str | None</code></td><td>단독 문항의 정답입니다.</td></tr>
-<tr><td><code>points</code></td><td><code>int | None</code></td><td>따로 확인해 입력한 배점입니다.</td></tr>
+<tr><td><code>points</code></td><td><code>int | float | None</code></td><td>따로 확인해 입력한 배점입니다.</td></tr>
 <tr><td><code>correct_rate</code></td><td><code>float | None</code></td><td>정답률입니다. 0~1 사이의 값입니다.</td></tr>
 <tr><td><code>difficulty</code></td><td><code>Difficulty | None</code></td><td>상 · 중 · 하로 구분한 난이도입니다.</td></tr>
 <tr><td><code>choice_rates</code></td><td><code>list[float] | None</code></td><td>①부터 ⑤까지 각 선지를 고른 비율입니다. 0~1 사이의 값입니다.</td></tr>
@@ -213,7 +213,7 @@ for item in result.items:
 <tr><td><code>rate_stddev</code></td><td><code>float | None</code></td><td>문항 정답률의 표준편차입니다.</td></tr>
 <tr><td><code>rate_hist</code></td><td><code>dict[str, int] | None</code></td><td>정답률을 20%p씩 나눠 구간마다 문항이 몇 개인지 센 것입니다. 키는 <code>"0-20"</code>부터 <code>"80-100"</code>까지입니다.</td></tr>
 <tr><td><code>points_count</code></td><td><code>int</code></td><td>배점이 입력된 문항 수입니다.</td></tr>
-<tr><td><code>points_total</code></td><td><code>int | None</code></td><td>배점의 합입니다. <code>points_count</code>가 <code>question_count</code>와 같을 때만 시험지 만점입니다.</td></tr>
+<tr><td><code>points_total</code></td><td><code>int | float | None</code></td><td>배점의 합입니다. <code>points_count</code>가 <code>question_count</code>와 같을 때만 시험지 만점입니다.</td></tr>
 <tr><td><code>est_mean_score</code></td><td><code>float | None</code></td><td>배점 × 정답률의 합으로 계산한 예상 평균 점수입니다.</td></tr>
 <tr><td><code>difficulty_dist</code></td><td><code>dict[Difficulty, int] | None</code></td><td>난이도별 문항 수입니다.</td></tr>
 </table>
